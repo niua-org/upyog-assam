@@ -2,3 +2,11 @@
 frontend/micro-ui-internals/node_modules/*
 .idea
 index.lock
+edcr/client/egov/.project
+edcr/service/egov/egov-commons/.settings/org.eclipse.jdt.core.prefs
+edcr/service/egov/egov-config/.settings/org.eclipse.jdt.core.prefs
+edcr/service/egov/egov-edcr/.settings/org.eclipse.jdt.core.prefs
+edcr/service/egov/egov-edcrweb/.settings/org.eclipse.jdt.core.prefs
+edcr/service/egov/egov-egi/.settings/org.eclipse.jdt.core.prefs
+edcr/service/egov/egov-egiweb/.settings/org.eclipse.jdt.core.prefs
+.vscode/settings.json
