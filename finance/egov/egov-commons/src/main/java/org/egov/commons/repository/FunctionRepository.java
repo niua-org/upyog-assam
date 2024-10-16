@@ -51,6 +51,9 @@ package org.egov.commons.repository;
 import org.egov.commons.CFunction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 import java.util.List;
 
@@ -68,8 +71,12 @@ public interface FunctionRepository extends JpaRepository<CFunction, Long> {
 
     List<CFunction> findByCodeContainingIgnoreCase(String code);
 
+    // @Query("SELECT f FROM CFunction f WHERE f.isNotLeaf = :isNotLeaf ORDER BY f.code ASC")
+    // List<CFunction> findByIsNotLeaf(@Param("isNotLeaf") boolean isNotLeaf);
     List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
 
     List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
+
+    List<CFunction> findByIsNotLeafOrderByCodeAsc(Boolean isNotLeaf);
 
 }

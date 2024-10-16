@@ -79,6 +79,7 @@ public class ReportViewer implements HttpRequestHandler {
 	@Override
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String reportId = request.getParameter(ReportConstants.REQ_PARAM_REPORT_ID);
+		LOGGER.info("report request!");
 		try {
 			ReportOutput reportOutput = reportViewerUtil.getReportOutputFormCache(reportId);
 			if (reportOutput == null) {

@@ -115,6 +115,10 @@ public class FunctionService {
 		return functionRepository.findByIsNotLeaf(true);
 	}
 
+	public List<CFunction> findAllIsNotLeafTrueOrderByCodeAsc() {
+		return functionRepository.findByIsNotLeafOrderByCodeAsc(true);
+	}
+
 	public List<CFunction> findByNameLikeOrCodeLike(final String name) {
 		return functionRepository.findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(name, name);
 	}

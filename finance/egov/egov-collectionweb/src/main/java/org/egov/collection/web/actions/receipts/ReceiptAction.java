@@ -1177,7 +1177,7 @@ public class ReceiptAction extends BaseFormAction {
 			LOGGER.error(errMsg, e);
 			throw new ApplicationRuntimeException(errMsg, e);
 		}
-
+		LOGGER.info("receipt list generated!");
 		return CollectionConstants.REPORT;
 	}
 

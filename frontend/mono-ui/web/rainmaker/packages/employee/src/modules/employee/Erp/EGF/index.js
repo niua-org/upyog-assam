@@ -13,16 +13,16 @@ class EGFFinance extends Component {
 
   render() {
     let auth_token = getAccessToken(),
-    locale = localStorage.getItem("locale"),
-    menuUrl = this.props.location.pathname,
-    loc = window.location,
-    subdomainurl,
-    domainurl,
-    finEnv,
-    hostname = loc.hostname,
-    winheight = window.innerHeight - 100,
-    erp_url,
-    tenantId = getTenantId();
+      locale = localStorage.getItem("locale"),
+      menuUrl = this.props.location.pathname,
+      loc = window.location,
+      subdomainurl,
+      domainurl,
+      finEnv,
+      hostname = loc.hostname,
+      winheight = window.innerHeight - 100,
+      erp_url,
+      tenantId = getTenantId();
     //Reading domain name from the request url
     domainurl = hostname.substring(hostname.indexOf(".") + 1);
     // Reading environment name (ex: dev, qa, uat, fin-uat etc) from the globalconfigs if exists else reading from the .env file
@@ -31,6 +31,9 @@ class EGFFinance extends Component {
     subdomainurl = !!(finEnv) ? "-" + finEnv + "." + domainurl : "." + domainurl;
     erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + subdomainurl + menuUrl;
 
+    // todo remove
+    erp_url = "http://localhost:8080" + menuUrl;
+
     return (
       <div>
         <iframe name="erp_iframe" id="erp_iframe" height={winheight} width="100%" />
@@ -38,7 +41,7 @@ class EGFFinance extends Component {
           <input readOnly hidden="true" name="auth_token" value={auth_token} />
           <input readOnly hidden="true" name="tenantId" value={tenantId} />
           <input readOnly hidden="true" name="locale" value={locale} />
-	  <input readOnly hidden="true" name="formPage" value="true" />
+          <input readOnly hidden="true" name="formPage" value="true" />
         </form>
       </div>
     );

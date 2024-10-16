@@ -92,7 +92,8 @@ public class FunctionController {
 	private MessageSource messageSource;
 
 	private void prepareNewForm(Model model) {
-		model.addAttribute("functions", functionService.findAllIsNotLeafTrue());
+		// model.addAttribute("functions", functionService.findAllIsNotLeafTrue());
+		model.addAttribute("functions", functionService.findAllIsNotLeafTrueOrderByCodeAsc());
 	}
 
 	@PostMapping(value = "/new")

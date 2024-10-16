@@ -1,48 +1,43 @@
 /*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ * Copyright (C) 2017 eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at
+ * http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following
+ * additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice. Further, all
+ * user interfaces, including but not limited to citizen facing interfaces, Urban Local Bodies
+ * interfaces, dashboards, mobile applications, of the program and any derived works should carry
+ * eGovernments Foundation logo on the top right corner.
  *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
+ * For the logo, please refer http://egovernments.org/html/logo/egov_logo.png. For any further
+ * queries on attribution, including queries on brand guidelines, please contact
+ * contact@egovernments.org
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all
+ * modified versions of this material be marked in reasonable ways as different from the original
+ * version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ * 3) This license does not grant any rights to any user of the program with regards to rights under
+ * trademark law for use of the trade names or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
 
@@ -247,7 +242,7 @@ public class MicroserviceUtils {
     /*---- SI user details-----*/
     @Value("${token.authorization.key}")
     private String tokenAuthorizationKey;
-    
+
     @Value("${si.microservice.user}")
     private String siUser;
 
@@ -295,10 +290,10 @@ public class MicroserviceUtils {
 
     @Value("${egov.services.egov-indexer.url}")
     private String egovIndexerUrl;
-    
+
     @Value("${collection.payment.searchurl.enabled}")
     private Boolean paymentSearchEndPointEnabled;
-    
+
     private ObjectMapper mapper;
     SimpleDateFormat ddMMMyyyyFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
@@ -328,12 +323,14 @@ public class MicroserviceUtils {
 
     public UserInfo getUserInfo() {
         final User user = securityUtils.getCurrentUser();
-        final List<org.egov.infra.microservice.models.RoleInfo> roles = new ArrayList<org.egov.infra.microservice.models.RoleInfo>();
-        user.getRoles()
-                .forEach(authority -> roles.add(new org.egov.infra.microservice.models.RoleInfo(authority.getName())));
+        final List<org.egov.infra.microservice.models.RoleInfo> roles =
+                new ArrayList<org.egov.infra.microservice.models.RoleInfo>();
+        user.getRoles().forEach(authority -> roles
+                .add(new org.egov.infra.microservice.models.RoleInfo(authority.getName())));
 
-        return new UserInfo(roles, user.getId(), user.getUuid(), user.getUsername(), user.getName(), user.getEmailId(),
-                user.getMobileNumber(), user.getType().toString(), getTenentId());
+        return new UserInfo(roles, user.getId(), user.getUuid(), user.getUsername(), user.getName(),
+                user.getEmailId(), user.getMobileNumber(), user.getType().toString(),
+                getTenentId());
     }
 
     public String getTenentId() {
@@ -367,9 +364,10 @@ public class MicroserviceUtils {
 
             final RestTemplate restTemplate = new RestTemplate();
             try {
-                restTemplate.postForObject(userServiceUrl, createUserRequest, UserDetailResponse.class);
+                restTemplate.postForObject(userServiceUrl, createUserRequest,
+                        UserDetailResponse.class);
             } catch (final RestClientException e) {
-            	LOGGER.warn("Exception while creating User in microservice ", e);
+                LOGGER.warn("Exception while creating User in microservice ", e);
             }
         }
     }
@@ -393,10 +391,14 @@ public class MicroserviceUtils {
     private HashMap getFinanceMdmsObj() {
         HashMap mdmObj = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
-        this.prepareModuleDetails(moduleDetailsList, "common-masters", "mapping", null, null, String.class);
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+        this.prepareModuleDetails(moduleDetailsList, "common-masters", "mapping", null, null,
+                String.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            mdmObj = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.common-masters.mapping[0]"),HashMap.class);
+            mdmObj = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.common-masters.mapping[0]"),
+                    HashMap.class);
         }
         return mdmObj;
     }
@@ -411,13 +413,19 @@ public class MicroserviceUtils {
         // List<BusinessService> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
         try {
-            this.prepareModuleDetails(moduleDetailsList, "common-masters", "Department", "code", codes, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+            this.prepareModuleDetails(moduleDetailsList, "common-masters", "Department", "code",
+                    codes, String.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
             if (postForObject != null) {
-                return mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.common-masters.Department"),new TypeReference<List<Department>>(){});
+                return mapper.convertValue(
+                        JsonPath.read(postForObject, "$.MdmsRes.common-masters.Department"),
+                        new TypeReference<List<Department>>() {});
             }
         } catch (ApplicationRuntimeException e) {
-            LOGGER.error("ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",e);
+            LOGGER.error(
+                    "ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",
+                    e);
         }
         // try {
         // if(!StringUtils.isEmpty(codes) && codes != null &&
@@ -480,15 +488,18 @@ public class MicroserviceUtils {
         // FilterRequest filterReq =new FilterRequest();
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
         try {
-            this.prepareModuleDetails(moduleDetailsList, "common-masters", "Designation", "code", code, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+            this.prepareModuleDetails(moduleDetailsList, "common-masters", "Designation", "code",
+                    code, String.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
             if (postForObject != null) {
-                return mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.common-masters.Designation"),
-                        new TypeReference<List<Designation>>() {
-                        });
+                return mapper.convertValue(
+                        JsonPath.read(postForObject, "$.MdmsRes.common-masters.Designation"),
+                        new TypeReference<List<Designation>>() {});
             }
         } catch (ApplicationRuntimeException e) {
-            LOGGER.error("ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",
+            LOGGER.error(
+                    "ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",
                     e);
         }
         // try {
@@ -517,7 +528,8 @@ public class MicroserviceUtils {
         return null;
     }
 
-    public JSONArray getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name, FilterRequest filter) {
+    public JSONArray getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name,
+            FilterRequest filter) {
         String mdmsUrl = appConfigManager.getEgovMdmsSerHost() + this.mdmsSearchUrl;
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setAuthToken(getUserToken());
@@ -558,14 +570,14 @@ public class MicroserviceUtils {
         mdmsrequest.setRequestInfo(requestInfo);
         mdmsrequest.setMdmsCriteria(mdmscriteria);
         try {
-            MdmsResponse response = restTemplate.postForObject(mdmsUrl, mdmsrequest, MdmsResponse.class);
+            MdmsResponse response =
+                    restTemplate.postForObject(mdmsUrl, mdmsrequest, MdmsResponse.class);
             Map<String, JSONArray> mdmsmap = response.getMdmsRes().get(moduleName);
             if (null != mdmsmap && mdmsmap.size() > 0) {
                 return mdmsmap.get(name);
             }
         } catch (RestClientException e) {
-            LOGGER.error("ERROR occurred while fetching finance mdms method: ",
-                    e);
+            LOGGER.error("ERROR occurred while fetching finance mdms method: ", e);
         }
         return null;
     }
@@ -575,27 +587,28 @@ public class MicroserviceUtils {
     }
 
     public List<EmployeeInfo> getApprovers(String departmentId, String designationId) {
-        return this.getEmployeeBySearchCriteria(
-                new EmployeeSearchCriteria().builder().departments(Collections.singletonList(departmentId))
-                        .designations(Collections.singletonList(designationId)).build());
+        return this.getEmployeeBySearchCriteria(new EmployeeSearchCriteria().builder()
+                .departments(Collections.singletonList(departmentId))
+                .designations(Collections.singletonList(designationId)).build());
     }
 
     public List<EmployeeInfo> getEmployeeBySearchCriteria(EmployeeSearchCriteria criteria) {
         final RestTemplate restTemplate = createRestTemplate();
-        StringBuilder url = new StringBuilder(appConfigManager.getEgovHrmsSerHost()).append(approverSrvcUrl)
-                .append("?tenantId=").append(getTenentId());
+        StringBuilder url = new StringBuilder(appConfigManager.getEgovHrmsSerHost())
+                .append(approverSrvcUrl).append("?tenantId=").append(getTenentId());
         this.prepareEmplyeeSearchQueryString(criteria, url);
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
         requestInfo.setAuthToken(getUserToken());
         requestInfo.setTs(getEpochDate(new Date()));
         reqWrapper.setRequestInfo(requestInfo);
-        EmployeeInfoResponse empResponse = restTemplate.postForObject(url.toString(), reqWrapper,
-                EmployeeInfoResponse.class);
+        EmployeeInfoResponse empResponse =
+                restTemplate.postForObject(url.toString(), reqWrapper, EmployeeInfoResponse.class);
         return empResponse.getEmployees();
     }
 
-    private void prepareEmplyeeSearchQueryString(EmployeeSearchCriteria criteria, StringBuilder url) {
+    private void prepareEmplyeeSearchQueryString(EmployeeSearchCriteria criteria,
+            StringBuilder url) {
         if (criteria.getAsOnDate() != null && criteria.getAsOnDate() != 0) {
             url.append("&asOnDate=").append(criteria.getAsOnDate());
         }
@@ -618,10 +631,12 @@ public class MicroserviceUtils {
             url.append("&ids=").append(StringUtils.join(criteria.getIds(), ","));
         }
         if (CollectionUtils.isNotEmpty(criteria.getEmployeestatuses())) {
-            url.append("&employeestatuses=").append(StringUtils.join(criteria.getEmployeestatuses(), ","));
+            url.append("&employeestatuses=")
+                    .append(StringUtils.join(criteria.getEmployeestatuses(), ","));
         }
         if (CollectionUtils.isNotEmpty(criteria.getEmployeetypes())) {
-            url.append("&employeetypes=").append(StringUtils.join(criteria.getEmployeetypes(), ","));
+            url.append("&employeetypes=")
+                    .append(StringUtils.join(criteria.getEmployeetypes(), ","));
         }
         if (CollectionUtils.isNotEmpty(criteria.getPositions())) {
             url.append("&positions=").append(StringUtils.join(criteria.getPositions(), ","));
@@ -635,14 +650,15 @@ public class MicroserviceUtils {
     }
 
     public EmployeeInfo getEmployeeByPositionId(Long positionId) {
-        List<EmployeeInfo> list = this.getEmployeeBySearchCriteria(
-                new EmployeeSearchCriteria().builder().positions(Collections.singletonList(positionId)).build());
+        List<EmployeeInfo> list = this.getEmployeeBySearchCriteria(new EmployeeSearchCriteria()
+                .builder().positions(Collections.singletonList(positionId)).build());
         return list.isEmpty() ? null : list.get(0);
     }
 
     public CustomUserDetails getUserDetails(String user_token, String admin_token) {
         final RestTemplate restT = createRestTemplate();
-        final String authurl = appConfigManager.getEgovUserSerHost() + authSrvcUrl + "?access_token=" + user_token;
+        final String authurl =
+                appConfigManager.getEgovUserSerHost() + authSrvcUrl + "?access_token=" + user_token;
         RequestInfo reqInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
         reqInfo.setAuthToken(admin_token);
@@ -669,7 +685,8 @@ public class MicroserviceUtils {
         map.add("userType", this.siUserType);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, header);
         try {
-            StringBuilder url = new StringBuilder(appConfigManager.getEgovUserSerHost()).append(tokenGenUrl);
+            StringBuilder url =
+                    new StringBuilder(appConfigManager.getEgovUserSerHost()).append(tokenGenUrl);
             LOGGER.info("call:" + url);
             Object response = restTemplate.postForObject(url.toString(), request, Object.class);
             if (response != null)
@@ -708,8 +725,10 @@ public class MicroserviceUtils {
         posrequest.setRequestInfo(req_header);
         posrequest.setPosition(positions);
         LOGGER.info("call:" + positionSrvcUrl);
-        StringBuilder uri = new StringBuilder(appConfigManager.getEgovHrMasterSerHost()).append(positionSrvcUrl);
-        PositionResponse response = restT.postForObject(uri.toString(), posrequest, PositionResponse.class);
+        StringBuilder uri = new StringBuilder(appConfigManager.getEgovHrMasterSerHost())
+                .append(positionSrvcUrl);
+        PositionResponse response =
+                restT.postForObject(uri.toString(), posrequest, PositionResponse.class);
 
         return response;
 
@@ -728,21 +747,24 @@ public class MicroserviceUtils {
         request.setActionMaster("actions-test");
         request.setEnabled(true);
         LOGGER.info("call:" + actionSrvcUrl);
-        StringBuilder uri = new StringBuilder(appConfigManager.getEgovAccessControllSerHost()).append(actionSrvcUrl);
-        ActionResponse response = restT.postForObject(uri.toString(), request, ActionResponse.class);
+        StringBuilder uri = new StringBuilder(appConfigManager.getEgovAccessControllSerHost())
+                .append(actionSrvcUrl);
+        ActionResponse response =
+                restT.postForObject(uri.toString(), request, ActionResponse.class);
 
         // response.getActions()
         return response;
     }
 
-    public List<EmployeeInfo> getEmployee(Long empId, Date toDay, String departmentId, String designationId) {
-       EmployeeSearchCriteria creiteria = this.prepareEmployeeSearchQueryBuilder(empId, toDay, departmentId,
-               designationId);
+    public List<EmployeeInfo> getEmployee(Long empId, Date toDay, String departmentId,
+            String designationId) {
+        EmployeeSearchCriteria creiteria =
+                this.prepareEmployeeSearchQueryBuilder(empId, toDay, departmentId, designationId);
         return this.getEmployeeBySearchCriteria(creiteria);
     }
 
-    private EmployeeSearchCriteria prepareEmployeeSearchQueryBuilder(Long empId, Date toDay, String departmentId,
-            String designationId) {
+    private EmployeeSearchCriteria prepareEmployeeSearchQueryBuilder(Long empId, Date toDay,
+            String departmentId, String designationId) {
         EmployeeSearchCriteria criteria = new EmployeeSearchCriteria().builder().build();
         if (empId != null && empId != 0) {
             criteria.setIds(Collections.singletonList(empId));
@@ -761,14 +783,14 @@ public class MicroserviceUtils {
     }
 
     public EmployeeInfo getEmployeeById(Long empId) {
-        List<EmployeeInfo> list = this.getEmployeeBySearchCriteria(
-                new EmployeeSearchCriteria().builder().ids(Collections.singletonList(empId)).build());
+        List<EmployeeInfo> list = this.getEmployeeBySearchCriteria(new EmployeeSearchCriteria()
+                .builder().ids(Collections.singletonList(empId)).build());
         return list.isEmpty() ? null : list.get(0);
     }
 
     public List<EmployeeInfo> getEmployeeByIds(Set<Long> ids) {
-        return this.getEmployeeBySearchCriteria(
-                new EmployeeSearchCriteria().builder().ids(ids.stream().collect(Collectors.toList())).build());
+        return this.getEmployeeBySearchCriteria(new EmployeeSearchCriteria().builder()
+                .ids(ids.stream().collect(Collectors.toList())).build());
     }
 
     public List<Assignment> getAssignments(String department, String designation) {
@@ -782,19 +804,20 @@ public class MicroserviceUtils {
         }
         return assignmentList;
     }
-    
+
     public List<TaxHeadMaster> getTaxheadsByService(String service) {
 
         final RestTemplate restTemplate = createRestTemplate();
 
-        final String url = appConfigManager.getEgovBillingSerHost() + taxheadsSearchUrl + "?tenantId=" + getTenentId()
-                + "&service=" + service;
+        final String url = appConfigManager.getEgovBillingSerHost() + taxheadsSearchUrl
+                + "?tenantId=" + getTenentId() + "&service=" + service;
 
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
-        TaxHeadMasterResponse response = restTemplate.postForObject(url, reqWrapper, TaxHeadMasterResponse.class);
+        TaxHeadMasterResponse response =
+                restTemplate.postForObject(url, reqWrapper, TaxHeadMasterResponse.class);
         return response.getTaxHeadMasters();
     }
 
@@ -802,7 +825,8 @@ public class MicroserviceUtils {
 
         final RestTemplate restTemplate = createRestTemplate();
 
-        final String url = appConfigManager.getEgovBillingSerHost() + taxheadsSearchUrl + "?tenantId=" + getTenentId();
+        final String url = appConfigManager.getEgovBillingSerHost() + taxheadsSearchUrl
+                + "?tenantId=" + getTenentId();
 
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
@@ -810,7 +834,8 @@ public class MicroserviceUtils {
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
 
-        TaxHeadMasterResponse response = restTemplate.postForObject(url, reqWrapper, TaxHeadMasterResponse.class);
+        TaxHeadMasterResponse response =
+                restTemplate.postForObject(url, reqWrapper, TaxHeadMasterResponse.class);
         return response.getTaxHeadMasters();
     }
 
@@ -818,8 +843,8 @@ public class MicroserviceUtils {
 
         final RestTemplate restTemplate = createRestTemplate();
 
-        final String url = appConfigManager.getEgovBillingSerHost() + glcodeMasterSearchUrl + "?tenantId="
-                + getTenentId() + "&service=" + service;
+        final String url = appConfigManager.getEgovBillingSerHost() + glcodeMasterSearchUrl
+                + "?tenantId=" + getTenentId() + "&service=" + service;
 
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
@@ -827,7 +852,8 @@ public class MicroserviceUtils {
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
 
-        GlCodeMasterResponse response = restTemplate.postForObject(url, reqWrapper, GlCodeMasterResponse.class);
+        GlCodeMasterResponse response =
+                restTemplate.postForObject(url, reqWrapper, GlCodeMasterResponse.class);
         return response.getGlCodeMasters();
     }
 
@@ -835,16 +861,18 @@ public class MicroserviceUtils {
 
         final RestTemplate restTemplate = createRestTemplate();
 
-        final String url = appConfigManager.getEgovBillingSerHost() + taxperiodsSearchUrl + "?tenantId=" + getTenentId()
-                + "&service=" + type;
+        final String url = appConfigManager.getEgovBillingSerHost() + taxperiodsSearchUrl
+                + "?tenantId=" + getTenentId() + "&service=" + type;
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
 
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
 
-        TaxPeriodResponse response = restTemplate.postForObject(url, reqWrapper, TaxPeriodResponse.class);
-        if (response != null && response.getTaxPeriods() != null && !response.getTaxPeriods().isEmpty())
+        TaxPeriodResponse response =
+                restTemplate.postForObject(url, reqWrapper, TaxPeriodResponse.class);
+        if (response != null && response.getTaxPeriods() != null
+                && !response.getTaxPeriods().isEmpty())
             return response.getTaxPeriods().get(0);
         else
             return null;
@@ -854,24 +882,29 @@ public class MicroserviceUtils {
         return this.getBankAcntServiceMappings(null, null);
     }
 
-    public List<BankAccountServiceMapping> getBankAcntServiceMappings(String bankAccount, String businessDetails) {
+    public List<BankAccountServiceMapping> getBankAcntServiceMappings(String bankAccount,
+            String businessDetails) {
         List<BankAccountServiceMapping> basm = Collections.EMPTY_LIST;
         List<ModuleDetail> moduleDetailList = new ArrayList<>();
         try {
-            this.prepareModuleDetails(moduleDetailList, "FinanceModule", "BankAccountServiceMapping",
-                    bankAccount != null ? "bankAccount" : null, bankAccount != null ? bankAccount : null, String.class);
-            this.prepareModuleDetails(moduleDetailList, "FinanceModule", "BankAccountServiceMapping",
-                    businessDetails != null ? "businessDetails" : null,
+            this.prepareModuleDetails(moduleDetailList, "FinanceModule",
+                    "BankAccountServiceMapping", bankAccount != null ? "bankAccount" : null,
+                    bankAccount != null ? bankAccount : null, String.class);
+            this.prepareModuleDetails(moduleDetailList, "FinanceModule",
+                    "BankAccountServiceMapping", businessDetails != null ? "businessDetails" : null,
                     businessDetails != null ? businessDetails : null, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailList, false, null, null), Map.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailList, false, null, null), Map.class);
             if (postForObject != null) {
                 basm = mapper.convertValue(
-                        JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.BankAccountServiceMapping"),
-                        new TypeReference<List<BankAccountServiceMapping>>() {
-                        });
+                        JsonPath.read(postForObject,
+                                "$.MdmsRes.FinanceModule.BankAccountServiceMapping"),
+                        new TypeReference<List<BankAccountServiceMapping>>() {});
             }
         } catch (RestClientException e) {
-            LOGGER.error("ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ", e);
+            LOGGER.error(
+                    "ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ",
+                    e);
         }
         return basm;
     }
@@ -886,10 +919,12 @@ public class MicroserviceUtils {
         return this.getBankAcntServiceMappings(bankAccount, businessDetails);
     }
 
-    public List<BankAccountServiceMapping> createBankAcntServiceMappings(BankAccountServiceMapping basm) {
+    public List<BankAccountServiceMapping> createBankAcntServiceMappings(
+            BankAccountServiceMapping basm) {
 
         final RestTemplate restTemplate = createRestTemplate();
-        final String url = appConfigManager.getEgovCollSerHost() + bankAccountServiceMappingCreateUrl;
+        final String url =
+                appConfigManager.getEgovCollSerHost() + bankAccountServiceMappingCreateUrl;
 
         RequestInfo requestInfo = new RequestInfo();
 
@@ -900,8 +935,8 @@ public class MicroserviceUtils {
         request.setRequestInfo(requestInfo);
         request.setBankAccountServiceMapping(Collections.singletonList(basm));
 
-        BankAccountServiceMappingResponse response = restTemplate.postForObject(url, request,
-                BankAccountServiceMappingResponse.class);
+        BankAccountServiceMappingResponse response =
+                restTemplate.postForObject(url, request, BankAccountServiceMappingResponse.class);
         if (response != null && response.getBankAccountServiceMapping() != null)
             return response.getBankAccountServiceMapping();
         else
@@ -910,8 +945,8 @@ public class MicroserviceUtils {
 
     public FinancialStatus getInstrumentStatusByCode(String code) {
 
-        final String url = appConfigManager.getEgovEgfMasterSerHost() + financialStatusesSearchUrl + "?tenantId="
-                + getTenentId() + "&moduleType=Instrument&code=" + code;
+        final String url = appConfigManager.getEgovEgfMasterSerHost() + financialStatusesSearchUrl
+                + "?tenantId=" + getTenentId() + "&moduleType=Instrument&code=" + code;
 
         RequestInfo requestInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
@@ -919,7 +954,8 @@ public class MicroserviceUtils {
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
         LOGGER.info("call:" + url);
-        FinancialStatusResponse response = restTemplate.postForObject(url, reqWrapper, FinancialStatusResponse.class);
+        FinancialStatusResponse response =
+                restTemplate.postForObject(url, reqWrapper, FinancialStatusResponse.class);
         if (response.getFinancialStatuses() != null && !response.getFinancialStatuses().isEmpty())
             return response.getFinancialStatuses().get(0);
         else
@@ -927,7 +963,7 @@ public class MicroserviceUtils {
     }
 
     public List<Instrument> getInstruments(String instrumentType, TransactionType transactionType,
-            String instrumentStatus,final Date startDate, final Date endDate) {
+            String instrumentStatus, final Date startDate, final Date endDate) {
         InstrumentSearchContract contract = new InstrumentSearchContract();
         contract.setInstrumentTypes(instrumentType);
         contract.setTransactionType(transactionType);
@@ -938,14 +974,16 @@ public class MicroserviceUtils {
         return this.getInstrumentsBySearchCriteria(contract);
     }
 
-    public List<Instrument> getInstrumentsBySearchCriteria(InstrumentSearchContract insSearchContra) {
+    public List<Instrument> getInstrumentsBySearchCriteria(
+            InstrumentSearchContract insSearchContra) {
         StringBuilder url = new StringBuilder().append(appConfigManager.getEgovEgfInstSerHost())
                 .append(instrumentSearchUrl).append("?tenantId=").append(getTenentId());
         if (StringUtils.isNotBlank(insSearchContra.getIds())) {
             url.append("&ids=").append(insSearchContra.getIds());
         }
         if (StringUtils.isNotBlank(insSearchContra.getBankAccountNumber())) {
-            url.append("&bankAccount.accountNumber=").append(insSearchContra.getBankAccountNumber());
+            url.append("&bankAccount.accountNumber=")
+                    .append(insSearchContra.getBankAccountNumber());
         }
         if (StringUtils.isNotBlank(insSearchContra.getBankId())) {
             url.append("&bank.id=").append(insSearchContra.getBankId());
@@ -985,7 +1023,8 @@ public class MicroserviceUtils {
         requestInfo.setAuthToken(getUserToken());
         reqWrapper.setRequestInfo(requestInfo);
         LOGGER.info("call:" + url);
-        InstrumentResponse response = restTemplate.postForObject(url.toString(), reqWrapper, InstrumentResponse.class);
+        InstrumentResponse response =
+                restTemplate.postForObject(url.toString(), reqWrapper, InstrumentResponse.class);
         return response.getInstruments();
     }
 
@@ -995,8 +1034,8 @@ public class MicroserviceUtils {
         return this.getInstrumentsBySearchCriteria(contract);
     }
 
-    public List<Instrument> getInstrumentsByReceiptIds(String instrumentType, String instrumentStatus,
-            String receiptIds) {
+    public List<Instrument> getInstrumentsByReceiptIds(String instrumentType,
+            String instrumentStatus, String receiptIds) {
         InstrumentSearchContract contract = new InstrumentSearchContract();
         contract.setInstrumentTypes(instrumentType);
         contract.setReceiptIds(receiptIds);
@@ -1004,11 +1043,14 @@ public class MicroserviceUtils {
         return this.getInstrumentsBySearchCriteria(contract);
     }
 
-    public List<Receipt> getReceipts(String ids, String status, String serviceCodes, Date fromDate, Date toDate) {
+    public List<Receipt> getReceipts(String ids, String status, String serviceCodes, Date fromDate,
+            Date toDate) {
         ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
-                .status(Arrays.stream(status.split(",")).collect(Collectors.toSet())).fromDate(fromDate).toDate(toDate)
+                .status(Arrays.stream(status.split(",")).collect(Collectors.toSet()))
+                .fromDate(fromDate).toDate(toDate)
                 .receiptNumbers(Arrays.stream(ids.split(",")).collect(Collectors.toSet()))
-                .businessCodes(Arrays.stream(serviceCodes.split(",")).collect(Collectors.toSet())).tenantId(getTenentId()).build();
+                .businessCodes(Arrays.stream(serviceCodes.split(",")).collect(Collectors.toSet()))
+                .tenantId(getTenentId()).build();
         return this.getReceipt(criteria);
     }
 
@@ -1017,34 +1059,36 @@ public class MicroserviceUtils {
         // version are getting used
         List<Receipt> receipts = new ArrayList<>();
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
-        case "V2":
-        case "VERSION2":
-            PaymentSearchCriteria paySearchCriteria = new PaymentSearchCriteria();
-            rSearchcriteria.toPayemntSerachCriteriaContract(paySearchCriteria);
-            List<Payment> payments = this.getPayments(paySearchCriteria);
-            paymentUtils.getReceiptsFromPayments(payments, receipts);
-            break;
+            case "V2":
+            case "VERSION2":
+                PaymentSearchCriteria paySearchCriteria = new PaymentSearchCriteria();
+                rSearchcriteria.toPayemntSerachCriteriaContract(paySearchCriteria);
+                List<Payment> payments = this.getPayments(paySearchCriteria);
+                paymentUtils.getReceiptsFromPayments(payments, receipts);
+                break;
 
-        default:
-            RequestInfo requestInfo = new RequestInfo();
-            RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
-            requestInfo.setAuthToken(getUserToken());
-            requestInfo.setUserInfo(getUserInfo());
-            reqWrapper.setRequestInfo(requestInfo);
-            StringBuilder url = new StringBuilder();
-            url.append(appConfigManager.getEgovCollSerHost()).append(receiptSearchUrl).append("?tenantId=")
-                    .append(getTenentId());
-            prepareReceiptSearchUrl(rSearchcriteria, url);
-            LOGGER.info("call:" + url.toString());
-            ReceiptResponse response = restTemplate.postForObject(url.toString(), reqWrapper, ReceiptResponse.class);
-            receipts = response.getReceipts();
+            default:
+                RequestInfo requestInfo = new RequestInfo();
+                RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
+                requestInfo.setAuthToken(getUserToken());
+                requestInfo.setUserInfo(getUserInfo());
+                reqWrapper.setRequestInfo(requestInfo);
+                StringBuilder url = new StringBuilder();
+                url.append(appConfigManager.getEgovCollSerHost()).append(receiptSearchUrl)
+                        .append("?tenantId=").append(getTenentId());
+                prepareReceiptSearchUrl(rSearchcriteria, url);
+                LOGGER.info("call:" + url.toString());
+                ReceiptResponse response = restTemplate.postForObject(url.toString(), reqWrapper,
+                        ReceiptResponse.class);
+                receipts = response.getReceipts();
         }
         return receipts;
     }
 
     private void prepareReceiptSearchUrl(ReceiptSearchCriteria criteria, StringBuilder url) {
         if (CollectionUtils.isNotEmpty(criteria.getReceiptNumbers())) {
-            url.append("&receiptNumbers=").append(StringUtils.join(criteria.getReceiptNumbers(), ","));
+            url.append("&receiptNumbers=")
+                    .append(StringUtils.join(criteria.getReceiptNumbers(), ","));
         }
         if (StringUtils.isNotBlank(criteria.getDepartment())) {
             url.append("&department=").append(criteria.getDepartment());
@@ -1053,7 +1097,8 @@ public class MicroserviceUtils {
             url.append("&fund=").append(criteria.getFund());
         }
         if (CollectionUtils.isNotEmpty(criteria.getBusinessCodes())) {
-            url.append("&businessCodes=").append(StringUtils.join(criteria.getBusinessCodes(), ","));
+            url.append("&businessCodes=")
+                    .append(StringUtils.join(criteria.getBusinessCodes(), ","));
         }
         if (criteria.getFromDate() != null) {
             url.append("&fromDate=").append(criteria.getFromDate().getTime());
@@ -1068,53 +1113,65 @@ public class MicroserviceUtils {
 
     public List<Receipt> getReceipts(String receiptNumbers) {
         ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
-                .receiptNumbers(Arrays.stream(receiptNumbers.split(",")).collect(Collectors.toSet())).build();
-        return this.getReceipt(criteria);
-    }
-    
-    public List<Receipt> getReceiptsList(String receiptNumbers,String serviceCode) {
-        ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
-                .receiptNumbers(Arrays.stream(receiptNumbers.split(",")).collect(Collectors.toSet())).businessCodes(Arrays.stream(serviceCode.split(",")).collect(Collectors.toSet())).build();
+                .receiptNumbers(
+                        Arrays.stream(receiptNumbers.split(",")).collect(Collectors.toSet()))
+                .build();
         return this.getReceipt(criteria);
     }
 
-    public List<Receipt> getReceipts(String status, String serviceCode, String fund, String department,
-            String receiptDate) {
+    public List<Receipt> getReceiptsList(String receiptNumbers, String serviceCode) {
+        ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
+                .receiptNumbers(
+                        Arrays.stream(receiptNumbers.split(",")).collect(Collectors.toSet()))
+                .businessCodes(Arrays.stream(serviceCode.split(",")).collect(Collectors.toSet()))
+                .build();
+        return this.getReceipt(criteria);
+    }
+
+    public List<Receipt> getReceipts(String status, String serviceCode, String fund,
+            String department, String receiptDate) {
         ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
                 .status(Arrays.stream(status.split(",")).collect(Collectors.toSet()))
-                .businessCodes(Arrays.stream(serviceCode.split(",")).collect(Collectors.toSet())).fund(fund)
-                .department(department).fromDate(DateUtils.toDateUsingDefaultPattern(receiptDate))
+                .businessCodes(Arrays.stream(serviceCode.split(",")).collect(Collectors.toSet()))
+                .fund(fund).department(department)
+                .fromDate(DateUtils.toDateUsingDefaultPattern(receiptDate))
                 .toDate(DateUtils.toDateUsingDefaultPattern(receiptDate)).build();
         return this.getReceipt(criteria);
     }
 
-    public List<Receipt> searchReciepts(String classification, Date fromDate, Date toDate, String businessCode,
-            String receiptNo) {
+    public List<Receipt> searchReciepts(String classification, Date fromDate, Date toDate,
+            String businessCode, String receiptNo) {
 
-        return this.searchReciepts(classification, fromDate, toDate, businessCode, Arrays.asList(receiptNo));
+        return this.searchReciepts(classification, fromDate, toDate, businessCode,
+                Arrays.asList(receiptNo));
 
     }
 
-    public List<Receipt> searchReciepts(String classification, Date fromDate, Date toDate, String businessCode,
-            List<String> receiptNos) {
-        ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder().fromDate(fromDate).toDate(toDate)
-                .businessCodes(businessCode != null ? Arrays.stream(businessCode.split(",")).collect(Collectors.toSet())
-                        : Collections.EMPTY_SET)
-                .receiptNumbers(
-                        receiptNos != null ? receiptNos.stream().collect(Collectors.toSet()) : Collections.EMPTY_SET)
-                .classification(classification).build();
+    public List<Receipt> searchReciepts(String classification, Date fromDate, Date toDate,
+            String businessCode, List<String> receiptNos) {
+        ReceiptSearchCriteria criteria =
+                new ReceiptSearchCriteria().builder().fromDate(fromDate).toDate(toDate)
+                        .businessCodes(businessCode != null
+                                ? Arrays.stream(businessCode.split(",")).collect(Collectors.toSet())
+                                : Collections.EMPTY_SET)
+                        .receiptNumbers(
+                                receiptNos != null ? receiptNos.stream().collect(Collectors.toSet())
+                                        : Collections.EMPTY_SET)
+                        .classification(classification).build();
         return this.getReceipt(criteria);
     }
 
-    public InstrumentResponse reconcileInstruments(List<Instrument> instruments, String depositedBankAccountNum) {
+    public InstrumentResponse reconcileInstruments(List<Instrument> instruments,
+            String depositedBankAccountNum) {
         FinancialStatus instrumentStatusReconciled = new FinancialStatus();
         instrumentStatusReconciled.setCode("Reconciled");
         instrumentStatusReconciled.setName("Reconciled");
-        return this.updateInstruments(instruments, depositedBankAccountNum, instrumentStatusReconciled);
+        return this.updateInstruments(instruments, depositedBankAccountNum,
+                instrumentStatusReconciled);
     }
 
-    public InstrumentResponse reconcileInstruments(List<Instrument> instruments, String depositedBankAccountNum,
-            String bankId) {
+    public InstrumentResponse reconcileInstruments(List<Instrument> instruments,
+            String depositedBankAccountNum, String bankId) {
         FinancialStatus instrumentStatusReconciled = new FinancialStatus();
         instrumentStatusReconciled.setCode("Reconciled");
         instrumentStatusReconciled.setName("Reconciled");
@@ -1131,15 +1188,16 @@ public class MicroserviceUtils {
         return this.updateInstruments(instruments);
     }
 
-    public InstrumentResponse depositeInstruments(List<Instrument> instruments, String depositedBankAccountNum) {
+    public InstrumentResponse depositeInstruments(List<Instrument> instruments,
+            String depositedBankAccountNum) {
         FinancialStatus finStatus = new FinancialStatus();
         finStatus.setCode("Deposited");
         finStatus.setName("Deposited");
         return this.updateInstruments(instruments, depositedBankAccountNum, finStatus);
     }
 
-    public InstrumentResponse depositeInstruments(List<Instrument> instruments, String depositedBankAccountNum,
-            String bankId) {
+    public InstrumentResponse depositeInstruments(List<Instrument> instruments,
+            String depositedBankAccountNum, String bankId) {
         FinancialStatus finStatus = new FinancialStatus();
         finStatus.setCode("Deposited");
         finStatus.setName("Deposited");
@@ -1174,7 +1232,8 @@ public class MicroserviceUtils {
     }
 
     public RemittanceResponse createRemittance(List<Remittance> remittanceList) {
-        final StringBuilder url = new StringBuilder(appConfigManager.getEgovCollSerHost() + remittanceCreateUrl);
+        final StringBuilder url =
+                new StringBuilder(appConfigManager.getEgovCollSerHost() + remittanceCreateUrl);
         RemittanceRequest request = new RemittanceRequest();
         request.setRemittances(remittanceList);
         final RequestInfo requestInfo = new RequestInfo();
@@ -1188,7 +1247,8 @@ public class MicroserviceUtils {
     }
 
     public ReceiptResponse updateReceipts(List<Receipt> receiptList) {
-        final StringBuilder url = new StringBuilder(appConfigManager.getEgovCollSerHost() + receiptUpdateUrl);
+        final StringBuilder url =
+                new StringBuilder(appConfigManager.getEgovCollSerHost() + receiptUpdateUrl);
         ReceiptRequest request = new ReceiptRequest();
         receiptList.stream().forEach(rec -> {
             if (rec.getInstrument().getBank() != null) {
@@ -1213,10 +1273,11 @@ public class MicroserviceUtils {
                 RequestInfoWrapper requestInfo = new RequestInfoWrapper();
                 requestInfo.setRequestInfo(createRequestInfo);
                 LOGGER.info("call:" + workflowServiceUrl);
-                tresp = restTemplate.postForObject(workflowServiceUrl, requestInfo, TaskResponse.class);
+                tresp = restTemplate.postForObject(workflowServiceUrl, requestInfo,
+                        TaskResponse.class);
                 tasks = tresp.getTasks();
-            } catch (final  RestClientException e) {
-            	LOGGER.warn("Exception while getting inbox items from microservice ",e);
+            } catch (final RestClientException e) {
+                LOGGER.warn("Exception while getting inbox items from microservice ", e);
             }
         }
         return tasks;
@@ -1246,7 +1307,7 @@ public class MicroserviceUtils {
     }
 
     public void saveAuthToken(String auth_token, String sessionId) {
-    	LOGGER.info("Inside save auth_token::"+auth_token+"sessionId::"+sessionId);
+        LOGGER.info("Inside save auth_token::" + auth_token + "sessionId::" + sessionId);
         redisTemplate.opsForHash().putIfAbsent(auth_token, sessionId, sessionId);
     }
 
@@ -1258,7 +1319,8 @@ public class MicroserviceUtils {
         return null;
     }
 
-    public void SaveSessionToRedis(String access_token, String sessionId, Map<String, String> values) {
+    public void SaveSessionToRedis(String access_token, String sessionId,
+            Map<String, String> values) {
 
         if (null != access_token && null != values && values.size() > 0) {
             values.keySet().forEach(key -> {
@@ -1285,23 +1347,25 @@ public class MicroserviceUtils {
     }
 
     public void removeSessionFromRedis(String access_token, String sessionId) {
-		/*
-		 * LOGGER.info("******Print all keys from redis on LOGOUT***********");
-		 * Set<Object> redisKeys = redisTemplate.keys("*"); // Store the keys in a List
-		 * Iterator<Object> it = redisKeys.iterator(); while (it.hasNext()) { Object
-		 * data = it.next(); LOGGER.info("****Keys in redis---->>> " + data); }
-		 */
+        /*
+         * LOGGER.info("******Print all keys from redis on LOGOUT***********"); Set<Object>
+         * redisKeys = redisTemplate.keys("*"); // Store the keys in a List Iterator<Object> it =
+         * redisKeys.iterator(); while (it.hasNext()) { Object data = it.next();
+         * LOGGER.info("****Keys in redis---->>> " + data); }
+         */
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
-        Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");
-        LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
-        if (null != access_token && (redisTemplate.hasKey(access_token) || redisTemplate.hasKey("auth:"+access_token))) {
-            //sessionId = (String) redisTemplate.opsForHash().get(sessionId, sessionId);
+        Object sessionIdFromRedis =
+                redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");
+        LOGGER.info("**Redis:: sessionID*****" + sessionIdFromRedis);
+        if (null != access_token && (redisTemplate.hasKey(access_token)
+                || redisTemplate.hasKey("auth:" + access_token))) {
+            // sessionId = (String) redisTemplate.opsForHash().get(sessionId, sessionId);
             if (sessionIdFromRedis != null) {
-            	redisTemplate.delete(sessionId);
-            	sessionId = String.valueOf(sessionIdFromRedis);
-            	LOGGER.info("***********sessionId**** " + sessionId);
+                redisTemplate.delete(sessionId);
+                sessionId = String.valueOf(sessionIdFromRedis);
+                LOGGER.info("***********sessionId**** " + sessionId);
                 redisTemplate.delete(access_token);
-                //redisTemplate.delete("auth:"+access_token);
+                // redisTemplate.delete("auth:"+access_token);
                 redisTemplate.delete(sessionId);
                 LOGGER.info("spring:session:sessions:" + sessionId);
                 LOGGER.info("spring:session:sessions:expires:" + sessionId);
@@ -1323,7 +1387,8 @@ public class MicroserviceUtils {
 
                 Object sessionId = redisTemplate.opsForList().leftPop(oldToken);
                 if (redisTemplate.hasKey(sessionId))
-                    if (oldToken.equals(redisTemplate.opsForHash().get(sessionId, "ACCESS_TOKEN"))) {
+                    if (oldToken
+                            .equals(redisTemplate.opsForHash().get(sessionId, "ACCESS_TOKEN"))) {
                         redisTemplate.opsForHash().delete(sessionId, "ACCESS_TOKEN");
                         redisTemplate.opsForHash().put(sessionId, "ACCESS_TOKEN", newToken);
                         redisTemplate.delete(oldToken);
@@ -1336,7 +1401,8 @@ public class MicroserviceUtils {
         }
     }
 
-    public static ResponseInfo getResponseInfo(RequestInfo requestInfo, Integer status, String apiId) {
+    public static ResponseInfo getResponseInfo(RequestInfo requestInfo, Integer status,
+            String apiId) {
         ResponseInfo info = new ResponseInfo();
 
         if (requestInfo != null) {
@@ -1355,7 +1421,8 @@ public class MicroserviceUtils {
     }
 
     public static Long getEpochDate(Date date) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
+        DateTimeFormatter fmt =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
         // Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String strDate = dateFormat.format(date);
@@ -1365,14 +1432,17 @@ public class MicroserviceUtils {
 
     public void pushDataToIndexer(Object data, String topicName) {
         try {
-            StringBuilder uri = new StringBuilder(appConfigManager.getEgovIndexerSerHost()).append(egovIndexerUrl);
-            Object postForObject = restTemplate.postForObject(uri.toString(), data, Object.class, topicName);
+            StringBuilder uri = new StringBuilder(appConfigManager.getEgovIndexerSerHost())
+                    .append(egovIndexerUrl);
+            Object postForObject =
+                    restTemplate.postForObject(uri.toString(), data, Object.class, topicName);
         } catch (RestClientException e) {
             Log.error("ERROR occurred while trying to push the data to indexer : ", e);
         }
     }
 
-    public Object getMdmsData(List<ModuleDetail> moduleDetails, boolean isStateLevel, String tenantId, String token) {
+    public Object getMdmsData(List<ModuleDetail> moduleDetails, boolean isStateLevel,
+            String tenantId, String token) {
         String mdmsUrl = appConfigManager.getEgovMdmsSerHost() + this.mdmsSearchUrl;
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setAuthToken(token != null && !token.isEmpty() ? token : getUserToken());
@@ -1398,29 +1468,34 @@ public class MicroserviceUtils {
         List<ModuleDetail> moduleDetailList = new ArrayList<>();
         String tenentId = getTenentId();
         try {
-            this.prepareModuleDetails(moduleDetailList, "tenant", "tenants", "code", tenentId, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailList, true, null, null), Map.class);
+            this.prepareModuleDetails(moduleDetailList, "tenant", "tenants", "code", tenentId,
+                    String.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailList, true, null, null), Map.class);
             if (postForObject != null) {
                 ulbGrade = mapper.convertValue(
-                        JsonPath.read(postForObject, "$.MdmsRes.tenant.tenants[0].city.ulbGrade"), String.class);
+                        JsonPath.read(postForObject, "$.MdmsRes.tenant.tenants[0].city.ulbGrade"),
+                        String.class);
             }
             if (ulbGrade != null && !ulbGrade.isEmpty())
                 ulbGrade = environment.getProperty(ulbGrade, ulbGrade);
         } catch (RestClientException e) {
-            LOGGER.error("ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ", e);
+            LOGGER.error(
+                    "ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ",
+                    e);
         }
         return tenentId.split(Pattern.quote("."))[1] + " " + (ulbGrade != null ? ulbGrade : "");
     }
 
-    private void prepareModuleDetails(List<ModuleDetail> moduleDetailsList, String moduleNme, String masterName,
-            String filterKey, String filterValue, Class filterType) {
+    private void prepareModuleDetails(List<ModuleDetail> moduleDetailsList, String moduleNme,
+            String masterName, String filterKey, String filterValue, Class filterType) {
         List<MasterDetail> masterDetails = new ArrayList<>();
         ListIterator<ModuleDetail> listIterator = moduleDetailsList.listIterator();
         while (listIterator.hasNext()) {
             ModuleDetail existModName = listIterator.next();
             if (existModName.getModuleName().equals(moduleNme)) {
-                this.prepareMasterDetails(existModName.getMasterDetails(), masterName, filterKey, filterValue,
-                        filterType);
+                this.prepareMasterDetails(existModName.getMasterDetails(), masterName, filterKey,
+                        filterValue, filterType);
                 listIterator.remove();
                 listIterator.add(existModName);
                 return;
@@ -1430,8 +1505,8 @@ public class MicroserviceUtils {
         moduleDetailsList.add(new ModuleDetail(moduleNme, masterDetails));
     }
 
-    private void prepareMasterDetails(List<MasterDetail> masterDetailList, String masterName, String filterKey,
-            String filterValue, Class filterType) {
+    private void prepareMasterDetails(List<MasterDetail> masterDetailList, String masterName,
+            String filterKey, String filterValue, Class filterType) {
         String filter = null;
         StringBuilder filterBuilder = new StringBuilder();
         ListIterator<MasterDetail> listIterator = masterDetailList.listIterator();
@@ -1445,12 +1520,16 @@ public class MicroserviceUtils {
                         Matcher matcher = pattern.matcher(oldFilter);
                         if (matcher.find()) {
                             String newFilter = oldFilter.substring(0, oldFilter.length() - 3);
-                            filterBuilder.append(newFilter).append(",").append(getSingleQuoteBasedOnType(filterType))
-                                    .append(filterValue).append(getSingleQuoteBasedOnType(filterType)).append("])]");
+                            filterBuilder.append(newFilter).append(",")
+                                    .append(getSingleQuoteBasedOnType(filterType))
+                                    .append(filterValue)
+                                    .append(getSingleQuoteBasedOnType(filterType)).append("])]");
                         } else {
                             String newFilter = oldFilter.substring(0, oldFilter.length() - 2);
-                            filterBuilder.append(newFilter).append(" && ").append("@.").append(filterKey)
-                                    .append(" in [").append(getSingleQuoteBasedOnType(filterType)).append(filterValue)
+                            filterBuilder.append(newFilter).append(" && ").append("@.")
+                                    .append(filterKey).append(" in [")
+                                    .append(getSingleQuoteBasedOnType(filterType))
+                                    .append(filterValue)
                                     .append(getSingleQuoteBasedOnType(filterType)).append("])]");
                         }
                     } else {
@@ -1483,7 +1562,8 @@ public class MicroserviceUtils {
     public String getBusinessServiceNameByCode(String code) {
         String serviceName = "";
         try {
-            List<BusinessService> serviceByCodes = this.getBusinessServiceByCodes(Collections.singleton(code));
+            List<BusinessService> serviceByCodes =
+                    this.getBusinessServiceByCodes(Collections.singleton(code));
             if (serviceByCodes != null && !serviceByCodes.isEmpty()) {
                 serviceName = serviceByCodes.get(0).getBusinessService();
             }
@@ -1501,21 +1581,22 @@ public class MicroserviceUtils {
         try {
             if (codes != null && !codes.isEmpty()) {
                 for (String code : codes)
-                    this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService", "code", code,
-                            String.class);
+                    this.prepareModuleDetails(moduleDetailsList, "BillingService",
+                            "BusinessService", "code", code, String.class);
             } else {
-                this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService", "code", null,
-                        String.class);
+                this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService",
+                        "code", null, String.class);
             }
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
             if (postForObject != null) {
                 return list = mapper.convertValue(
                         JsonPath.read(postForObject, "$.MdmsRes.BillingService.BusinessService"),
-                        new TypeReference<List<BusinessService>>() {
-                        });
+                        new TypeReference<List<BusinessService>>() {});
             }
         } catch (RestClientException e) {
-            LOGGER.error("ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",
+            LOGGER.error(
+                    "ERROR occurred while fetching business service details in getBusinessServiceByCodes method: ",
                     e);
         }
         return null;
@@ -1524,12 +1605,14 @@ public class MicroserviceUtils {
     public List<BusinessService> getBusinessService(String type) {
         List<BusinessService> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
-        this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService", "type", type, String.class);
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+        this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService", "type",
+                type, String.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            list = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.BillingService.BusinessService"),
-                    new TypeReference<List<BusinessService>>() {
-                    });
+            list = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.BillingService.BusinessService"),
+                    new TypeReference<List<BusinessService>>() {});
         }
         return list;
     }
@@ -1538,18 +1621,20 @@ public class MicroserviceUtils {
         List<BusinessService> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
         for (String type : types)
-            this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService", "type", type,
-                    String.class);
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+            this.prepareModuleDetails(moduleDetailsList, "BillingService", "BusinessService",
+                    "type", type, String.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            list = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.BillingService.BusinessService"),
-                    new TypeReference<List<BusinessService>>() {
-                    });
+            list = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.BillingService.BusinessService"),
+                    new TypeReference<List<BusinessService>>() {});
         }
         return list;
     }
 
-    public List<BusinessServiceMapping> getBusinessServiceMappingBySearchCriteria(BusinessServiceCriteria criteria) {
+    public List<BusinessServiceMapping> getBusinessServiceMappingBySearchCriteria(
+            BusinessServiceCriteria criteria) {
         List<BusinessServiceMapping> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
         Field[] declaredFields = criteria.getClass().getDeclaredFields();
@@ -1575,16 +1660,17 @@ public class MicroserviceUtils {
             }
             if (StringUtils.isNotBlank(fieldValue)) {
                 for (String str : StringUtils.split(fieldValue, ",")) {
-                    this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "BusinessServiceMapping", fieldName,
-                            str, fieldType);
+                    this.prepareModuleDetails(moduleDetailsList, "FinanceModule",
+                            "BusinessServiceMapping", fieldName, str, fieldType);
                 }
             }
         }
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            list = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.BusinessServiceMapping"),
-                    new TypeReference<List<BusinessServiceMapping>>() {
-                    });
+            list = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.BusinessServiceMapping"),
+                    new TypeReference<List<BusinessServiceMapping>>() {});
         }
         return list;
     }
@@ -1592,19 +1678,20 @@ public class MicroserviceUtils {
     public List<TaxHeadMaster> getTaxheadsByServiceCode(String serviceCode) {
         List<TaxHeadMaster> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
-        this.prepareModuleDetails(moduleDetailsList, "BillingService", "TaxHeadMaster", "service", serviceCode,
-                String.class);
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+        this.prepareModuleDetails(moduleDetailsList, "BillingService", "TaxHeadMaster", "service",
+                serviceCode, String.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            list = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.BillingService.TaxHeadMaster"),
-                    new TypeReference<List<TaxHeadMaster>>() {
-                    });
+            list = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.BillingService.TaxHeadMaster"),
+                    new TypeReference<List<TaxHeadMaster>>() {});
         }
         return list;
     }
 
-    public InstrumentResponse updateInstruments(List<Instrument> instruments, String depositedBankAccountNum,
-            FinancialStatus finStatus) {
+    public InstrumentResponse updateInstruments(List<Instrument> instruments,
+            String depositedBankAccountNum, FinancialStatus finStatus) {
         for (Instrument i : instruments) {
             i.setFinancialStatus(finStatus);
             if (depositedBankAccountNum != null) {
@@ -1630,25 +1717,28 @@ public class MicroserviceUtils {
     public InstrumentAccountCode getInstrumentAccountGlCodeByType(String type) {
         List<InstrumentAccountCode> list = null;
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
-        this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "InstrumentGLcodeMapping", "instrumenttype", type,
-                String.class);
-        Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+        this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "InstrumentGLcodeMapping",
+                "instrumenttype", type, String.class);
+        Map postForObject = mapper
+                .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
         if (postForObject != null) {
-            list = mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.InstrumentGLcodeMapping"),
-                    new TypeReference<List<InstrumentAccountCode>>() {
-                    });
+            list = mapper.convertValue(
+                    JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.InstrumentGLcodeMapping"),
+                    new TypeReference<List<InstrumentAccountCode>>() {});
         }
         return !list.isEmpty() ? list.get(0) : null;
     }
 
     public Department getDepartment(String code, String tenantId, String token) {
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
-        this.prepareModuleDetails(moduleDetailsList, "common-masters", "Department", "code", code, String.class);
+        this.prepareModuleDetails(moduleDetailsList, "common-masters", "Department", "code", code,
+                String.class);
         try {
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, tenantId, token),
-                    Map.class);
+            Map postForObject = mapper.convertValue(
+                    this.getMdmsData(moduleDetailsList, true, tenantId, token), Map.class);
             if (postForObject != null) {
-                return mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.common-masters.Department[0]"),
+                return mapper.convertValue(
+                        JsonPath.read(postForObject, "$.MdmsRes.common-masters.Department[0]"),
                         Department.class);
             }
         } catch (RestClientException e) {
@@ -1673,13 +1763,15 @@ public class MicroserviceUtils {
         try {
             preparePaymentSearchQueryString(searchCriteria, url);
             if (paymentSearchEndPointEnabled) {
-                for (String serviceCode :searchCriteria.getBusinessServices()) {
-                response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class,serviceCode);
+                for (String serviceCode : searchCriteria.getBusinessServices()) {
+                    response = restTemplate.postForObject(url.toString(), reqWrapper,
+                            PaymentResponse.class, serviceCode);
                 }
             } else {
-                response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class);
+                response = restTemplate.postForObject(url.toString(), reqWrapper,
+                        PaymentResponse.class);
             }
-            return response!=null ? response.getPayments() : null;
+            return response != null ? response.getPayments() : null;
 
         } catch (RestClientException e) {
             LOGGER.error("ERROR occurred while fetching the Payment list : ", e);
@@ -1705,10 +1797,10 @@ public class MicroserviceUtils {
                     return file.getOriginalFilename();
                 }
             };
-        };
+        } ;
         map.add("file", contentsAsResource);
-        //map.add("file", contentsAsResource);
-       
+        // map.add("file", contentsAsResource);
+
         StringBuilder uri = new StringBuilder(appConfigManager.getEgovFileStoreSerHost())
                 .append(appConfigManager.getEgovFileStoreUploadFile());
 
@@ -1716,13 +1808,13 @@ public class MicroserviceUtils {
 
         return restTemplate.postForObject(uri.toString(), request, StorageResponse.class);
     }
-    
+
     public ResponseEntity<byte[]> fetchFilesFromDigitService(String fileStoreId) {
         Map<String, String> request = new HashMap<String, String>();
-        String tenantId=getTenentId();
+        String tenantId = getTenentId();
         request.put("tenantId", tenantId);
         request.put("fileStoreId", fileStoreId);
-        
+
         StringBuilder uri = new StringBuilder(appConfigManager.getEgovFileStoreSerHost())
                 .append(appConfigManager.getEgovFileStoreDownloadFile()).append("?");
 
@@ -1732,28 +1824,33 @@ public class MicroserviceUtils {
         if (StringUtils.isNotBlank(fileStoreId)) {
             uri.append("&fileStoreId=").append(fileStoreId);
         }
-      
+
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<byte[]> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, byte[].class);
+        ResponseEntity<byte[]> response =
+                restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, byte[].class);
         return response;
     }
-    
-    private void preparePaymentSearchQueryString(PaymentSearchCriteria searchCriteria, StringBuilder url) {
+
+    private void preparePaymentSearchQueryString(PaymentSearchCriteria searchCriteria,
+            StringBuilder url) {
         searchCriteria.setTenantId(getTenentId());
         url.append("tenantId=").append(searchCriteria.getTenantId());
         if (CollectionUtils.isNotEmpty(searchCriteria.getReceiptNumbers())) {
-            url.append("&receiptNumbers=").append(StringUtils.join(searchCriteria.getReceiptNumbers(), ","));
+            url.append("&receiptNumbers=")
+                    .append(StringUtils.join(searchCriteria.getReceiptNumbers(), ","));
         }
         if (CollectionUtils.isNotEmpty(searchCriteria.getStatus())) {
             url.append("&status=").append(StringUtils.join(searchCriteria.getStatus(), ","));
         }
         if (CollectionUtils.isNotEmpty(searchCriteria.getInstrumentStatus())) {
-            url.append("&instrumentStatus=").append(StringUtils.join(searchCriteria.getInstrumentStatus(), ","));
+            url.append("&instrumentStatus=")
+                    .append(StringUtils.join(searchCriteria.getInstrumentStatus(), ","));
         }
         if (CollectionUtils.isNotEmpty(searchCriteria.getPaymentModes())) {
-            url.append("&paymentModes=").append(StringUtils.join(searchCriteria.getPaymentModes(), ","));
+            url.append("&paymentModes=")
+                    .append(StringUtils.join(searchCriteria.getPaymentModes(), ","));
         }
         if (searchCriteria.getFromDate() != null) {
             url.append("&fromDate=").append(searchCriteria.getFromDate());
@@ -1765,7 +1862,8 @@ public class MicroserviceUtils {
             url.append("&transactionNumber=").append(searchCriteria.getTransactionNumber());
         }
         if (CollectionUtils.isNotEmpty(searchCriteria.getBusinessServices())) {
-            url.append("&businessServices=").append(StringUtils.join(searchCriteria.getBusinessServices(), ","));
+            url.append("&businessServices=")
+                    .append(StringUtils.join(searchCriteria.getBusinessServices(), ","));
         }
         if (CollectionUtils.isNotEmpty(searchCriteria.getBillIds())) {
             url.append("&billIds=").append(StringUtils.join(searchCriteria.getBillIds(), ","));
@@ -1780,7 +1878,8 @@ public class MicroserviceUtils {
         StringBuilder uri = new StringBuilder(appConfigManager.getEgovCollSerHost())
                 .append(appConfigManager.getCollSerPaymentCreate());
         final RequestInfo requestInfo = getRequestInfo();
-        PaymentRequest request = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
+        PaymentRequest request =
+                PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
         response = restTemplate.postForObject(uri.toString(), request, PaymentResponse.class);
         return response;
     }
@@ -1792,31 +1891,39 @@ public class MicroserviceUtils {
         return requestInfo;
     }
 
-    //payment workflow url without modulename
-    public PaymentResponse performWorkflow(Set<String> paymentIdSet, PaymentAction action, String reason) {
-        List<PaymentWorkflow> paymentWFList = paymentIdSet.stream().map(id -> PaymentWorkflow.builder().paymentId(id)
-                .tenantId(getTenentId()).reason(reason).action(action).build()).collect(Collectors.toList());
-        PaymentWorkflowRequest request = PaymentWorkflowRequest.builder().paymentWorkflows(paymentWFList)
-                .requestInfo(getRequestInfo()).build();
+    // payment workflow url without modulename
+    public PaymentResponse performWorkflow(Set<String> paymentIdSet, PaymentAction action,
+            String reason) {
+        List<PaymentWorkflow> paymentWFList =
+                paymentIdSet.stream()
+                        .map(id -> PaymentWorkflow.builder().paymentId(id).tenantId(getTenentId())
+                                .reason(reason).action(action).build())
+                        .collect(Collectors.toList());
+        PaymentWorkflowRequest request = PaymentWorkflowRequest.builder()
+                .paymentWorkflows(paymentWFList).requestInfo(getRequestInfo()).build();
         PaymentResponse response = null;
         StringBuilder uri = new StringBuilder(appConfigManager.getEgovCollSerHost())
                 .append(appConfigManager.getCollSerPaymentWorkflow());
         response = restTemplate.postForObject(uri.toString(), request, PaymentResponse.class);
         return response;
     }
-    
+
     // payment workflow url with module name
-    public PaymentResponse performWorkflowWithModuleName(Set<String> paymentIdSet, PaymentAction action, String reason,
-            String serviceCode) {
-        List<PaymentWorkflow> paymentWFList = paymentIdSet.stream().map(id -> PaymentWorkflow.builder().paymentId(id)
-                .tenantId(getTenentId()).reason(reason).action(action).build()).collect(Collectors.toList());
-        PaymentWorkflowRequest request = PaymentWorkflowRequest.builder().paymentWorkflows(paymentWFList)
-                .requestInfo(getRequestInfo()).build();
+    public PaymentResponse performWorkflowWithModuleName(Set<String> paymentIdSet,
+            PaymentAction action, String reason, String serviceCode) {
+        List<PaymentWorkflow> paymentWFList =
+                paymentIdSet.stream()
+                        .map(id -> PaymentWorkflow.builder().paymentId(id).tenantId(getTenentId())
+                                .reason(reason).action(action).build())
+                        .collect(Collectors.toList());
+        PaymentWorkflowRequest request = PaymentWorkflowRequest.builder()
+                .paymentWorkflows(paymentWFList).requestInfo(getRequestInfo()).build();
         PaymentResponse response = null;
         StringBuilder uri = new StringBuilder();
         uri = new StringBuilder(appConfigManager.getEgovCollSerHost())
                 .append(appConfigManager.getCollSerPaymentModuleNameWorkflow());
-        response = restTemplate.postForObject(uri.toString(), request, PaymentResponse.class, serviceCode);
+        response = restTemplate.postForObject(uri.toString(), request, PaymentResponse.class,
+                serviceCode);
         return response;
     }
 
@@ -1837,7 +1944,8 @@ public class MicroserviceUtils {
         return requestInfo;
     }
 
-    private void prepareRemmittanceSearchQueryString(StringBuilder uri, RemittanceSearcCriteria criteria) {
+    private void prepareRemmittanceSearchQueryString(StringBuilder uri,
+            RemittanceSearcCriteria criteria) {
         if (StringUtils.isNotBlank(criteria.getBankaccount())) {
             uri.append("&bankaccount=").append(criteria.getBankaccount());
         }
@@ -1858,25 +1966,35 @@ public class MicroserviceUtils {
         }
     }
 
-    public List<AccountCodeTemplate> getAccountCodeTemplate(String module, String billSubType, String accountDetailType) {
+    public List<AccountCodeTemplate> getAccountCodeTemplate(String module, String billSubType,
+            String accountDetailType) {
         List<ModuleDetail> moduleDetailsList = new ArrayList<>();
         try {
-            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate", "module", module, String.class);
-            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate", "subModule", billSubType, String.class);
-            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate", "subledgerType", accountDetailType, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
+            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate",
+                    "module", module, String.class);
+            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate",
+                    "subModule", billSubType, String.class);
+            this.prepareModuleDetails(moduleDetailsList, "FinanceModule", "AccountCodeTemplate",
+                    "subledgerType", accountDetailType, String.class);
+            Map postForObject = mapper
+                    .convertValue(this.getMdmsData(moduleDetailsList, true, null, null), Map.class);
             if (postForObject != null) {
-                return mapper.convertValue(JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.AccountCodeTemplate"),new TypeReference<List<AccountCodeTemplate>>(){});
+                return mapper.convertValue(
+                        JsonPath.read(postForObject, "$.MdmsRes.FinanceModule.AccountCodeTemplate"),
+                        new TypeReference<List<AccountCodeTemplate>>() {});
             }
         } catch (RestClientException e) {
-            LOGGER.error("ERROR occurred while fetching AccountCode Templates in getAccountCodeTemplate method: ",e);
+            LOGGER.error(
+                    "ERROR occurred while fetching AccountCode Templates in getAccountCodeTemplate method: ",
+                    e);
         }
         return null;
     }
 
-   
+
 
 }
+
 
 class FilterRequest {
     private List<Long> id;
