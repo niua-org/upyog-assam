@@ -30,6 +30,7 @@ import {
 } from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initOBPSV2Components } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
@@ -87,7 +88,8 @@ const enabledModules = [
   "ADS",
   "SV",
   "EW",
-  "CHB"
+  "CHB",
+  "OBPSV2"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -130,6 +132,7 @@ initHRMSComponents();
 initTLComponents();
 initReceiptsComponents();
 initOBPSComponents();
+initOBPSV2Components();
 initNOCComponents();
 initEngagementComponents();
 initWSComponents();

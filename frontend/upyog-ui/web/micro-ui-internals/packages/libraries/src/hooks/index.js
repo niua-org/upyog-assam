@@ -330,6 +330,8 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+import useBPACreateUpdateApi from "./obpsv2/useBPACreateUpdateApi";
+import useBPASearchApi from "./obpsv2/useBPASearchApi";
 
 const pgr = {
   useComplaintDetails,
@@ -666,6 +668,11 @@ const cm = {
   useCMSearch
 }
 
+const obpsv2={
+  useBPACreateUpdateApi,
+  useBPASearchApi
+};
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -739,7 +746,8 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  obpsv2
 };
 
 export default Hooks;

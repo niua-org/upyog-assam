@@ -13,7 +13,8 @@
     "micro-ui-internals/packages/modules/noc",
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/pt"
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/obpsv2"
   ],
   "engines": {
     "node": ">=14"
@@ -34,6 +35,7 @@
     "@upyog/digit-ui-module-mcollect": "3.0.2",
     "@upyog/digit-ui-module-noc": "3.0.0",
     "@upyog/digit-ui-module-obps": "3.0.2",
+    "@upyog/digit-ui-module-obpsv2": "1.0.0",
     "@upyog/digit-ui-module-pgr": "3.0.0",
     "@upyog/digit-ui-module-pt": "3.0.1",
     "@upyog/digit-ui-module-receipts": "3.0.0",

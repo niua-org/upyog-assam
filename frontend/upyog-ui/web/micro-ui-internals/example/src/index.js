@@ -23,6 +23,7 @@ import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
+import { initOBPSV2Components } from "@upyog/digit-ui-module-obpsv2";
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -80,7 +81,8 @@ const enabledModules = [
   "ADS",
   "SV",
   "EW",
-  "CHB"
+  "CHB",
+  "OBPSV2"
 ];
 
 const initTokens = (stateCode) => {
@@ -155,6 +157,7 @@ const initDigitUI = () => {
   initReceiptsComponents();
   // initReportsComponents();
   initOBPSComponents();
+  initOBPSV2Components();
   initEngagementComponents();
   initNOCComponents();
   initWSComponents();

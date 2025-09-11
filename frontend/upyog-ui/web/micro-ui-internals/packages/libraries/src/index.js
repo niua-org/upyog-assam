@@ -59,7 +59,7 @@ import { EwService } from "./services/elements/EW";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
 import {CustomService} from "./services/elements/CustomService";    
 import { CMServices } from "./services/elements/CM";
-   
+import { OBPSV2Services } from "./services/elements/OBPSV2";
 
 
 const setupLibraries = (Library, props) => {
@@ -95,6 +95,7 @@ const initLibraries = () => {
   setupLibraries("PaymentService", PaymentService);
   setupLibraries("EDCRService", EDCRService);
   setupLibraries("OBPSService", OBPSService);
+  setupLibraries("OBPSV2Services", OBPSV2Services);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
