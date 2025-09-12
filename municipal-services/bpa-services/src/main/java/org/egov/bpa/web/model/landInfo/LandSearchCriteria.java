@@ -1,16 +1,11 @@
 package org.egov.bpa.web.model.landInfo;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,14 +33,17 @@ public class LandSearchCriteria {
     @JsonProperty("limit")
     private Integer limit;
 
+    @JsonIgnore
+    private List<String> userIds;
+    
     @JsonProperty("locality")
     private String locality;
 
     public boolean isEmpty() {
-        return (this.tenantId == null && this.ids == null && this.landUId == null && this.mobileNumber == null && this.locality == null);
+        return (this.tenantId == null && this.ids == null && this.landUId == null && this.mobileNumber == null && locality == null);
     }
 
     public boolean tenantIdOnly() {
-        return (this.tenantId != null && this.ids == null && this.landUId == null && this.mobileNumber == null && this.locality == null);
+        return (this.tenantId != null && this.ids == null && this.landUId == null && this.mobileNumber == null && locality == null);
     }
 }

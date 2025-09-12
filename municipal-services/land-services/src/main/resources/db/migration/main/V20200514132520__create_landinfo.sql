@@ -1,265 +1,378 @@
- CREATE TABLE IF NOT EXISTS eg_land_landInfo(
+-- ==============================================
+-- MAIN TABLES
+-- ==============================================
+
+CREATE TABLE IF NOT EXISTS ug_land_info(
 	id character varying(64),
-	landUid character varying(64),
-	landUniqueRegNo character varying(64),
-	tenantId character varying(256) NOT NULL,
+	land_uid character varying(64),
+	land_unique_reg_no character varying(64),
+	tenant_id character varying(256) NOT NULL,
 	status character varying(64),
-	ownershipCategory character varying(64),
+	ownership_category character varying(64),
 	source character varying(64),
 	channel character varying(64),
-	additionalDetails JSONB,
+	old_dag_no character varying(64),
+	new_dag_no character varying(64),
+	old_patta_no character varying(64),
+	new_patta_no character varying(64),
+	total_plot_area double precision,
 	
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
 	
-	CONSTRAINT uk_eg_land_landInfo UNIQUE (id),
-	CONSTRAINT pk_eg_land_landInfo PRIMARY KEY (id)
+	CONSTRAINT pk_ug_land_info PRIMARY KEY (id),
+	
+	additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_Address(
+CREATE TABLE IF NOT EXISTS ug_land_address(
 	id character varying(64),
-	tenantId character varying(256) NOT NULL,
-	doorNo character varying(64),
-	plotNo character varying(64),
+	land_info_id character varying(64),
+	tenant_id character varying(256) NOT NULL,
+	house_no character varying(64),
+	address_line_1 character varying(200),
+	address_line_2 character varying(200),
 	landmark character varying(64),
-	city character varying(64),
+	locality character varying(64),
 	district character varying(64),
 	region character varying(64),
 	state character varying(64),
 	country character varying(64),
-	locality character varying(64),
 	pincode character varying(64),
-	additionDetails character varying(64),
-	buildingName character varying(64),
-	street character varying(64),
-	landInfoId character varying(64),
-	
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
 
-	CONSTRAINT uk_eg_land_Address UNIQUE (id),
-	CONSTRAINT fk_eg_land_Address FOREIGN KEY (landInfoId) REFERENCES eg_land_landInfo (id)
+	created_by character varying(64),
+	last_modified_by character varying(64),
+	created_time bigint,
+	last_modified_time bigint,
+
+	CONSTRAINT pk_ug_land_address PRIMARY KEY (id),
+	CONSTRAINT fk_ug_land_address_land FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
+
+	additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_GeoLocation(
 
+CREATE TABLE IF NOT EXISTS ug_land_geolocation(
 	id character varying(64),
 	latitude double precision,
 	longitude double precision,
-	addressId character varying(64),
-	additionalDetails JSONB,
+	address_id character varying(64),
 	
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
 
-	CONSTRAINT fk_eg_bpa_GeoLocation FOREIGN KEY (addressId) REFERENCES eg_land_Address (id)
+	CONSTRAINT pk_ug_land_geolocation PRIMARY KEY (id),
+	CONSTRAINT fk_ug_land_geolocation FOREIGN KEY (address_id) REFERENCES ug_land_address (id),
+	
+	additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_ownerInfo(
+CREATE TABLE IF NOT EXISTS ug_land_owner_info(
 	id character varying(64),
 	uuid character varying(64),
-	isprimaryowner boolean,
-	ownershippercentage double precision,
-	institutionId character varying(64),
-	additionalDetails JSONB,
-	landInfoId character varying(64),
-	relationship character varying(64),
+	is_primary_owner boolean,
+	ownership_percentage double precision,
+	institution_id character varying(64),
+	land_info_id character varying(64),
+	mother_name character varying(100),
+	status boolean DEFAULT TRUE,
 	
-	createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+	created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
 	
-	CONSTRAINT uk_eg_land_ownerInfo UNIQUE (id, landInfoId),
-	CONSTRAINT pk_eg_land_ownerInfo PRIMARY KEY (id),
-	CONSTRAINT fk_eg_land_ownerInfo FOREIGN KEY (landInfoId) REFERENCES eg_land_landInfo (id)
+	CONSTRAINT pk_ug_land_owner_info PRIMARY KEY (id),
+	CONSTRAINT uk_ug_land_owner_info_composite UNIQUE (id, land_info_id),
+	CONSTRAINT fk_ug_land_owner_info FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
+	
+	additional_details JSONB
 );
 
-
-CREATE TABLE IF NOT EXISTS eg_land_institution(
+CREATE TABLE IF NOT EXISTS ug_land_owner_address(
 	id character varying(64),
-	tenantId character varying(256),
+	owner_info_id character varying(64),
+	tenant_id character varying(256) NOT NULL,
+	house_no character varying(64),
+	address_line_1 character varying(200),
+	address_line_2 character varying(200),
+	landmark character varying(64),
+	locality character varying(64),
+	district character varying(64),
+	region character varying(64),
+	state character varying(64),
+	country character varying(64),
+	pincode character varying(64),
+	address_type character varying(64),
+
+	created_by character varying(64),
+	last_modified_by character varying(64),
+	created_time bigint,
+	last_modified_time bigint,
+
+	CONSTRAINT pk_ug_land_owner_address PRIMARY KEY (id),
+	CONSTRAINT fk_ug_land_owner_address FOREIGN KEY (owner_info_id) REFERENCES ug_land_owner_info (id),
+
+	additional_details JSONB
+);
+
+CREATE TABLE IF NOT EXISTS ug_land_institution(
+	id character varying(64),
+	tenant_id character varying(256),
 	type character varying(64),
 	designation character varying(256),
-	nameOfAuthorizedPerson character varying(256),
-	additionalDetails JSONB,
-	landInfoId character varying(64),
+	name_of_authorized_person character varying(256),
+	land_info_id character varying(64),
 
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
     
-	CONSTRAINT uk_eg_land_institution UNIQUE (id),
-	CONSTRAINT pk_eg_land_institution PRIMARY KEY (id),
-	CONSTRAINT fk_eg_land_institution FOREIGN KEY (landInfoId) REFERENCES eg_land_landInfo (id)
+	CONSTRAINT pk_ug_land_institution PRIMARY KEY (id),
+	CONSTRAINT fk_ug_land_institution FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
+	
+	additional_details JSONB
 );
 
-
-CREATE TABLE IF NOT EXISTS eg_land_document(
+CREATE TABLE IF NOT EXISTS ug_land_document(
 	id character varying(64),
-	documentType character varying(256),
-	fileStoreId character varying(256),
-	documentUid character varying(256),
-	additionalDetails JSONB,
-	landInfoId character varying(64),
+	document_type character varying(256),
+	file_store_id character varying(256),
+	document_uid character varying(256),
+	land_info_id character varying(64),
 	
-	createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+	created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
 
-	CONSTRAINT uk_eg_land_document UNIQUE (id, landInfoId),
-	CONSTRAINT pk_eg_land_document PRIMARY KEY (id),
-	CONSTRAINT fk_eg_land_document FOREIGN KEY (landInfoId) REFERENCES eg_land_landInfo (id)
+	CONSTRAINT pk_ug_land_document PRIMARY KEY (id),
+	CONSTRAINT uk_ug_land_document_composite UNIQUE (id, land_info_id),
+	CONSTRAINT fk_ug_land_document FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
+	
+	additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_unit(
-
+CREATE TABLE IF NOT EXISTS ug_land_unit(
 	id character varying(64),
-	tenantId character varying(256),
-	floorNo character varying(64),	
-	unitType character varying(256),
-	usageCategory character varying(64),
-	occupancyType character varying(64),
-	occupancyDate bigint,
-	additionalDetails JSONB,
-	landInfoId character varying(64),
+	tenant_id character varying(256),
+	floor_no character varying(64),	
+	unit_type character varying(256),
+	usage_category character varying(64),
+	occupancy_type character varying(64),
+	occupancy_date bigint,
+	land_info_id character varying(64),
 	
-	createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint,
+	created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
 		
-	CONSTRAINT pk_eg_land_unit PRIMARY KEY (id),
-	CONSTRAINT uk_eg_land_unit UNIQUE (id, landInfoId, tenantId),
-	CONSTRAINT fk_eg_land_unit FOREIGN KEY (landInfoId) REFERENCES eg_land_landInfo (id)
-
+	CONSTRAINT pk_ug_land_unit PRIMARY KEY (id),
+	CONSTRAINT uk_ug_land_unit_composite UNIQUE (id, land_info_id, tenant_id),
+	CONSTRAINT fk_ug_land_unit FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
+	
+	additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS public.eg_land_auditdetails
-(
-    id character varying(256) COLLATE pg_catalog."default" NOT NULL,
-    landUid character varying(64) COLLATE pg_catalog."default",
-    landUniqueRegNo character varying(256) COLLATE pg_catalog."default",
-    tenantId character varying(64) COLLATE pg_catalog."default",
-    status character varying(64) COLLATE pg_catalog."default",
-    ownershipcategory character varying(64) COLLATE pg_catalog."default",
-    source character varying(64) COLLATE pg_catalog."default",
-    channel character varying(64) COLLATE pg_catalog."default",
-    additionaldetails jsonb,
-    createdby character varying(64) COLLATE pg_catalog."default",
-    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
-    createdtime bigint,
-    lastmodifiedtime bigint
-);
+-- ==============================================
+-- AUDIT TABLES
+-- ==============================================
 
-CREATE TABLE IF NOT EXISTS eg_land_owner_auditdetails
-(
+-- Drop existing audit tables to recreate with correct structure
+DROP TABLE IF EXISTS ug_land_audit_details;
+DROP TABLE IF EXISTS ug_land_owner_audit_details;
+DROP TABLE IF EXISTS ug_land_institution_audit_details;
+DROP TABLE IF EXISTS ug_land_unit_audit_details;
+DROP TABLE IF EXISTS ug_land_address_audit_details;
+DROP TABLE IF EXISTS ug_land_geolocation_audit_details;
+DROP TABLE IF EXISTS ug_land_document_audit_details;
+
+-- Audit table for ug_land_info
+CREATE TABLE IF NOT EXISTS ug_land_audit_details(
     id character varying(64),
-	uuid character varying(64),
-	isprimaryowner boolean,
-	ownershippercentage double precision,
-	institutionId character varying(64),
-	additionalDetails JSONB,
-	landInfoId character varying(64),
-	relationship character varying(64),
-	
-	createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint
+    land_uid character varying(64),
+    land_unique_reg_no character varying(64),
+    tenant_id character varying(256) NOT NULL,
+    status character varying(64),
+    ownership_category character varying(64),
+    source character varying(64),
+    channel character varying(64),
+    old_dag_no character varying(64),
+    new_dag_no character varying(64),
+    old_patta_no character varying(64),
+    new_patta_no character varying(64),
+    total_plot_area double precision,
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
 );
 
-
-CREATE TABLE IF NOT EXISTS eg_land_institution_auditdetails(
-	id character varying(64),
-	tenantId character varying(256),
-	type character varying(64),
-	designation character varying(256),
-	nameOfAuthorizedPerson character varying(256),
-	additionalDetails JSONB,
-	landInfoId character varying(64),
-
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint
+-- Audit table for ug_land_owner_info
+CREATE TABLE IF NOT EXISTS ug_land_owner_audit_details(
+    id character varying(64),
+    uuid character varying(64),
+    is_primary_owner boolean,
+    ownership_percentage double precision,
+    institution_id character varying(64),
+    land_info_id character varying(64),
+    mother_name character varying(100),
+    status boolean DEFAULT TRUE,
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
 );
 
-
-
-CREATE TABLE IF NOT EXISTS eg_land_unit_auditdetails(
-
-	id character varying(64),
-	tenantId character varying(256),
-	floorNo character varying(64),	
-	unitType character varying(256),
-	usageCategory character varying(64),
-	occupancyType character varying(64),
-	occupancyDate bigint,
-	additionalDetails JSONB,
-	landInfoId character varying(64),
-	
-	createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint
-
+-- Audit table for ug_land_institution
+CREATE TABLE IF NOT EXISTS ug_land_institution_audit_details(
+    id character varying(64),
+    tenant_id character varying(256),
+    type character varying(64),
+    designation character varying(256),
+    name_of_authorized_person character varying(256),
+    land_info_id character varying(64),
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_address_auditdetails(
-	id character varying(64),
-	tenantId character varying(256) NOT NULL,
-	doorNo character varying(64),
-	plotNo character varying(64),
-	landmark character varying(64),
-	city character varying(64),
-	district character varying(64),
-	region character varying(64),
-	state character varying(64),
-	country character varying(64),
-	locality character varying(64),
-	pincode character varying(64),
-	additionDetails character varying(64),
-	buildingName character varying(64),
-	street character varying(64),
-	landInfoId character varying(64),
-	
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint
+-- Audit table for ug_land_unit
+CREATE TABLE IF NOT EXISTS ug_land_unit_audit_details(
+    id character varying(64),
+    tenant_id character varying(256),
+    floor_no character varying(64),    
+    unit_type character varying(256),
+    usage_category character varying(64),
+    occupancy_type character varying(64),
+    occupancy_date bigint,
+    land_info_id character varying(64),
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
 );
 
-CREATE TABLE IF NOT EXISTS eg_land_geolocation_auditdetails(
+-- Audit table for ug_land_address
+CREATE TABLE IF NOT EXISTS ug_land_address_audit_details(
+    id character varying(64),
+    land_info_id character varying(64),
+    tenant_id character varying(256) NOT NULL,
+    house_no character varying(64),
+    address_line_1 character varying(200),
+    address_line_2 character varying(200),
+    landmark character varying(64),
+    locality character varying(64),
+    district character varying(64),
+    region character varying(64),
+    state character varying(64),
+    country character varying(64),
+    pincode character varying(64),
 
-	id character varying(64),
-	latitude double precision,
-	longitude double precision,
-	addressId character varying(64),
-	additionalDetails JSONB,
-	
-    createdby character varying(64),
-    lastmodifiedby character varying(64),
-    createdtime bigint,
-    lastmodifiedtime bigint
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
 );
 
-CREATE INDEX land_index  ON eg_land_landInfo 
+-- Audit table for ug_land_geolocation
+CREATE TABLE IF NOT EXISTS ug_land_geolocation_audit_details(
+    id character varying(64),
+    latitude double precision,
+    longitude double precision,
+    address_id character varying(64),
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
+);
+
+-- Audit table for ug_land_document
+CREATE TABLE IF NOT EXISTS ug_land_document_audit_details(
+    id character varying(64),
+    document_type character varying(256),
+    file_store_id character varying(256),
+    document_uid character varying(256),
+    land_info_id character varying(64),
+    
+    created_by character varying(64),
+    last_modified_by character varying(64),
+    created_time bigint,
+    last_modified_time bigint,
+    
+    additional_details JSONB
+);
+
+-- ==============================================
+-- INDEXES
+-- ==============================================
+
+CREATE INDEX  IF NOT EXISTS land_index ON ug_land_info
 (
     id,
-    tenantId,
-    landUid
+    tenant_id,
+    land_uid
 );
 
-CREATE INDEX land_owner_index  ON eg_land_ownerInfo 
+CREATE INDEX  IF NOT EXISTS land_owner_index ON ug_land_owner_info
 (
-    id
+    id,
+    land_info_id
+);
+
+CREATE INDEX  IF NOT EXISTS  land_address_index ON ug_land_address
+(
+    id,
+    land_info_id,
+    tenant_id
+);
+
+CREATE INDEX  IF NOT EXISTS land_unit_index ON ug_land_unit
+(
+    id,
+    land_info_id,
+    tenant_id
+);
+
+CREATE INDEX  IF NOT EXISTS land_institution_index ON ug_land_institution
+(
+    id,
+    land_info_id,
+    tenant_id
+);
+
+CREATE INDEX  IF NOT EXISTS land_document_index ON ug_land_document
+(
+    id,
+    land_info_id
+);
+
+CREATE INDEX  IF NOT EXISTS land_geolocation_index ON ug_land_geolocation
+(
+    id,
+    address_id
 );

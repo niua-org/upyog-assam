@@ -18,6 +18,7 @@ import org.egov.land.web.models.Institution;
 import org.egov.land.web.models.LandInfo;
 import org.egov.land.web.models.OccupancyType;
 import org.egov.land.web.models.OwnerInfo;
+import org.egov.land.web.models.OwnerInfoV2;
 import org.egov.land.web.models.Relationship;
 import org.egov.land.web.models.Source;
 import org.egov.land.web.models.Status;
@@ -65,11 +66,11 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 						.latitude(latitude)
 						.longitude(longitude).build();
 
-				Address address = Address.builder().buildingName(rs.getString("buildingName"))
-						.city(rs.getString("city")).plotNo(rs.getString("plotno")).district(rs.getString("district"))
+				Address address = Address.builder()
+						.houseNo(rs.getString("plotno")).district(rs.getString("district"))
 						.region(rs.getString("region")).state(rs.getString("state")).country(rs.getString("country"))
 						.id(rs.getString("landInfo_ad_id")).landmark(rs.getString("landmark")).geoLocation(geoLocation)
-						.pincode(rs.getString("pincode")).doorNo(rs.getString("doorno")).street(rs.getString("street"))
+						.pincode(rs.getString("pincode"))
 						.tenantId(tenantId).locality(locality).build();
 
 				currentLandInfo = LandInfo.builder().id(id).landUId(rs.getString("landuid"))
@@ -105,7 +106,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 					.occupancyDate(rs.getLong("occupancydate"))
 					.auditDetails(auditdetails)
 					.tenantId(tenantId).build();
-			landInfo.addUnitsItem(unit);
+			landInfo.addUnitItem(unit);
 		}
 		
 		String ownerId = rs.getString("landInfoowner_id");
@@ -115,7 +116,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 			Double val =  (Double) rs.getObject("ownershippercentage");
 			BigDecimal ownerShipPercentage = val != null ? new BigDecimal(val) : null;
 
-			OwnerInfo owner = OwnerInfo.builder().tenantId(tenantId).ownerId(ownerId)
+			OwnerInfoV2 owner = OwnerInfoV2.builder().tenantId(tenantId).ownerId(ownerId)
 					.uuid(rs.getString("landInfoowner_uuid"))
 //					.mobileNumber(rs.getString("mobilenumber"))
 					.isPrimaryOwner(isPrimaryOwner)
@@ -126,7 +127,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 					.relationship(rs.getString("relationship") != null
 							? Relationship.fromValue(rs.getString("relationship")) : null)
 					.build();
-			landInfo.addOwnersItem(owner);
+			landInfo.addOwnerItem(owner);
 		}
 
 		if(rs.getString("land_inst_id") != null) {
@@ -142,7 +143,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 					.fileStoreId(rs.getString("landInfo_doc_filestore")).id(documentId)
 					.documentUid(rs.getString("documentUid"))
 					.auditDetails(auditdetails).build();
-			landInfo.addDocumentsItem(document);
+			landInfo.addDocumentItem(document);
 		}
 	}
 }

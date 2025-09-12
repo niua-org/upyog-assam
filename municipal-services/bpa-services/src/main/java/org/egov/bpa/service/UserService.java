@@ -11,6 +11,7 @@ import org.egov.bpa.util.BPAConstants;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.landInfo.OwnerInfo;
+import org.egov.bpa.web.model.landInfo.OwnerInfoV2;
 import org.egov.bpa.web.model.user.UserDetailResponse;
 import org.egov.bpa.web.model.user.UserSearchRequest;
 import org.egov.common.contract.request.RequestInfo;
@@ -189,7 +190,7 @@ public class UserService {
     public Set<String> getUUidFromUserName(BPA bpa, Map<String, String> mobilenumberToUUIDs){
 
         String tenantId = bpa.getTenantId();
-        List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners();
+        List<OwnerInfoV2> ownerInfos = bpa.getLandInfo().getOwners();
        // List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners().stream().filter(ow -> ow.getActive()).collect(Collectors.toList());
         Set<String> mobileNumbers = new HashSet<>();
 

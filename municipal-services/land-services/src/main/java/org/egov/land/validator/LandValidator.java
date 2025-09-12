@@ -11,6 +11,7 @@ import org.egov.land.util.LandConstants;
 import org.egov.land.web.models.LandInfoRequest;
 import org.egov.land.web.models.LandSearchCriteria;
 import org.egov.land.web.models.OwnerInfo;
+import org.egov.land.web.models.OwnerInfoV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,10 +51,10 @@ public class LandValidator {
 	}
 	
 	public void validateDuplicateUser(LandInfoRequest landRequest) {
-		List<OwnerInfo> owners = landRequest.getLandInfo().getOwners();
+		List<OwnerInfoV2> owners = landRequest.getLandInfo().getOwners();
 		if (owners.size() > 1) {
 			List<String> mobileNos = new ArrayList<String>();
-			for (OwnerInfo owner : owners) {
+			for (OwnerInfoV2 owner : owners) {
 				if (mobileNos.contains(owner.getMobileNumber())) {
 					throw new CustomException(LandConstants.DUPLICATE_MOBILENUMBER_EXCEPTION,
 							"Duplicate mobile numbers found for owners");

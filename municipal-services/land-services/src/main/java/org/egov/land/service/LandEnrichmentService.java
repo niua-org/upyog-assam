@@ -51,7 +51,8 @@ public class LandEnrichmentService {
 		@Valid RequestInfo requestInfo = landRequest.getRequestInfo();
 		AuditDetails auditDetails = landUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		landRequest.getLandInfo().setAuditDetails(auditDetails);
-		if (!isUpdate) {
+		//TODO: remove false condition after testing
+		if (!isUpdate && false) {
 			landRequest.getLandInfo().setId(UUID.randomUUID().toString());
 			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
 		}
@@ -73,17 +74,21 @@ public class LandEnrichmentService {
 
 		// address
 		if (landRequest.getLandInfo().getAddress() != null) {
-			if (StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getId()))
+			if (StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getId())) {
 				landRequest.getLandInfo().getAddress().setId(UUID.randomUUID().toString());
+			}
 			landRequest.getLandInfo().getAddress().setTenantId(landRequest.getLandInfo().getTenantId());
 			landRequest.getLandInfo().getAddress().setAuditDetails(auditDetails);
+			if(landRequest.getLandInfo().getAddress().getLocality() != null){
+				landRequest.getLandInfo().getAddress().setLocalityCode(landRequest.getLandInfo().getAddress().getLocality().getCode());
+			}
 			if (landRequest.getLandInfo().getAddress().getGeoLocation() != null
 					&& StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getGeoLocation().getId()))
 				landRequest.getLandInfo().getAddress().getGeoLocation().setId(UUID.randomUUID().toString());
 		}
 		// units
-		if (!CollectionUtils.isEmpty(landRequest.getLandInfo().getUnit())) {
-			landRequest.getLandInfo().getUnit().forEach(unit -> {
+		if (!CollectionUtils.isEmpty(landRequest.getLandInfo().getUnits())) {
+			landRequest.getLandInfo().getUnits().forEach(unit -> {
 				if (StringUtils.isEmpty(unit.getId())) {
 					unit.setId(UUID.randomUUID().toString());
 				}
@@ -108,6 +113,29 @@ public class LandEnrichmentService {
 				if (StringUtils.isEmpty(owner.getOwnerId()))
 					owner.setOwnerId(UUID.randomUUID().toString());
 				owner.setAuditDetails(auditDetails);
+			});
+			landRequest.getLandInfo().getOwners().forEach(owner ->{
+				if(owner.getCorrespondenceAddress() !=null){
+						owner.getCorrespondenceAddress().setId(UUID.randomUUID().toString());
+					owner.getCorrespondenceAddress().setOwnerInfoId(owner.getOwnerId());
+					owner.getCorrespondenceAddress().setAuditDetails(auditDetails);
+					if(owner.getCorrespondenceAddress().getLocality() != null){
+						owner.getCorrespondenceAddress().setLocalityCode(owner.
+								getCorrespondenceAddress().getLocality().getCode());
+					}
+					landRequest.getLandInfo().getOwnerAddresses().add(owner.getCorrespondenceAddress());
+				}
+				if(owner.getPermanentAddress() !=null){
+
+					owner.getPermanentAddress().setId(UUID.randomUUID().toString());
+					owner.getPermanentAddress().setOwnerInfoId(owner.getOwnerId());
+					owner.getPermanentAddress().setAuditDetails(auditDetails);
+					if(owner.getPermanentAddress().getLocality() != null){
+						owner.getPermanentAddress().setLocalityCode(owner.
+								getPermanentAddress().getLocality().getCode());
+					}
+					landRequest.getLandInfo().getOwnerAddresses().add(owner.getPermanentAddress());
+				}
 			});
 		}
 	}
