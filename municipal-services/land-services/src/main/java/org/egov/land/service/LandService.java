@@ -15,7 +15,7 @@ import org.egov.land.validator.LandValidator;
 import org.egov.land.web.models.LandInfo;
 import org.egov.land.web.models.LandInfoRequest;
 import org.egov.land.web.models.LandSearchCriteria;
-import org.egov.land.web.models.OwnerInfo;
+import org.egov.land.web.models.OwnerInfoV2;
 import org.egov.land.web.models.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +45,12 @@ public class LandService {
 
 	public LandInfo create(@Valid LandInfoRequest landRequest) {
 
-		Object mdmsData = util.mDMSCall(landRequest.getRequestInfo(), landRequest.getLandInfo().getTenantId());
+		Object mdmsData = null;//util.mDMSCall(landRequest.getRequestInfo(), landRequest.getLandInfo().getTenantId());
 		if (landRequest.getLandInfo().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(LandConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
 		
-		landValidator.validateLandInfo(landRequest,mdmsData);
+		//landValidator.validateLandInfo(landRequest,mdmsData);
 		userService.manageUser(landRequest);
 		
 		enrichmentService.enrichLandInfoRequest(landRequest, false);
@@ -94,7 +94,7 @@ public class LandService {
 		});
 
 		repository.update(landRequest.getLandInfo().getTenantId(), landRequest);
-		List<OwnerInfo> activeOwnerList = new ArrayList<OwnerInfo>();
+		List<OwnerInfoV2> activeOwnerList = new ArrayList<>();
 		if(landRequest.getLandInfo().getOwners().size()>1) {
 			landRequest.getLandInfo().getOwners().forEach(owner -> {
 			if (owner.getStatus()) {

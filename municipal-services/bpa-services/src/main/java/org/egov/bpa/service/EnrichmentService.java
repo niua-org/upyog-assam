@@ -1,16 +1,7 @@
 package org.egov.bpa.service;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
@@ -23,7 +14,6 @@ import org.egov.bpa.validator.MDMSValidator;
 import org.egov.bpa.web.model.AuditDetails;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
-import org.egov.bpa.web.model.PreapprovedPlanRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.edcr.RequestInfoWrapper;
 import org.egov.bpa.web.model.idgen.IdResponse;
@@ -91,9 +81,9 @@ public class EnrichmentService {
 	 *
 	 * @param bpaRequest
 	 * @param mdmsData
-	 * @param values
+	 * @param edcrValues
 	 */
-	public void enrichBPACreateRequest(BPARequest bpaRequest, Object mdmsData, Map<String, String> values) {
+	public void enrichBPACreateRequest(BPARequest bpaRequest, Object mdmsData, Map<String, String> edcrValues) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
 		AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		bpaRequest.getBPA().setAuditDetails(auditDetails);
@@ -103,14 +93,11 @@ public class EnrichmentService {
                 : new HashMap<String, String>();
 
 		bpaRequest.getBPA().setAccountId(bpaRequest.getBPA().getAuditDetails().getCreatedBy());
-		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
+	//	String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 
-		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
+	/*if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
 		
-			if (bpaRequest.getBPA().getBusinessService()!= null && bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN))
-			{				
-			}
-			else if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
+			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
 			} else {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
@@ -118,20 +105,28 @@ public class EnrichmentService {
 		} else {
 			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_OC_MODULE_CODE);
 			bpaRequest.getBPA().setLandId(values.get("landId"));
-		}
-		if (bpaRequest.getBPA().getLandInfo() != null) {
-			bpaRequest.getBPA().setLandId(bpaRequest.getBPA().getLandInfo().getId());
-		}
+		}*/
+		String businessService = workflowService.determineBusinessService(bpaRequest.getBPA().getAreaMapping());
+		bpaRequest.getBPA().setBusinessService(businessService);
+
         if (bpaRequest.getBPA().getRiskType() != null) {
             additionalDetails.put(BPAConstants.RISKTYPE, bpaRequest.getBPA().getRiskType());
         }
+//		bpaRequest.getBPA().getRtpDetails().setId(UUID.randomUUID().toString());
+//		bpaRequest.getBPA().getAreaMapping().setId(UUID.randomUUID().toString());
+
+		//Land info is incomplete here so adding landinfo to additional details
+		//Will send request to land service once data is complete
+		String landInfo = bpaUtil.getLandInfoAsString(bpaRequest.getBPA().getLandInfo());
+		additionalDetails.put(BPAConstants.LAND_INFO_KEY, landInfo);
 
 //		 BPA Documents
 		if (!CollectionUtils.isEmpty(bpaRequest.getBPA().getDocuments()))
 			bpaRequest.getBPA().getDocuments().forEach(document -> {
-				if (document.getId() == null) {
+				//TODO uncomment this if this check required in future
+			//	if (document.getId() == null) {
 					document.setId(UUID.randomUUID().toString());
-				}
+			//	}
 			});
 		setIdgenIds(bpaRequest);
 	}
@@ -146,8 +141,7 @@ public class EnrichmentService {
 		String tenantId = request.getBPA().getTenantId();
 		BPA bpa = request.getBPA();
 
-		List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
-				config.getApplicationNoIdgenFormat(), 1);
+		List<String> applicationNumbers = Arrays.asList("APP-2025-0001");
 		ListIterator<String> itr = applicationNumbers.listIterator();
 
 		Map<String, String> errorMap = new HashMap<>();
@@ -303,12 +297,12 @@ public class EnrichmentService {
 		BPA bpa = bpaRequest.getBPA();
 		if ((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
-				|| (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN) && bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
+				|| (bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 				|| (!bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& ((!bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 				&& state.equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 				|| (state.equalsIgnoreCase(BPAConstants.DOCVERIFICATION_STATE) && bpa.getRiskType()
-				.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE) &&  !bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN) )))) {
+				.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
@@ -332,13 +326,10 @@ public class EnrichmentService {
 
 				Object mdmsData = bpaUtil.mDMSCall(bpaRequest.getRequestInfo(), bpaRequest.getBPA().getTenantId());
 				Map<String, String> edcrResponse = new HashMap<>();
-				if (StringUtils.isNotEmpty(bpa.getBusinessService()) && BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(bpa.getBusinessService())) {
-					edcrResponse =  edcrService.getEdcrDetailsForPreapprovedPlan(edcrResponse,bpaRequest);
-			      }
-			      else{
-			    	  edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
+				
+			    edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
 							bpaRequest.getBPA());
-			      }
+			     
 				log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
 				log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 
@@ -422,47 +413,4 @@ public class EnrichmentService {
 		}
 	}
 
-	private void setIdgenIdsForPreapprovedPlan(PreapprovedPlanRequest preapprovedPlanRequest) {
-	    RequestInfo requestInfo = preapprovedPlanRequest.getRequestInfo();
-	    String tenantId = preapprovedPlanRequest.getPreapprovedPlan().getTenantId();
-	    List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getDrawingNoIdGenName(),
-	        config.getDrawingNoIdGenFormat(), 1);
-	    ListIterator<String> itr = applicationNumbers.listIterator();
-
-	    Map<String, String> errorMap = new HashMap<>();
-	    if (!errorMap.isEmpty())
-	      throw new CustomException(errorMap);
-	    preapprovedPlanRequest.getPreapprovedPlan().setDrawingNo(itr.next());
-	  }
-
-	  public void enrichPreapprovedPlanCreateRequestV2(PreapprovedPlanRequest request) {
-	    log.info(" Inside enrichPreapprovedPlanCreateRequestV2 ");
-	    RequestInfo requestInfo = request.getRequestInfo();
-	    AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-	    request.getPreapprovedPlan().setAuditDetails(auditDetails);
-	    request.getPreapprovedPlan().setId(UUID.randomUUID().toString());
-
-
-
-	    // Documents-
-	    if (!CollectionUtils.isEmpty(request.getPreapprovedPlan().getDocuments()))
-	      request.getPreapprovedPlan().getDocuments().forEach(document -> {
-	        if (document.getId() == null) {
-	          document.setId(UUID.randomUUID().toString());
-	        }
-	      });
-	    setIdgenIdsForPreapprovedPlan(request);
-	  }
-
-
-
-	  public void enrichPreapprovedPlanUpdateRequest(PreapprovedPlanRequest preapprovedPlanRequest) {
-
-	    RequestInfo requestInfo = preapprovedPlanRequest.getRequestInfo();
-	    AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
-	    auditDetails.setCreatedBy(preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails().getCreatedBy());
-	    auditDetails.setCreatedTime(preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails().getCreatedTime());
-	    preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails()
-	        .setLastModifiedTime(auditDetails.getLastModifiedTime());
-	  }
 }
