@@ -73,6 +73,7 @@ public class PlanService {
     private OcComparisonDetailService ocComparisonDetailService;
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
+    	
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
       
         Date asOnDate = null;
@@ -92,8 +93,6 @@ public class PlanService {
                 featureService.getFeatures());
         plan.setTenantId(tenantId);    
         plan.setCoreArea(dcrApplication.getCoreArea());
-        System.out.println("coreArea" + plan.getCoreArea());
-
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         plan = applyRules(plan, amd, cityDetails);
       

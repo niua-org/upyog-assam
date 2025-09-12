@@ -54,8 +54,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.*;
+import org.egov.edcr.entity.AmendmentDetails;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +69,7 @@ import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class RoadReserve extends FeatureProcess {
+	private static final Logger LOG = LogManager.getLogger(RoadReserve.class);
 
     @Override
     public Plan validate(Plan pl) {
@@ -85,7 +89,7 @@ public class RoadReserve extends FeatureProcess {
 			scrutinyDetail8.addColumnHeading(2, PROVIDED);
 			scrutinyDetail8.addColumnHeading(3, STATUS);
 			scrutinyDetail8.setKey(COMMON_ROAD_RESERVE);
-        System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
+			LOG.info("RoadReserve" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
         if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
      	setReportOutputDetails(pl, ROAD_WIDTH_FRONT_AND_REAR,

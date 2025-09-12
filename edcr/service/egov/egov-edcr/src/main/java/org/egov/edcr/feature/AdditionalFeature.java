@@ -308,7 +308,7 @@ public class AdditionalFeature extends FeatureProcess {
     }
     
     private void validateHeightOfFloors(Plan pl, HashMap<String, String> errors, BigDecimal additionalFeatureMinRequiredFloorHeight, BigDecimal additionalFeatureMaxPermissibleFloorHeight) {
-    	System.out.println(INSIDE_HIEGHT_OF_FLOOR);
+    	LOG.info(INSIDE_HIEGHT_OF_FLOOR);
 		for (Block block : pl.getBlocks()) {
 			
 			boolean isAccepted = false;

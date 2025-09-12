@@ -831,7 +831,8 @@ public class Util {
                 while (styledParagraphIterator.hasNext()) {
                     StyledTextParagraph styledTextParagraph = (StyledTextParagraph) styledParagraphIterator.next();
                     String[] data = styledTextParagraph.getText().split("=");
-                    System.out.println(styledTextParagraph.getText());
+                    LOG.info
+(styledTextParagraph.getText());
                     if (data.length == 2)
                         planInfoProperties.put(data[0].trim(), data[1].trim());
                 }
@@ -942,7 +943,8 @@ public class Util {
                 while (styledParagraphIterator.hasNext()) {
                     StyledTextParagraph styledTextParagraph = (StyledTextParagraph) styledParagraphIterator.next();
                     String[] data = styledTextParagraph.getText().split("=");
-                    System.out.println(styledTextParagraph.getText());
+                    LOG.info
+(styledTextParagraph.getText());
                     if (data.length == 2)
                         planInfoProperties.put(data[0].trim(), data[1].trim());
                 }

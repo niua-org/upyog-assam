@@ -243,7 +243,7 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
                 while (styledParagraphIterator.hasNext()) {
                     StyledTextParagraph styledTextParagraph = (StyledTextParagraph) styledParagraphIterator.next();
                     String[] data = styledTextParagraph.getText().split("=");
-                    System.out.println(styledTextParagraph.getText());
+                    LOG.info(styledTextParagraph.getText());
                     if (data.length == 2)
                     	rwhProperties.put(data[0].trim(), data[1].trim());
                 }

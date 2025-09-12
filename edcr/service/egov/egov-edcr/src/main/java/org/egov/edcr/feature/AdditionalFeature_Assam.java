@@ -415,7 +415,7 @@ public class AdditionalFeature_Assam extends FeatureProcess {
      * @param additionalFeatureStiltFloor Required height for stilt floors
      */
     private void validateHeightOfFloors(Plan pl, HashMap<String, String> errors, BigDecimal additionalFeatureMinRequiredFloorHeight, BigDecimal additionalFeatureMaxPermissibleFloorHeight, BigDecimal additionalFeatureStiltFloor) {
-        System.out.println(INSIDE_HIEGHT_OF_FLOOR);
+        LOG.info(INSIDE_HIEGHT_OF_FLOOR);
         for (Block block : pl.getBlocks()) {
 
             boolean isAccepted = false;
