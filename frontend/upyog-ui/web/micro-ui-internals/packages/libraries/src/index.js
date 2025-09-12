@@ -59,6 +59,14 @@ import { EwService } from "./services/elements/EW";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
 import {CustomService} from "./services/elements/CustomService";    
 import { CMServices } from "./services/elements/CM";
+import { WTService } from "./services/elements/WT";
+import { VendorService } from "./services/elements/EmpVendor";
+import { MTService } from "./services/elements/MT";
+import { TPService } from "./services/elements/TP";
+
+import { PGRAIService } from "./services/elements/PGRAI";
+import { PGRAIUpdate } from "./services/elements/PGRAIUpdate";
+
 import { OBPSV2Services } from "./services/elements/OBPSV2";
 
 
@@ -130,6 +138,12 @@ const initLibraries = () => {
   setupLibraries("SVService", SVService);
   setupLibraries("CMServices", CMServices);
   setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
+  setupLibraries("WTService",WTService);
+  setupLibraries("VendorService", VendorService);
+  setupLibraries("MTService", MTService);
+  setupLibraries("TPService", TPService);
+  setupLibraries("PGRAIService", PGRAIService);
+  setupLibraries("PGRAIUpdate", PGRAIUpdate);
 
   return new Promise((resolve) => {
     initI18n(resolve);
