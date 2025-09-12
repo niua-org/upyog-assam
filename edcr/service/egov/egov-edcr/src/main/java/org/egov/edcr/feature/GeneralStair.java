@@ -128,7 +128,7 @@ public class GeneralStair extends FeatureProcess {
 	                    flrHt = generalStair.getFloorHeight();
 	                    LOG.info("Floor height set to {} for Stair {}", flrHt, generalStair.getNumber());
 
-	                    totalRisers = updateTotalRisers(generalStair, totalRisers);
+	                    totalRisers = updateTotalRisers(generalStair);
 	                    LOG.info("Updated total risers = {}", totalRisers);
 
 	                    totalLandingWidth = updateLandingWidths(generalStair, totalLandingWidth);
@@ -155,6 +155,7 @@ public class GeneralStair extends FeatureProcess {
 	                        LOG.info("Error added: Landing not defined for Stair {} on Floor {} of Block {}", generalStair.getNumber(), floor.getNumber(), block.getNumber());
 	                    }
 	                }
+	                validateRiserHeight(plan, floor, flrHt, totalSteps, scrutinyDetail4);
 	            } else {
 	                if (floor.getNumber() != generalStairCount) {
 	                    String absentMsg = BLOCK_PREFIX + block.getNumber() + FLOOR_SPACED + floor.getNumber();
@@ -165,7 +166,7 @@ public class GeneralStair extends FeatureProcess {
 	        } else {
 	            LOG.info("Skipping terrace floor {} in Block {}", floor.getNumber(), block.getNumber());
 	        }
-	        validateRiserHeight(plan, floor, flrHt, totalSteps, scrutinyDetail4);
+	       
 		    LOG.info("Completed validateRiserHeight for Block {}", block.getNumber());
 	    }
 
@@ -203,9 +204,9 @@ public class GeneralStair extends FeatureProcess {
 	 * @param totalRisers  The running total of risers.
 	 * @return Updated total number of risers including the given stair's flights.
 	 */
-	private BigDecimal updateTotalRisers(org.egov.common.entity.edcr.GeneralStair stair, BigDecimal totalRisers) {
+	private BigDecimal updateTotalRisers(org.egov.common.entity.edcr.GeneralStair stair) {
 	    LOG.info("Entering updateTotalRisers for stair: {}", stair != null ? stair.getNumber() : "null");
-
+	     BigDecimal totalRisers = BigDecimal.ZERO;
 	    for (Flight flight : stair.getFlights()) {
 	        LOG.info("Processing flight: {}, current rises: {}", flight, flight.getNoOfRises());
 	        totalRisers = totalRisers.add(flight.getNoOfRises());
