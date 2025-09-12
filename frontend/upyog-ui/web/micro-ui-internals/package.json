@@ -9,11 +9,12 @@
     "packages/react-components",
     "packages/modules/core",
     "packages/modules/common",
-    "packages/modules/obps"
+    "packages/modules/obps",
     "packages/modules/hrms",
     "packages/modules/pt",
     "packages/modules/fsm",
-    "packages/modules/dss"
+    "packages/modules/dss",
+    "packages/modules/obpsv2"
   ],
   "license": "MIT",
   "private": true,
@@ -43,6 +44,7 @@
     "dev:tl": "cd packages/modules/tl && yarn start",
     "dev:hrms": "cd packages/modules/hrms && yarn start",
     "dev:obps": "cd packages/modules/obps && yarn start",
+    "dev:obpsv2": "cd packages/modules/obpsv2 && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:noc": "cd packages/modules/noc && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
@@ -73,6 +75,7 @@
     "buildD:tl": "cd packages/modules/tl && yarn build",
     "build:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
+    "build:obpsv2": "cd packages/modules/obpsv2 && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
