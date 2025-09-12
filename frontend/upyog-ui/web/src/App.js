@@ -157,7 +157,7 @@ initBillsComponents();
 // initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
-  pgr: PGRReducers(initData),
+  // pgr: PGRReducers(initData),
 });
 
 function App() {

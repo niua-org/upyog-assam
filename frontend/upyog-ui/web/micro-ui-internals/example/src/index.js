@@ -183,7 +183,7 @@ const initDigitUI = () => {
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({
-    pgr: PGRReducers(initData),
+    // pgr: PGRReducers(initData),
   });
 
   window.Digit.Customizations = {
