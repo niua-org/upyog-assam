@@ -14,6 +14,7 @@
     "@upyog/digit-ui-module-engagement": "3.0.3",
     "@upyog/digit-ui-module-receipts": "3.0.1",
     "@upyog/digit-ui-libraries": "3.0.1",
+    "@nudmcdgnpm/upyog-ui-module-obpsv2": "1.0.0",
     "http-proxy-middleware": "1.0.5",
     "react": "17.0.2",
     "react-dom": "17.0.2",
