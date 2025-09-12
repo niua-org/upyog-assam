@@ -188,6 +188,7 @@ public class EdcrRestService {
         EdcrApplication edcrApplication = new EdcrApplication();
         edcrApplication.setMdmsMasterData(masterData);
         
+        System.out.println("coeArea " + edcrRequest.getCoreArea());
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         if (ApplicationType.OCCUPANCY_CERTIFICATE.toString().equalsIgnoreCase(edcrRequest.getAppliactionType())) {
             edcrApplicationDetail.setComparisonDcrNumber(edcrRequest.getComparisonEdcrNumber());
@@ -196,7 +197,8 @@ public class EdcrRestService {
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
-       // edcrApplication.setCoreArea(edcrRequest.getCoreArea());
+        edcrApplication.setCoreArea(edcrRequest.getCoreArea());
+        System.out.println("-----"+ edcrApplication.getCoreArea());
         if (isNotBlank(edcrRequest.getApplicantName()))
             edcrApplication.setApplicantName(edcrRequest.getApplicantName());
         else

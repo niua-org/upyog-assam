@@ -236,10 +236,10 @@ public class HeightOfRoom extends FeatureProcess {
 								totalArea = roomAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 								BigDecimal minRoomWidth = roomWidths.stream().reduce(BigDecimal::min).get();
 
-								evaluateFirstRoomDetails(pl, floor, roomAreas, roomWidths, subRule, subRuleDesc,
+								evaluateFirstRoomDetails(pl, floor, roomAreas, roomWidths, subRule, REGULAR_ROOM,
 										scrutinyDetail);
 
-								evaluateRemainingRoomDetails(pl, floor, roomAreas, roomWidths, subRule, subRuleDesc,
+								evaluateRemainingRoomDetails(pl, floor, roomAreas, roomWidths, subRule, REGULAR_ROOM,
 										scrutinyDetail1);
 							}
 

@@ -61,12 +61,69 @@ public class Utility extends Measurement {
     private List<RainWaterHarvesting> rainWaterHarvest = new ArrayList<>();
     private List<Solar> solar = new ArrayList<>();
     private BigDecimal rainWaterHarvestingTankCapacity;
-    private List<BiometricWasteTreatment> biometricWasteTreatment = new ArrayList<>();
+    private BigDecimal rwhPipeDia;
+    private String settlingTank;
+    private String overheadTank;
+    private List<PercolationPit> percolationPits = new ArrayList<>();
+
+    public void addPercolationPit(PercolationPit pit) {
+        this.percolationPits.add(pit);
+    }
+
+    public List<PercolationPit> getPercolationPits() {
+        return percolationPits;
+    }
+
+    public String getOverheadTank() {
+		return overheadTank;
+	}
+
+	public void setOverheadTank(String overheadTank) {
+		this.overheadTank = overheadTank;
+	}
+
+	public BigDecimal getRwhPipeDia() {
+		return rwhPipeDia;
+	}
+
+	public void setDrySumps(List<DrySump> drySumps) {
+		this.drySumps = drySumps;
+	}
+
+	public String getSettlingTank() {
+		return settlingTank;
+	}
+
+	public void setSettlingTank(String settlingTank) {
+		this.settlingTank = settlingTank;
+	}
+
+	public void setRwhPipeDia(BigDecimal rwhPipeDia) {
+		this.rwhPipeDia = rwhPipeDia;
+	}
+
+	private List<BiometricWasteTreatment> biometricWasteTreatment = new ArrayList<>();
+    private List<BiodegradableWasteTreatment> biodegradableWasteTreatment = new ArrayList<>();
     private List<SolidLiqdWasteTrtmnt> solidLiqdWasteTrtmnt = new ArrayList<>();
     private List<Measurement> solarWaterHeatingSystems = new ArrayList<>();
     private List<Measurement> segregationOfWaste = new ArrayList<>();
     private BigDecimal waterTankCapacity;
     private SupplyLine supplyLine;
+    
+    private List<DrySump> drySumps = new ArrayList<>();
+
+    public void addDrySump(DrySump drySump) {
+        drySumps.add(drySump);
+    }
+
+    public List<DrySump> getDrySumps() {
+        return drySumps;
+    }
+
+    private BigDecimal drySumpCapacity;
+    public BigDecimal getDrySumpCapacity() { return drySumpCapacity; }
+    public void setDrySumpCapacity(BigDecimal cap) { this.drySumpCapacity = cap; }
+
 
     public void setBiometricWasteTreatment(List<BiometricWasteTreatment> biometricWasteTreatment) {
         this.biometricWasteTreatment = biometricWasteTreatment;
@@ -77,8 +134,20 @@ public class Utility extends Measurement {
         return biometricWasteTreatment;
     }
 
-    public void addBiometricWasteTreatment(BiometricWasteTreatment biometricWasteTrtmnt) {
+    public List<BiodegradableWasteTreatment> getBiodegradableWasteTreatment() {
+		return biodegradableWasteTreatment;
+	}
+
+	public void setBiodegradableWasteTreatment(List<BiodegradableWasteTreatment> biodegradableWasteTreatment) {
+		this.biodegradableWasteTreatment = biodegradableWasteTreatment;
+	}
+
+	public void addBiometricWasteTreatment(BiometricWasteTreatment biometricWasteTrtmnt) {
         biometricWasteTreatment.add(biometricWasteTrtmnt);
+    }
+	
+	public void addBiodegradableWasteTreatment(BiodegradableWasteTreatment biodegradableWasteTrtmnt) {
+		biodegradableWasteTreatment.add(biodegradableWasteTrtmnt);
     }
 
     public BigDecimal getRainWaterHarvestingTankCapacity() {

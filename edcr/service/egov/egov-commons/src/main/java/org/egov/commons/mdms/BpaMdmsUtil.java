@@ -118,6 +118,7 @@ public class BpaMdmsUtil {
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SIDE_YARD_SERVICE);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.RISK_TYPE_COMPUTATION);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.ADDITIONAL_FEATURE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.ROOF_SLOPE);
 
         ModuleDetail bpaModuleDtls = new ModuleDetail();
         bpaModuleDtls.setMasterDetails(bpaMasterDtls);

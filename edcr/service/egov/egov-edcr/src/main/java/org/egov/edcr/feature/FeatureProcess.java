@@ -105,6 +105,8 @@ public abstract class FeatureProcess {
 	public static final String Common_Solar = "Common_Solar";
 	public static final String Common_Toilet = "Common_Toilet";
 	public static final String Common_Verandah = "Common_Verandah";
+	public static final String COMMON_ROOF_SLOPE = "Roof Slope";
+
 	
 	
 

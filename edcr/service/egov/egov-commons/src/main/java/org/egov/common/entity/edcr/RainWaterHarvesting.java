@@ -54,7 +54,16 @@ public class RainWaterHarvesting extends Measurement {
     private static final long serialVersionUID = 48L;
     private Integer number;
     private BigDecimal radius;
-    private List<BigDecimal> tankHeight;
+    private BigDecimal pipeDiameter;
+    public BigDecimal getPipeDiameter() {
+		return pipeDiameter;
+	}
+
+	public void setPipeDiameter(BigDecimal pipeDiameter) {
+		this.pipeDiameter = pipeDiameter;
+	}
+
+	private List<BigDecimal> tankHeight;
     private BigDecimal tankCapacity;
 
     public BigDecimal getRadius() {

@@ -30,19 +30,34 @@ public class AdditionalFeatureRequirement extends MdmsFeatureRule {
     private BigDecimal additionalFeatureNewRoadWidthB;
     @JsonProperty("additionalFeatureNewRoadWidthC")
     private BigDecimal additionalFeatureNewRoadWidthC;
-    @JsonProperty("additionalFeatureRoadWidthAcceptedBC")
-    private BigDecimal additionalFeatureRoadWidthAcceptedBC;
-    @JsonProperty("additionalFeatureRoadWidthAcceptedCD")
-    private BigDecimal additionalFeatureRoadWidthAcceptedCD;
-    @JsonProperty("additionalFeatureRoadWidthAcceptedDE")
-    private BigDecimal additionalFeatureRoadWidthAcceptedDE;
-    @JsonProperty("additionalFeatureRoadWidthAcceptedEF")
-    private BigDecimal additionalFeatureRoadWidthAcceptedEF;
 
-    @JsonProperty("additionalFeatureRoadWidthNewAcceptedAB")
-    private BigDecimal additionalFeatureRoadWidthNewAcceptedAB;
-    @JsonProperty("additionalFeatureRoadWidthNewAcceptedBC")
-    private BigDecimal additionalFeatureRoadWidthNewAcceptedBC;
+    @JsonProperty("additionalFeatureBuildingHeightA")
+    private BigDecimal additionalFeatureBuildingHeightA;
+    @JsonProperty("additionalFeatureBuildingHeightB")
+    private BigDecimal additionalFeatureBuildingHeightB;
+    @JsonProperty("additionalFeatureBuildingHeightServiceFloor")
+    private BigDecimal additionalFeatureBuildingHeightServiceFloor;
+    @JsonProperty("additionalFeatureTotalBuildingHeight")
+    private BigDecimal additionalFeatureTotalBuildingHeight;
+    @JsonProperty("additionalFeatureBuildingHeightStiltParking")
+    private BigDecimal additionalFeatureBuildingHeightStiltParking;
+    @JsonProperty("additionalFeatureBuildingHeightRoofTanks")
+    private BigDecimal additionalFeatureBuildingHeightRoofTanks;
+
+    @JsonProperty("additionalFeatureBuildingHeightChimney")
+    private BigDecimal additionalFeatureBuildingHeightChimney;
+    @JsonProperty("additionalFeatureBuildingHeightServiceRooms")
+    private BigDecimal additionalFeatureBuildingHeightServiceRooms;
+    @JsonProperty("additionalFeatureBuildingHeightStairCovers")
+    private BigDecimal additionalFeatureBuildingHeightStairCovers;
+    @JsonProperty("additionalFeatureBuildingHeightRoofArea")
+    private BigDecimal additionalFeatureBuildingHeightRoofArea;
+    @JsonProperty("additionalFeatureBuildingHeightRWH")
+    private BigDecimal additionalFeatureBuildingHeightRWH;
+    @JsonProperty("additionalFeatureBuildingHeightCappedPermitted")
+    private BigDecimal additionalFeatureBuildingHeightCappedPermitted;
+    @JsonProperty("additionalFeatureBuildingHeightMaxPermitted")
+    private BigDecimal additionalFeatureBuildingHeightMaxPermitted;
 
     @JsonProperty("additionalFeatureFloorsAcceptedBC")
     private BigDecimal additionalFeatureFloorsAcceptedBC;
@@ -163,54 +178,6 @@ public class AdditionalFeatureRequirement extends MdmsFeatureRule {
         this.additionalFeatureNewRoadWidthC = additionalFeatureNewRoadWidthC;
     }
 
-    public BigDecimal getAdditionalFeatureRoadWidthAcceptedBC() {
-        return additionalFeatureRoadWidthAcceptedBC;
-    }
-
-    public void setAdditionalFeatureRoadWidthAcceptedBC(BigDecimal additionalFeatureRoadWidthAcceptedBC) {
-        this.additionalFeatureRoadWidthAcceptedBC = additionalFeatureRoadWidthAcceptedBC;
-    }
-
-    public BigDecimal getAdditionalFeatureRoadWidthAcceptedCD() {
-        return additionalFeatureRoadWidthAcceptedCD;
-    }
-
-    public void setAdditionalFeatureRoadWidthAcceptedCD(BigDecimal additionalFeatureRoadWidthAcceptedCD) {
-        this.additionalFeatureRoadWidthAcceptedCD = additionalFeatureRoadWidthAcceptedCD;
-    }
-
-    public BigDecimal getAdditionalFeatureRoadWidthAcceptedDE() {
-        return additionalFeatureRoadWidthAcceptedDE;
-    }
-
-    public void setAdditionalFeatureRoadWidthAcceptedDE(BigDecimal additionalFeatureRoadWidthAcceptedDE) {
-        this.additionalFeatureRoadWidthAcceptedDE = additionalFeatureRoadWidthAcceptedDE;
-    }
-
-    public BigDecimal getAdditionalFeatureRoadWidthAcceptedEF() {
-        return additionalFeatureRoadWidthAcceptedEF;
-    }
-
-    public void setAdditionalFeatureRoadWidthAcceptedEF(BigDecimal additionalFeatureRoadWidthAcceptedEF) {
-        this.additionalFeatureRoadWidthAcceptedEF = additionalFeatureRoadWidthAcceptedEF;
-    }
-
-    public BigDecimal getAdditionalFeatureRoadWidthNewAcceptedAB() {
-        return additionalFeatureRoadWidthNewAcceptedAB;
-    }
-
-    public void setAdditionalFeatureRoadWidthNewAcceptedAB(BigDecimal additionalFeatureRoadWidthNewAcceptedAB) {
-        this.additionalFeatureRoadWidthNewAcceptedAB = additionalFeatureRoadWidthNewAcceptedAB;
-    }
-
-    public BigDecimal getAdditionalFeatureRoadWidthNewAcceptedBC() {
-        return additionalFeatureRoadWidthNewAcceptedBC;
-    }
-
-    public void setAdditionalFeatureRoadWidthNewAcceptedBC(BigDecimal additionalFeatureRoadWidthNewAcceptedBC) {
-        this.additionalFeatureRoadWidthNewAcceptedBC = additionalFeatureRoadWidthNewAcceptedBC;
-    }
-
     public BigDecimal getAdditionalFeatureStiltFloor() {
         return additionalFeatureStiltFloor;
     }
@@ -323,10 +290,150 @@ public class AdditionalFeatureRequirement extends MdmsFeatureRule {
         this.afGreenBuildingValueD = afGreenBuildingValueD;
     }
 
+    public BigDecimal getAdditionalFeatureBuildingHeightA() {
+        return additionalFeatureBuildingHeightA;
+    }
+
+    public void setAdditionalFeatureBuildingHeightA(BigDecimal additionalFeatureBuildingHeightA) {
+        this.additionalFeatureBuildingHeightA = additionalFeatureBuildingHeightA;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightB() {
+        return additionalFeatureBuildingHeightB;
+    }
+
+    public void setAdditionalFeatureBuildingHeightB(BigDecimal additionalFeatureBuildingHeightB) {
+        this.additionalFeatureBuildingHeightB = additionalFeatureBuildingHeightB;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightServiceFloor() {
+        return additionalFeatureBuildingHeightServiceFloor;
+    }
+
+    public void setAdditionalFeatureBuildingHeightServiceFloor(BigDecimal additionalFeatureBuildingHeightServiceFloor) {
+        this.additionalFeatureBuildingHeightServiceFloor = additionalFeatureBuildingHeightServiceFloor;
+    }
+
+    public BigDecimal getAdditionalFeatureTotalBuildingHeight() {
+        return additionalFeatureTotalBuildingHeight;
+    }
+
+    public void setAdditionalFeatureTotalBuildingHeight(BigDecimal additionalFeatureTotalBuildingHeight) {
+        this.additionalFeatureTotalBuildingHeight = additionalFeatureTotalBuildingHeight;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightStiltParking() {
+        return additionalFeatureBuildingHeightStiltParking;
+    }
+
+    public void setAdditionalFeatureBuildingHeightStiltParking(BigDecimal additionalFeatureBuildingHeightStiltParking) {
+        this.additionalFeatureBuildingHeightStiltParking = additionalFeatureBuildingHeightStiltParking;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightRoofTanks() {
+        return additionalFeatureBuildingHeightRoofTanks;
+    }
+
+    public void setAdditionalFeatureBuildingHeightRoofTanks(BigDecimal additionalFeatureBuildingHeightRoofTanks) {
+        this.additionalFeatureBuildingHeightRoofTanks = additionalFeatureBuildingHeightRoofTanks;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightChimney() {
+        return additionalFeatureBuildingHeightChimney;
+    }
+
+    public void setAdditionalFeatureBuildingHeightChimney(BigDecimal additionalFeatureBuildingHeightChimney) {
+        this.additionalFeatureBuildingHeightChimney = additionalFeatureBuildingHeightChimney;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightServiceRooms() {
+        return additionalFeatureBuildingHeightServiceRooms;
+    }
+
+    public void setAdditionalFeatureBuildingHeightServiceRooms(BigDecimal additionalFeatureBuildingHeightServiceRooms) {
+        this.additionalFeatureBuildingHeightServiceRooms = additionalFeatureBuildingHeightServiceRooms;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightStairCovers() {
+        return additionalFeatureBuildingHeightStairCovers;
+    }
+
+    public void setAdditionalFeatureBuildingHeightStairCovers(BigDecimal additionalFeatureBuildingHeightStairCovers) {
+        this.additionalFeatureBuildingHeightStairCovers = additionalFeatureBuildingHeightStairCovers;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightRoofArea() {
+        return additionalFeatureBuildingHeightRoofArea;
+    }
+
+    public void setAdditionalFeatureBuildingHeightRoofArea(BigDecimal additionalFeatureBuildingHeightRoofArea) {
+        this.additionalFeatureBuildingHeightRoofArea = additionalFeatureBuildingHeightRoofArea;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightRWH() {
+        return additionalFeatureBuildingHeightRWH;
+    }
+
+    public void setAdditionalFeatureBuildingHeightRWH(BigDecimal additionalFeatureBuildingHeightRWH) {
+        this.additionalFeatureBuildingHeightRWH = additionalFeatureBuildingHeightRWH;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightCappedPermitted() {
+        return additionalFeatureBuildingHeightCappedPermitted;
+    }
+
+    public void setAdditionalFeatureBuildingHeightCappedPermitted(BigDecimal additionalFeatureBuildingHeightCappedPermitted) {
+        this.additionalFeatureBuildingHeightCappedPermitted = additionalFeatureBuildingHeightCappedPermitted;
+    }
+
+    public BigDecimal getAdditionalFeatureBuildingHeightMaxPermitted() {
+        return additionalFeatureBuildingHeightMaxPermitted;
+    }
+
+    public void setAdditionalFeatureBuildingHeightMaxPermitted(BigDecimal additionalFeatureBuildingHeightMaxPermitted) {
+        this.additionalFeatureBuildingHeightMaxPermitted = additionalFeatureBuildingHeightMaxPermitted;
+    }
+
     @Override
     public String toString() {
         return "AdditionalFeatureRequirement [additionalFeatureMinRequiredFloorHeight=" + additionalFeatureMinRequiredFloorHeight
-                + ", additionalFeatureMaxPermissibleFloorHeight=" + additionalFeatureMaxPermissibleFloorHeight + "]";
+                + ", additionalFeatureMaxPermissibleFloorHeight=" + additionalFeatureMaxPermissibleFloorHeight
+                + ", additionalFeatureStiltFloor=" + additionalFeatureStiltFloor
+                + ", additionalFeatureRoadWidthA=" + additionalFeatureRoadWidthA
+                + ", additionalFeatureRoadWidthB=" + additionalFeatureRoadWidthB
+                + ", additionalFeatureRoadWidthC=" + additionalFeatureRoadWidthC
+                + ", additionalFeatureRoadWidthD=" + additionalFeatureRoadWidthD
+                + ", additionalFeatureRoadWidthE=" + additionalFeatureRoadWidthE
+                + ", additionalFeatureRoadWidthF=" + additionalFeatureRoadWidthF
+                + ", additionalFeatureNewRoadWidthA=" + additionalFeatureNewRoadWidthA
+                + ", additionalFeatureNewRoadWidthB=" + additionalFeatureNewRoadWidthB
+                + ", additionalFeatureNewRoadWidthC=" + additionalFeatureNewRoadWidthC
+                + ", additionalFeatureBuildingHeightA=" + additionalFeatureBuildingHeightA
+                + ", additionalFeatureBuildingHeightB=" + additionalFeatureBuildingHeightB
+                + ", additionalFeatureBuildingHeightServiceFloor=" + additionalFeatureBuildingHeightServiceFloor
+                + ", additionalFeatureTotalBuildingHeight=" + additionalFeatureTotalBuildingHeight
+                + ", additionalFeatureBuildingHeightStiltParking=" + additionalFeatureBuildingHeightStiltParking
+                + ", additionalFeatureBuildingHeightRoofTanks=" + additionalFeatureBuildingHeightRoofTanks
+                + ", additionalFeatureBuildingHeightChimney=" + additionalFeatureBuildingHeightChimney
+                + ", additionalFeatureBuildingHeightServiceRooms=" + additionalFeatureBuildingHeightServiceRooms
+                + ", additionalFeatureBuildingHeightStairCovers=" + additionalFeatureBuildingHeightStairCovers
+                + ", additionalFeatureBuildingHeightRoofArea=" + additionalFeatureBuildingHeightRoofArea
+                + ", additionalFeatureBuildingHeightRWH=" + additionalFeatureBuildingHeightRWH
+                + ", additionalFeatureBuildingHeightCappedPermitted=" + additionalFeatureBuildingHeightCappedPermitted
+                + ", additionalFeatureBuildingHeightMaxPermitted=" + additionalFeatureBuildingHeightMaxPermitted
+                + ", additionalFeatureFloorsAcceptedBC=" + additionalFeatureFloorsAcceptedBC
+                + ", additionalFeatureFloorsAcceptedCD=" + additionalFeatureFloorsAcceptedCD
+                + ", additionalFeatureFloorsAcceptedDE=" + additionalFeatureFloorsAcceptedDE
+                + ", additionalFeatureFloorsAcceptedEF=" + additionalFeatureFloorsAcceptedEF
+                + ", additionalFeatureFloorsNewAcceptedAB=" + additionalFeatureFloorsNewAcceptedAB
+                + ", additionalFeatureFloorsNewAcceptedBC=" + additionalFeatureFloorsNewAcceptedBC
+                + ", additionalFeatureBasementPlotArea=" + additionalFeatureBasementPlotArea
+                + ", additionalFeatureBasementAllowed=" + additionalFeatureBasementAllowed
+                + ", additionalFeatureBarrierValue=" + additionalFeatureBarrierValue
+                + ", afGreenBuildingValueA=" + afGreenBuildingValueA
+                + ", afGreenBuildingValueB=" + afGreenBuildingValueB
+                + ", afGreenBuildingValueC=" + afGreenBuildingValueC
+                + ", afGreenBuildingValueD=" + afGreenBuildingValueD + "]";
     }
 
 }

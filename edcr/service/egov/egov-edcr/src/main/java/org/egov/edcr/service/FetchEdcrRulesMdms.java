@@ -2,19 +2,81 @@ package org.egov.edcr.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.*;
+import org.egov.common.entity.edcr.AdditionalFeatureRequirement;
+import org.egov.common.entity.edcr.BalconyRequirement;
+import org.egov.common.entity.edcr.BasementRequirement;
+import org.egov.common.entity.edcr.BathroomRequirement;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
+import org.egov.common.entity.edcr.BlockDistancesServiceRequirement;
+import org.egov.common.entity.edcr.ChimneyRequirement;
+import org.egov.common.entity.edcr.CoverageRequirement;
+import org.egov.common.entity.edcr.DoorsRequirement;
+import org.egov.common.entity.edcr.ExitWidthRequirement;
+import org.egov.common.entity.edcr.FarRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FeatureRuleKey;
+import org.egov.common.entity.edcr.FireStairRequirement;
+import org.egov.common.entity.edcr.FireTenderMovementRequirement;
+import org.egov.common.entity.edcr.FrontSetBackRequirement;
+import org.egov.common.entity.edcr.GovtBuildingDistanceRequirement;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
+import org.egov.common.entity.edcr.HeadRoomRequirement;
+import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
+import org.egov.common.entity.edcr.KitchenRequirement;
+import org.egov.common.entity.edcr.LandUseRequirement;
+import org.egov.common.entity.edcr.LandingRequirement;
+import org.egov.common.entity.edcr.LiftRequirement;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.MdmsResponse;
+import org.egov.common.entity.edcr.MezzanineFloorServiceRequirement;
+import org.egov.common.entity.edcr.MonumentDistanceRequirement;
+import org.egov.common.entity.edcr.NoOfRiserRequirement;
+import org.egov.common.entity.edcr.NonHabitationalDoorsRequirement;
+import org.egov.common.entity.edcr.OverHangsRequirement;
+import org.egov.common.entity.edcr.OverheadElectricalLineServiceRequirement;
+import org.egov.common.entity.edcr.ParapetRequirement;
+import org.egov.common.entity.edcr.ParkingRequirement;
+import org.egov.common.entity.edcr.PassageRequirement;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlantationGreenStripRequirement;
+import org.egov.common.entity.edcr.PlantationRequirement;
+import org.egov.common.entity.edcr.PlinthHeightRequirement;
+import org.egov.common.entity.edcr.PlotAreaRequirement;
+import org.egov.common.entity.edcr.PorticoServiceRequirement;
+import org.egov.common.entity.edcr.RainWaterHarvestingRequirement;
+import org.egov.common.entity.edcr.RampServiceRequirement;
+import org.egov.common.entity.edcr.RearSetBackRequirement;
+import org.egov.common.entity.edcr.RequiredTreadRequirement;
+import org.egov.common.entity.edcr.RequiredWidthRequirement;
+import org.egov.common.entity.edcr.RiserHeightRequirement;
+import org.egov.common.entity.edcr.RiverDistanceRequirement;
+import org.egov.common.entity.edcr.RoadWidthRequirement;
+import org.egov.common.entity.edcr.RoofSlopeRequirement;
+import org.egov.common.entity.edcr.RoofTankRequirement;
+import org.egov.common.entity.edcr.RoomAreaRequirement;
+import org.egov.common.entity.edcr.RoomWiseDoorAreaRequirement;
+import org.egov.common.entity.edcr.RoomWiseVentilationRequirement;
+import org.egov.common.entity.edcr.SanitationRequirement;
+import org.egov.common.entity.edcr.SegregatedToiletRequirement;
+import org.egov.common.entity.edcr.SepticTankRequirement;
+import org.egov.common.entity.edcr.SideYardServiceRequirement;
+import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.common.entity.edcr.SpiralStairRequirement;
+import org.egov.common.entity.edcr.StairCoverRequirement;
+import org.egov.common.entity.edcr.TerraceUtilityServiceRequirement;
+import org.egov.common.entity.edcr.ToiletRequirement;
+import org.egov.common.entity.edcr.TravelDistanceToExitRequirement;
+import org.egov.common.entity.edcr.VehicleRampRequirement;
+import org.egov.common.entity.edcr.VentilationRequirement;
+import org.egov.common.entity.edcr.VerandahRequirement;
+import org.egov.common.entity.edcr.WaterClosetsRequirement;
+import org.egov.common.entity.edcr.WaterTankCapacityRequirement;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.config.EdcrConfigProperties;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
@@ -70,6 +132,8 @@ public class FetchEdcrRulesMdms {
 	        return EdcrRulesMdmsConstants.EDUCATIONAL;
 	    case EdcrRulesMdmsConstants.MEDICAL:
 	        return EdcrRulesMdmsConstants.MEDICAL;
+	    case EdcrRulesMdmsConstants.PUBLIC:
+	        return EdcrRulesMdmsConstants.PUBLIC;
 	    default:
 	        return occupancyName;
 	}
@@ -252,6 +316,8 @@ public class FetchEdcrRulesMdms {
 	            return WaterTankCapacityRequirement.class;
 			case ADDITIONAL_FEATURE:
 				return AdditionalFeatureRequirement.class;
+			case ROOF_SLOPE:
+				return RoofSlopeRequirement.class;
 
 	        default:
 	            return MdmsFeatureRule.class; // Fallback
