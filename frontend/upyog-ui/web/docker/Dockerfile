@@ -28,7 +28,6 @@ RUN yarn add @nudmcdgnpm/digit-ui-react-components@1.2.14
 RUN yarn add @nudmcdgnpm/upyog-ui-module-vendor
 RUN yarn add @nudmcdgnpm/upyog-ui-module-wt
 RUN yarn add @nudmcdgnpm/upyog-ui-module-pgrai
-RUN yarn add @upyog/digit-ui-module-obpsv2@1.0.0
 
 ARG WORK_DIR
 WORKDIR /app
