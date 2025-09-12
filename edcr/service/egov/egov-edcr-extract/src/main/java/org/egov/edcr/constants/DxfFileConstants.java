@@ -7,6 +7,9 @@ public class DxfFileConstants {
     public static String CRZ_ZONE = "CRZ";
     public static final String PLOT_AREA = "PLOT_AREA_M2";
     public static final Object ARCHITECT_NAME = "ARCHITECT_NAME";
+    public static final String PIPE_DIA = "PIPE_DIA";
+    public static final String SETTLING_TANK = "SETTLING_TANK";
+    public static final String OVERHEAD_TANK = "OVERHEAD_TANK";
     public static final String FLOOR_HEIGHT = "FLR_HT_M";
     public static final String ACCESS_WIDTH = "ACCESS_WIDTH_M";
     public static final int BLDG_EXTERIOR_WALL_COLOR = 2;
@@ -82,12 +85,18 @@ public class DxfFileConstants {
     public static final String REVENUE_WARD = "REVENUE_WARD";
     public static final String VILLAGE = "VILLAGE";
     public static final String DESAM = "DESAM";
+    public static final String TDR = "TDR";
+    public static final String TOD_ZONE = "TOD_ZONE";
     public static final Object NO_OF_BEDS = "NO_OF_BEDS";
     public static final int YARD_DIMENSION_COLOR = 2;
     public static final int STAIR_FLIGHT_LENGTH_COLOR = 1;
     public static final int STAIR_FLIGHT_WIDTH_COLOR = 2;
+    public static final int RAMP_FLIGHT_LENGTH_COLOR = 1;
+    public static final int RAMP_FLIGHT_WIDTH_COLOR = 2;
     public static final int INDEX_COLOR_ONE = 1;
     public static final int INDEX_COLOR_TWO = 2;
+    public static final int KITCHEN_WIDTH_COLOR = 2;
+    public static final int KITCHEN_HEIGHT_COLOR = 1;
 
     // ***********START - Extra functionalities color code key names************
     // ******** Height of room related ************
@@ -165,7 +174,32 @@ public class DxfFileConstants {
     public static final String PLOT_NO = "PLOT_NO";
     public static final String ZONE = "ZONE";
     public static final String SUB_ZONE = "SUB_ZONE";
-  //  public static final String KHATA_NO = "KHATA_NO";
+    public static final String DAGNO = "DAG_NO";
+    public static final String DEVELOPMENTZONE = "DEVELOPMENT_ZONE";
+    public static final String WARDNO = "WARD_NO";
+    public static final String TWO_WHEELER_SLOW_CHARGER = "TWO_WHEELER_SLOW_CHARGER";
+    public static final String TWO_WHEELER_FAST_CHARGER = "TWO_WHEELER_FAST_CHARGER";
+    public static final String FOUR_WHEELER_SLOW_CHARGER = "FOUR_WHEELER_SLOW_CHARGER";
+    public static final String FOUR_WHEELER_FAST_CHARGER = "FOUR_WHEELER_FAST_CHARGER";
+    public static final String THREE_WHEELER_SLOW_CHARGER = "THREE_WHEELER_SLOW_CHARGER";
+    public static final String THREE_WHEELER_FAST_CHARGER = "THREE_WHEELER_FAST_CHARGER";
+    public static final String PV_SLOW_CHARGER = "PV_SLOW_CHARGER";
+    public static final String PV_FAST_CHARGER = "PV_FAST_CHARGER";
+    public static final String NO_OF_FOUR_WHEELER_FOR_SLOW_CHARGER = "NO_OF_FOUR_WHEELER_FOR_SLOW_CHARGER";
+    public static final String NO_OF_THREE_WHEELER_FOR_SLOW_CHARGER = "NO_OF_THREE_WHEELER_FOR_SLOW_CHARGER";
+    public static final String NO_OF_TWO_WHEELER_FOR_SLOW_CHARGER = "NO_OF_TWO_WHEELER_FOR_SLOW_CHARGER";
+    public static final String NO_OF_PV_FOR_SLOW_CHARGER = "NO_OF_PV_FOR_SLOW_CHARGER";
+    public static final String NO_OF_FOUR_WHEELER_FOR_FAST_CHARGER = "NO_OF_FOUR_WHEELER_FOR_FAST_CHARGER";
+    public static final String NO_OF_THREE_WHEELER_FOR_FAST_CHARGER = "NO_OF_THREE_WHEELER_FOR_FAST_CHARGER";
+    public static final String NO_OF_WHEELER_RESIDENTIAL = "NO_OF_WHEELER_RESIDENTIAL";
+    public static final String CHARGER_RESIDENTIAL = "CHARGER_RESIDENTIAL";
+    public static final String EARTHQUAKE_RESISTANT = "IS_EARTHQUAKE_RESISTANT";
+    public static final String SECOND_ROAD_WIDTH = "SECOND_ROAD_WIDTH";
+    public static final String IS_FOUR_FIVE_STARED_HOTEL = "FOUR_FIVE_STARED_HOTEL";
+    public static final String IS_ECONOMICALLY_WEAKER_SECTION = "ECONOMICALLY_WEAKER_SECTION";
+    public static final String IS_LOWER_INCOME_GROUP = "LOWER_INCOME_GROUP";
+
+    //  public static final String KHATA_NO = "KHATA_NO";
     public static final String KHASRA_NO = "KHASRA_NO";
     public static final String KHATUNI_NO = "KHATUNI_NO";
     public static final String DISTRICT = "DISTRICT";
@@ -197,5 +231,15 @@ public class DxfFileConstants {
     public static final int DIMENSION_WIDTH_COLOR_CODE = 2;
     public static final int DIMENSION_HEIGHT_COLOR_CODE = 3;
     public static final int PORTICO_EXTERIOR_WALL_COLOR = 4;
+    
+    public static final String RIVER = "RIVER";
+    public static final String BHARALU_MORA_BONDAJAN = "BHARALU_MORA_BONDAJAN";
+    public static final String OTHER_CHANNELS = "OTHER_CHANNELS";
+    public static final String MINOR_DRAINS = "MINOR_DRAINS";
+    public static final String NOTIFIED_WATERBODIES = "NOTIFIED_WATERBODIES";
+    public static final String OTHER_NOTIFIED_WATERBODIES = "OTHER_NOTIFIED_WATERBODIES";
+    public static final String OTHER_LARGE_PONDS_WATERBODIES = "OTHER_LARGE_PONDS_WATERBODIES";
+    public static final String SMALL_PONDS = "SMALL_PONDS";
+    
 
 }

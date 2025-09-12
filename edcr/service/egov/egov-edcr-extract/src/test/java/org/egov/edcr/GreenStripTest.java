@@ -27,10 +27,14 @@
  * for (Block b : pl.getBlocks()) {
  * 
  * Measurement measurement = b.getPlantationGreenStripes().get(0);
- * System.out.println(measurement.getMinimumSide());
- * System.out.println(measurement.getLength());
- * System.out.println(measurement.getWidth());
- * System.out.println(measurement.getHeight()); }
+ * log.info
+(measurement.getMinimumSide());
+ * log.info
+(measurement.getLength());
+ * log.info
+(measurement.getWidth());
+ * log.info
+(measurement.getHeight()); }
  * 
  * }
  * 

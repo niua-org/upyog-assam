@@ -338,7 +338,7 @@ public class FrontYardService extends GeneralRule {
 			meanVal = BigDecimal.ZERO;
 		}
 
-		System.out.println("meanVllll" + meanVal);
+		LOG.info("meanVllll" + meanVal);
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
 		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }

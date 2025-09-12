@@ -9,7 +9,7 @@ public class EdcrConfigProperties {
     @Value("${edcr.default.state:pg}")
     private String defaultState;
 
-    @Value("${edcr.default.isStateWise:false}")
+    @Value("${edcr.default.isStateWise:true}")
     private boolean isStateWise;
 
     public String getDefaultState() {

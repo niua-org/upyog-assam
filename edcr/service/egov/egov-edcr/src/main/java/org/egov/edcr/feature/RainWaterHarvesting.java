@@ -71,6 +71,11 @@ import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
 import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_51;
+import static org.egov.edcr.constants.EdcrReportConstants.PERCOLATION_PIT_REQUIREMENT;
+import static org.egov.edcr.constants.EdcrReportConstants.PERCOLATION_PIT_SIZE;
+import static org.egov.edcr.constants.EdcrReportConstants.PERCOLATION_PIT_DIMENSION_REQUIRED;
+import static org.egov.edcr.constants.EdcrReportConstants.PERCOLATION_PIT_NOT_PROVIDED;
 
 @Service
 public class RainWaterHarvesting extends FeatureProcess {

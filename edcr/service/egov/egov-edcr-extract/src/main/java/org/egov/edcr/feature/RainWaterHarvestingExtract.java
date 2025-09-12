@@ -2,23 +2,33 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.PercolationPit;
 import org.egov.common.entity.edcr.RainWaterHarvesting;
 import org.egov.common.entity.edcr.RoofArea;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.service.LayerNames;
 import org.egov.edcr.utility.Util;
 import org.kabeja.dxf.DXFCircle;
+import org.kabeja.dxf.DXFConstants;
+import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
-import org.kabeja.dxf.DXFPolyline;
+import org.kabeja.dxf.DXFLayer;
+import org.kabeja.dxf.DXFText;
+import org.kabeja.dxf.helpers.StyledTextParagraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +37,8 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
     private static final Logger LOG = LogManager.getLogger(RainWaterHarvestingExtract.class);
     @Autowired
     private LayerNames layerNames;
+    private String digitsRegex = "[^\\d.]";
+  
 
     @Override
     public PlanDetail extract(PlanDetail pl) {
@@ -49,6 +61,29 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
                 pl.getUtility().addRainWaterHarvest(rwh);
             }
 
+        List<DXFLWPolyline> percolationPits = Util.getPolyLinesByLayer(
+                pl.getDoc(), layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING_PERCOLATION_PIT"));
+
+        if (percolationPits != null && !percolationPits.isEmpty()) {
+            for (DXFLWPolyline pline : percolationPits) {
+                Measurement measurement = new MeasurementDetail(pline, true);
+                PercolationPit pit = new PercolationPit();
+                pit.setLength(measurement.getLength());
+                pit.setWidth(measurement.getWidth());
+                pit.setHeight(measurement.getHeight());
+                pit.setArea(measurement.getArea());
+                pit.setPresentInDxf(true);
+
+                pl.getUtility().addPercolationPit(pit); 
+        
+
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Percolation Pit extracted: Area={}, Height={}, Width={}, Length={}",
+                            pit.getArea(), pit.getHeight(), pit.getWidth(), pit.getLength());
+                }
+            }
+        }
+        
         List<DXFCircle> rainWaterHarvestingCircle = Util.getPolyCircleByLayer(pl.getDoc(),
                 layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"));
         if (rainWaterHarvestingCircle != null && !rainWaterHarvestingCircle.isEmpty())
@@ -187,12 +222,81 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
                     }
             }
         }
-
+        extractRWHInfo(pl);
         if (LOG.isInfoEnabled())
             LOG.info("End of Rain Water Harvesting Extract......");
         return pl;
     }
+    
+    public Map<String, String> getFormatedRWHProperties(DXFDocument doc) {
 
+        DXFLayer rwhlayer = doc.getDXFLayer(layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"));
+        List texts = rwhlayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+        DXFText text = null;
+        Map<String, String> rwhProperties = new HashMap<>();
+
+        if (texts != null && texts.size() > 0) {
+            Iterator iterator = texts.iterator();
+            while (iterator.hasNext()) {
+                text = (DXFText) iterator.next();
+                Iterator styledParagraphIterator = text.getTextDocument().getStyledParagraphIterator();
+                while (styledParagraphIterator.hasNext()) {
+                    StyledTextParagraph styledTextParagraph = (StyledTextParagraph) styledParagraphIterator.next();
+                    String[] data = styledTextParagraph.getText().split("=");
+                    LOG.info(styledTextParagraph.getText());
+                    if (data.length == 2)
+                    	rwhProperties.put(data[0].trim(), data[1].trim());
+                }
+
+            }
+        }
+        return rwhProperties;
+    }
+    
+    /**
+     * Extracts Rain Water Harvesting (RWH) related information from the DXF document
+     * and updates the {@link PlanDetail} with extracted values.
+     * <p>
+     * Specifically, this method looks for the pipe diameter property in the RWH layer.
+     * If found, it removes any non-numeric characters, converts the value into a
+     * {@link BigDecimal}, and stores it in the plan's utility object.
+     * </p>
+     *
+     * @param pl the {@link PlanDetail} object containing the DXF document and utility details
+     */
+    private void extractRWHInfo(PlanDetail pl) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting extraction of Rain Water Harvesting (RWH) information...");
+        }
+
+        Map<String, String> rwhProperties = getFormatedRWHProperties(pl.getDoc());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Extracted RWH properties: {}", rwhProperties);
+        }
+
+        String pipeDiameter = rwhProperties.get(DxfFileConstants.PIPE_DIA);
+        if (StringUtils.isNotBlank(pipeDiameter)) {
+            LOG.info("Raw pipe diameter value found: {}", pipeDiameter);
+
+            pipeDiameter = pipeDiameter.replaceAll(digitsRegex, "");
+            BigDecimal pipeDiameterValue = getNumericValue(pipeDiameter, pl, DxfFileConstants.PIPE_DIA);
+
+            if (pipeDiameterValue != null) {
+                pl.getUtility().setRwhPipeDia(pipeDiameterValue);
+                LOG.info("RWH Pipe Diameter extracted and set: {}", pipeDiameterValue);
+            } else {
+                LOG.warn("Failed to convert RWH pipe diameter '{}' into numeric value.", pipeDiameter);
+            }
+        } else {
+            LOG.warn("No valid RWH pipe diameter information found in RWH properties.");
+        }
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Completed extraction of Rain Water Harvesting (RWH) information.");
+        }
+    }
+    
+ 
     @Override
     public PlanDetail validate(PlanDetail pl) {
         return pl;

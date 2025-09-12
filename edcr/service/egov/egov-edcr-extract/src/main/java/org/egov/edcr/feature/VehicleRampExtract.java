@@ -128,7 +128,8 @@ public class VehicleRampExtract extends FeatureExtract {
 		    	
 		       for(DXFLine lines: fireStairLines)
 		       {
-		    	  // System.out.println(" Line lengths ((((((((((((( " + lines.getLength());
+		    	  // log.info
+//(" Line lengths ((((((((((((( " + lines.getLength());
 		    	   //flight.setLengthOfFlights(lines.getLength());
 		    	   flight.setLength(BigDecimal.valueOf(lines.getLength()));
 		       }

@@ -1,13 +1,15 @@
 package org.egov.edcr.feature;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.service.LayerNames;
@@ -37,10 +39,25 @@ public class VerandahExtract extends FeatureExtract {
 								.map(polyline -> new MeasurementDetail(polyline, true)).collect(Collectors.toList());
 						f.getVerandah().setMeasurements(verandahMeasurements);
 
-						f.getVerandah()
-								.setHeightOrDepth((Util.getListOfDimensionValueByLayer(pl,
-										String.format(layerNames.getLayerName("LAYER_NAME_VERANDAH"),
-												b.getNumber(), f.getNumber()))));
+//						f.getVerandah()
+//								.setHeightOrDepth((Util.getListOfDimensionValueByLayer(pl,
+//										String.format(layerNames.getLayerName("LAYER_NAME_VERANDAH"),
+//												b.getNumber(), f.getNumber()))));
+						
+						 String verandahLayer = String.format(layerNames.getLayerName("LAYER_NAME_VERANDAH"),
+		                            b.getNumber(), f.getNumber());
+						 // Verandah Height from dimension
+                        List<BigDecimal> verandahHeight =
+                                Util.getListOfDimensionByColourCode(pl, verandahLayer,
+                                        DxfFileConstants.INDEX_COLOR_ONE);
+
+                        // Verandah Width from dimension
+                        List<BigDecimal> verandahWidth =
+                                Util.getListOfDimensionByColourCode(pl, verandahLayer,
+                                        DxfFileConstants.INDEX_COLOR_TWO);
+
+                        f.getVerandah().setHeightOrDepth(verandahHeight);
+                        f.getVerandah().setVerandahWidth(verandahWidth);
 
 					}
 

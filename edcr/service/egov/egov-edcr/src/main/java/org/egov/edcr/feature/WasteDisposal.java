@@ -66,6 +66,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.*;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -74,6 +76,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WasteDisposal extends FeatureProcess {
 
+	 private static final Logger LOG = LogManager.getLogger(WasteDisposal.class);
     /**
      * Validates the building plan for waste disposal requirements.
      * Currently commented out - would check if waste disposal units or liquid waste
@@ -102,36 +105,46 @@ public class WasteDisposal extends FeatureProcess {
      * @return The unmodified plan
      */
     @Override
-    public Plan process(Plan pl) {/*
-                                   * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
-                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
-                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
-                                   * STATUS); scrutinyDetail.setKey("Common_Waste Disposal"); if
-                                   * (pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) { if
-                                   * (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
-                                   * setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
-                                   * OBJECTDEFINED_DESC, Result.Accepted.getResultVal()); if
-                                   * (pl.getUtility().getWells().isEmpty()) { for (org.egov.common.entity.edcr.WasteDisposal
-                                   * wasteDisposal : pl.getUtility().getWasteDisposalUnits()) { if
-                                   * (wasteDisposal.getType().equals(DcrConstants.PROPOSED)) {
-                                   * printOutputForProposedWasteDisposal(pl); } } } } else {
-                                   * setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
-                                   * OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal()); } }
-                                   */
+    public Plan process(Plan pl) {
+        LOG.info("Starting waste disposal process for plan");
+
+        validate(pl);
+
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        scrutinyDetail.setKey("Common_Waste Disposal");
+
+        if (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
+            LOG.info("Waste disposal units found. Marking as Accepted.");
+            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
+                    OBJECTDEFINED_DESC, Result.Accepted.getResultVal());
+        } else {
+            LOG.info("No waste disposal units found. Marking as Not Accepted.");
+            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
+                    OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal());
+        }
+
+        LOG.info("Completed waste disposal process for plan");
+
         return pl;
     }
+
     /**
-     * Adds waste disposal validation results to the scrutiny report.
-     * Creates a detailed report entry with rule information, requirements,
-     * and compliance status without occupancy-specific details.
-     *
-     * @param pl The building plan
-     * @param ruleNo The rule number being validated
-     * @param ruleDesc The rule description
-     * @param expected The expected/required value
-     * @param actual The actual/provided value
-     * @param status The compliance status (Accepted/Not_Accepted)
-     */
+      Adds waste disposal validation results to the scrutiny report.
+      Creates a detailed report entry with rule information, requirements,
+      and compliance status without occupancy-specific details.
+     
+      @param pl The building plan
+      @param ruleNo The rule number being validated
+      @param ruleDesc The rule description
+      @param expected The expected/required value
+      @param actual The actual/provided value
+      @param status The compliance status (Accepted/Not_Accepted)
+    */ 
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
         ReportScrutinyDetail detail = new ReportScrutinyDetail();

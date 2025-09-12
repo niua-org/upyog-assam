@@ -55,10 +55,19 @@ import java.util.List;
 public class MeasurementWithHeight implements Serializable {
 	private static final long serialVersionUID = 55L;
 	private List<BigDecimal> heightOrDepth = new ArrayList<>();
+	private List<BigDecimal> verandahWidth = new ArrayList<>();
 	private List<Measurement> measurements = new ArrayList<>();
 
 	public List<BigDecimal> getHeightOrDepth() {
 		return heightOrDepth;
+	}
+
+	public List<BigDecimal> getVerandahWidth() {
+		return verandahWidth;
+	}
+
+	public void setVerandahWidth(List<BigDecimal> verandahWidth) {
+		this.verandahWidth = verandahWidth;
 	}
 
 	public void setHeightOrDepth(List<BigDecimal> heightOrDepth) {
