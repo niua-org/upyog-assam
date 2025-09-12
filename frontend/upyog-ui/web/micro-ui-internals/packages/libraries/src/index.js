@@ -67,7 +67,7 @@ import { TPService } from "./services/elements/TP";
 import { PGRAIService } from "./services/elements/PGRAI";
 import { PGRAIUpdate } from "./services/elements/PGRAIUpdate";
 
-   
+import { OBPSV2Services } from "./services/elements/OBPSV2";
 
 
 const setupLibraries = (Library, props) => {
@@ -103,6 +103,7 @@ const initLibraries = () => {
   setupLibraries("PaymentService", PaymentService);
   setupLibraries("EDCRService", EDCRService);
   setupLibraries("OBPSService", OBPSService);
+  setupLibraries("OBPSV2Services", OBPSV2Services);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);

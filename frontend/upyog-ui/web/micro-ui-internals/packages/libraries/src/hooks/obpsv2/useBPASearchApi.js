@@ -1,0 +1,31 @@
+import { fil } from "date-fns/locale";
+import { useQuery, useQueryClient } from "react-query";
+
+/**
+ * Custom hook for executing an BPA search using React Query.
+ * 
+ * This hook takes in tenant ID, filters, and authentication details to fetch
+ * search results. It handles loading states and errors, and includes a
+ * method to refetch data. The hook also allows for custom configurations 
+ */
+const useBPASearchApi = ({ tenantId, filters, auth}, config = {}) => {
+  const client = useQueryClient();
+
+  const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  
+  const defaultSelect = (data) => {
+    if(data.BPA.length > 0)  data.BPA[0].applicationNo = data.BPA[0].applicationNo || [];
+      
+    return data;
+  };
+
+  const { isLoading, error, data, isSuccess,refetch } = useQuery([tenantId, filters, auth, config], () => Digit.OBPSV2Services.search(args), {
+    
+    select: defaultSelect,
+    ...config,
+  });
+
+  return { isLoading, error, data, isSuccess,refetch, revalidate: () => client.invalidateQueries([tenantId, filters, auth]) };
+};
+
+export default useBPASearchApi;

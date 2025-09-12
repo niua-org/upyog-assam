@@ -329,6 +329,8 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation";
 import useCMSearch from "./cm/useCMSearch";
+import useBPACreateUpdateApi from "./obpsv2/useBPACreateUpdateApi";
+import useBPASearchApi from "./obpsv2/useBPASearchApi";
 
 
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
@@ -688,6 +690,11 @@ const cm = {
   useCMSearch
 }
 
+const obpsv2={
+  useBPACreateUpdateApi,
+  useBPASearchApi
+};
+
 const wt={
   useTankerCreateAPI,
   useTankerSearchAPI,
@@ -792,7 +799,8 @@ const Hooks = {
   useRouteSubscription,
   useCustomBackNavigation,
   pgrAi,
-  useInbox
+  useInbox,
+  obpsv2
 };
 
 export default Hooks;

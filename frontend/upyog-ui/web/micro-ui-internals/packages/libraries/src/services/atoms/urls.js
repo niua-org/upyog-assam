@@ -156,6 +156,11 @@ const Urls = {
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
     getSearchDetails: "/inbox/v1/dss/_search",
   },
+  obpsv2:{
+    create: "/bpa-services/v1/bpa/_create",
+    update: "/bpa-services/v1/bpa/_update",
+    search: "/bpa-services/v1/bpa/_search"
+  },
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
     anonymousCreate: "/edcr/rest/dcr/anonymousScrutinize"
