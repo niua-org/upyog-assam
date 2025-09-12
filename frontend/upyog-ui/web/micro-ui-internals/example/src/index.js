@@ -23,7 +23,7 @@ import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 // import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
-import { initOBPSV2Components } from "@upyog/digit-ui-module-obpsv2";
+import { initOBPSV2Components } from "@nudmcdgnpm/upyog-ui-module-obpsv2";
 
 // import {initCustomisationComponents} from "./customisations";
 
