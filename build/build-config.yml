@@ -796,11 +796,11 @@ config:
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: digit-ui
         
-  - name: builds/upyog-assamuat/frontend/upyog-assamuat-ui
+  - name: builds/upyog-assamuat/frontend/upyog-ui
     build:
-      - work-dir: frontend/upyog-assamuat-ui/
-        dockerfile: frontend/upyog-assamuat-ui/web/docker/Dockerfile
-        image-name: upyog-assamuat-ui        
+      - work-dir: frontend/upyog-ui/
+        dockerfile: frontend/upyog-ui/web/docker/Dockerfile
+        image-name: upyog-ui        
 
   - name: builds/upyog-assamuat/frontend/micro-ui/storybook
     build:
