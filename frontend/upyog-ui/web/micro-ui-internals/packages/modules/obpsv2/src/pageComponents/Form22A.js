@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, Card, CardSubHeader } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
+import Timeline from "../components/Timeline";
 const Form22A = ({ config, onSelect, userType, formData, value = formData }) => {
   const { pathname: url } = useLocation();
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ const Form22A = ({ config, onSelect, userType, formData, value = formData }) => 
   const [totalFloorAreaBeforeDeduction, setTotalFloorAreaBeforeDeduction] = useState(formData?.totalFloorAreaBeforeDeduction || formData?.form?.totalFloorAreaBeforeDeduction || "");
   const [coverage, setCoverage] = useState(formData?.coverage || formData?.form?.coverage || "");
   const [floorAreaRatio, setFloorAreaRatio] = useState(formData?.floorAreaRatio || formData?.form?.floorAreaRatio || "");
-
+ const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
   // Go next
   const goNext = () => {
     let formStepData = {
@@ -51,6 +51,7 @@ const Form22A = ({ config, onSelect, userType, formData, value = formData }) => 
 
   return (
     <React.Fragment>
+       <Timeline currentStep={flow==="editApplication"?5:null} flow={flow}/>
       <Card>
         <CardSubHeader style={{ textAlign: "center" }}>
           <h2>{t("Form 22")}</h2>

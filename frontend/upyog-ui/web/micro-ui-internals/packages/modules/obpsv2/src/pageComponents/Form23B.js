@@ -8,7 +8,7 @@ import {
   DatePicker
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-
+import Timeline from "../components/Timeline";
 const Form23B = ({ config, onSelect, userType, formData, value = formData }) => {
   const { t } = useTranslation();
 
@@ -91,6 +91,7 @@ const Form23B = ({ config, onSelect, userType, formData, value = formData }) => 
 
   return (
     <React.Fragment>
+       <Timeline currentStep={7} flow={"editApplication"}/>
       <Card>
         <CardSubHeader style={{ textAlign: "center" }}>
           <h2>{t("Form 23")}</h2>

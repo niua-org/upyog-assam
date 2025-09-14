@@ -26,6 +26,7 @@ module.exports = function (app) {
     "/asset-services/v1/disposal/_create",
     "/requester-services-dx",
     "/bpa-services/v1/preapprovedplan/_search",
+    "/bpa-services/v1/rtp/_create",
     "/bpa-calculator/_estimate"
   ].forEach((location) =>
     app.use(location, createProxy)

@@ -9,7 +9,7 @@ import {
 } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
+import Timeline from "../components/Timeline";
 const Form23A = ({ config, onSelect, userType, formData, value = formData }) => {
   const { pathname: url } = useLocation();
   const { t } = useTranslation();
@@ -116,6 +116,7 @@ const Form23A = ({ config, onSelect, userType, formData, value = formData }) => 
 
   return (
     <React.Fragment>
+       <Timeline currentStep={6} flow={"editApplication"}/>
       <Card>
         <CardSubHeader style={{ textAlign: "center" }}>
           <h2>{t("Form 23")}</h2>

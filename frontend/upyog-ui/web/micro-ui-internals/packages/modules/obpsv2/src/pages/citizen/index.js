@@ -10,6 +10,7 @@ const App = ({ path }) => {
 
 
   const BPACreate= Digit?.ComponentRegistryService?.getComponent("BPACreate");
+  const RTPCreate= Digit?.ComponentRegistryService?.getComponent("RTPCreate");
   const BPAMyApplications = Digit?.ComponentRegistryService?.getComponent("BPAMyApplications");
   const BPAApplicationDetails = Digit?.ComponentRegistryService?.getComponent("BPAApplicationDetails");
   const BPAEdit= Digit?.ComponentRegistryService?.getComponent("BPAEdit");
@@ -24,6 +25,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/my-applications`} component={BPAMyApplications}></PrivateRoute>
         <PrivateRoute path={`${path}/application/:acknowledgementIds/:tenantId`} component={BPAApplicationDetails}></PrivateRoute>
         <PrivateRoute path={`${path}/building-permit`} component={BPACreate}/>
+        <PrivateRoute path={`${path}/rtp/apply`} component={RTPCreate}/>
         <PrivateRoute path={`${path}/rtp/inbox`} component={(props) => <Search {...props} parentRoute={path} />} />
         <PrivateRoute path={`${path}/rtp/search/application`} component={(props) => <Search {...props} parentRoute={path} />} />
         <PrivateRoute path={`${path}/search/application`} component={(props) => <Search {...props} parentRoute={path} />} />

@@ -15,6 +15,19 @@ export const OBPSV2Services= {
       params: {},
       auth: true,
     }),
+    rtpcreate: (data, tenantId) =>
+    Request({
+      url: Urls.obpsv2.rtpcreate,
+      // data: data,
+      multipartData: data,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: { tenantId },
+      auth: true,
+      multipartFormData: true
+    }),
 
   update: (details) => 
     Request({
