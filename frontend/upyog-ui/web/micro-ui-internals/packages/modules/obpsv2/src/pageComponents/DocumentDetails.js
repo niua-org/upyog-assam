@@ -20,9 +20,9 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
-    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || [])
     const {data: bpaTaxDocuments, isLoading} = useOBPSDocuments(stateId, formData, beforeUploadDocuments || []);
+    const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
     const handleSubmit = () => {
         let document = formData.documents;
         let documentStep;
@@ -57,7 +57,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
 
     return (
         <div>
-        <Timeline currentStep={checkingFlow === "OCBPA"  ? 3 : checkingFlow==="PRE_APPROVE"? 7 : 2 } flow={checkingFlow}/>    
+        <Timeline currentStep={flow==="editApplication" ? 4 : null} flow={flow}/>    
             {!isLoading ?
                 <FormStep
                     t={t}

@@ -1,3 +1,4 @@
+import { v4 as uuid_v4 } from 'uuid';
 export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
   try {
@@ -13,6 +14,11 @@ export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
     return dateString;
   }
 };
+
+export const uuidv4 = () => {
+  return uuid_v4();
+};
+
 
 export const convertEpochToDateDMY = (dateEpoch) => {
   if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
@@ -105,6 +111,10 @@ export const bpaPayload = (data) =>{
     },
   };
   return formdata;
+};
+
+export const sortDropdownNames = (options, optionkey, locilizationkey) => {
+  return options.sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
 };
 
 export const getOrderDocuments = (appUploadedDocumnets, isNoc = false) => {

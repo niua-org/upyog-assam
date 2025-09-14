@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA, getOrderDocuments } from "../../../utils";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
-
+import Timeline from "../../../components/Timeline";
 const ActionButton = ({ jumpTo }) => {
   const history = useHistory();
 
@@ -41,9 +41,16 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const [agree, setAgree] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpanded = () => setIsExpanded((prev) => !prev);
+  const [expanded, setExpanded] = useState({
+    form22: false,
+    form23A: false,
+    form23B: false,
+  });
+  const toggleExpanded = (key) => {
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
   const { applicant = {}, address = {}, land = {}, documents = {} } = value;
+  const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
   const setDeclarationHandler = () => {
     setAgree(!agree);
   };
@@ -54,8 +61,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     fontSize: "14px",
   };
   
-  const isEditApplication = window.location.href.includes("editApplication");
-
+  let routeLink = window.location.href.includes("editApplication") ? `/upyog-ui/citizen/obpsv2/editApplication`:"";
+  
+  function routeTo(jumpTo) {
+    location.href=jumpTo;
+  }
   let improvedDoc = [];
   
   documents?.documents?.map((appDoc) => {
@@ -151,6 +161,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   return (
     <React.Fragment>
+       <Timeline currentStep={flow === "editApplication" ? 8 : 4} flow={flow}/>
       <Card>
         <CardHeader>{t("BPA_SUMMARY_PAGE")}</CardHeader>
 
@@ -454,7 +465,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         {window.location.href.includes("editApplication") ? (
           <React.Fragment>
             <StatusTable>
-              <CardLabel>{t("BPA_DOCUMENT_DETAILS_LABEL")}</CardLabel>
+              <CardLabel style={{fontSize: "18px", marginTop: "24px", fontWeight: "bold"}}>{t("BPA_DOCUMENT_DETAILS_LABEL")}</CardLabel>
               <LinkButton
                 label={
                   <EditIcon
@@ -493,16 +504,16 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 }}
               >
                 <CardLabel style={{ fontSize: "18px", marginTop: "24px", fontWeight: "bold" }}>{t("FORM_22_DETAILS")}</CardLabel>
-                {!isExpanded && (
+                {!expanded.form22 && (
                   <LinkButton
                     label={t("VIEW_DETAILS")}
-                    onClick={toggleExpanded}
+                    onClick={() => toggleExpanded("form22")}
                     style={{ marginRight: "1rem" }}
                   />
                 )}
               </div>
 
-              {isExpanded && (
+              {expanded.form22 && (
                 <React.Fragment>
                   <StatusTable>
                   {getDetailsRow(value?.form)}
@@ -510,7 +521,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                   <div style={{ marginTop: "1rem" }}>
                     <LinkButton
                       label={t("COLLAPSE")}
-                      onClick={toggleExpanded}
+                      onClick={() => toggleExpanded("form22")}
                     />
                   </div>
                   </StatusTable>
@@ -527,23 +538,23 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 }}
               >
                 <CardLabel style={{ fontSize: "18px", marginTop: "24px", fontWeight: "bold" }}>{t("FORM_23A_DETAILS")}</CardLabel>
-                {!isExpanded && (
+                {!expanded.form23A && (
                   <LinkButton
                     label={t("VIEW_DETAILS")}
-                    onClick={toggleExpanded}
+                    onClick={() => toggleExpanded("form23A")}
                     style={{ marginRight: "1rem" }}
                   />
                 )}
               </div>
 
-              {isExpanded && (
+              {expanded.form23A && (
                 <React.Fragment>
                   {getDetailsRow(value?.form23A)}
 
                   <div style={{ marginTop: "1rem" }}>
                     <LinkButton
                       label={t("COLLAPSE")}
-                      onClick={toggleExpanded}
+                      onClick={() => toggleExpanded("form23A")}
                     />
                   </div>
                 </React.Fragment>
@@ -558,23 +569,23 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 }}
               >
                 <CardLabel style={{ fontSize: "18px", marginTop: "24px", fontWeight: "bold" }}>{t("FORM_23B_DETAILS")}</CardLabel>
-                {!isExpanded && (
+                {!expanded.form23B && (
                   <LinkButton
                     label={t("VIEW_DETAILS")}
-                    onClick={toggleExpanded}
+                    onClick={() => toggleExpanded("form23B")}
                     style={{ marginRight: "1rem" }}
                   />
                 )}
               </div>
 
-              {isExpanded && (
+              {expanded.form23B && (
                 <React.Fragment>
                   {getDetailsRow(value?.form23B)}
 
                   <div style={{ marginTop: "1rem" }}>
                     <LinkButton
                       label={t("COLLAPSE")}
-                      onClick={toggleExpanded}
+                      onClick={() => toggleExpanded("form23B")}
                     />
                   </div>
                 </React.Fragment>

@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import { Loader, CitizenHomeCard, OBPSIcon, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
 import CitizenApp from "./pages/citizen";
 import Create from "./pages/citizen/Create";
+import RTPCreate from "./pages/citizen/RTPCreate";
 import Edit from "./pages/citizen/EditApplication";
 import ApplicantDetails  from "./pageComponents/ApplicantDetails";
 import AddressDetails from "./pageComponents/AddressDetails";
@@ -13,11 +14,13 @@ import { BPAMyApplications } from "./pages/citizen/MyApplications";
 import AreaMapping from "./pageComponents/AreaMapping";
 import BPAAcknowledgement from "./pages/citizen/Create/BPAAcknowledgement";
 import DocumentDetails from "./pageComponents/DocumentDetails";
+import RTPAcknowledgement from "./pages/citizen/RTPCreate/RTPAcknowledgement";
 import Form22A from "./pageComponents/Form22A";
 import Form23A from "./pageComponents/Form23A";
 import Form23B from "./pageComponents/Form23B";
 import OBPASCitizenHomeScreen from "./pages/citizen/home";
 import Inbox from "./pages/employee/Inbox";
+import RTPForm from "./pageComponents/RTPForm";
 import EmployeeApp from "./pages/employee";
 import BPAApplicationDetails from "./pages/citizen/ApplicationDetails";
 
@@ -74,10 +77,13 @@ const componentsToRegister = {
   Form23B,
   LandDetails,
   BPACreate: Create,
+  RTPCreate,
   CheckPage,
   BPAMyApplications,
   AreaMapping,
+  RTPForm,
   BPAAcknowledgement,
+  RTPAcknowledgement,
   BPAEdit : Edit,
   OBPASCitizenHomeScreen,
   RTASearchApplication,

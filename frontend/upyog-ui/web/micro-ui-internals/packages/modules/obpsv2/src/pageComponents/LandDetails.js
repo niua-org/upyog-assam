@@ -3,12 +3,13 @@ import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, CheckBox, CardH
 import Timeline from "../components/Timeline";
 
 const LandDetails = ({ t, config, onSelect, formData }) => {
-  
+
   // Future Provision Options
   const futureProvisionOptions = [
     { code: "YES", name: "Yes", i18nKey: "BPA_YES" },
     { code: "NO", name: "No", i18nKey: "BPA_NO" }
   ];
+  const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
 
   // TOD Zone Options
   const todZoneOptions = [
@@ -267,7 +268,7 @@ const LandDetails = ({ t, config, onSelect, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={3} flow="buildingPlanPermit" />
+      <Timeline currentStep={flow==="editApplication"? 3 : 3} flow={flow} />
       <FormStep
         config={config}
         onSelect={goNext}
