@@ -140,7 +140,7 @@ public class BPAService {
         landService.addLandInfoToBPA(bpaRequest);
         enrichmentService.enrichBPACreateRequest(bpaRequest, mdmsData, null);
 
-//        wfIntegrator.callWorkFlow(bpaRequest);
+        wfIntegrator.callWorkFlow(bpaRequest);
 
         //nocService.createNocRequest(bpaRequest, mdmsData);
 

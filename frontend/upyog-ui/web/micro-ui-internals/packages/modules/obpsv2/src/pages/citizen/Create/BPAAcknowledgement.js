@@ -25,7 +25,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.BPA?.applicationNo}
+      applicationNumber={props.data?.bpa?.[0]?.applicationNo}
       info={props.isSuccess ? props.t("BPA_APPLICATION_NO") : ""}
       successful={props.isSuccess}
       style={{ width: "100%" }}
@@ -90,42 +90,6 @@ const BPAAcknowledgement = ({ data, onSuccess }) => {
             last       
             textStyle={{ whiteSpace: "pre", width: "60%" }}
             />
-        )}
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            label={t("BPA_APPLICANT_NAME")}
-            text={data?.applicant?.applicantName || "N/A"}
-          />
-        )}
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            label={t("BPA_CONSTRUCTION_TYPE")}
-            text={t(data?.land?.constructionType?.name) || "N/A"}
-          />
-        )}
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            label={t("BPA_PROPERTY_ADDRESS")}
-            text={`${data?.address?.permanent?.houseNo || ""}, ${data?.address?.permanent?.addressLine1 || ""}, ${data?.address?.permanent?.city?.name || ""}`}
-          />
-        )}
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            label={t("BPA_SUBMISSION_DATE")}
-            text={new Date().toLocaleDateString()}
-          />
-        )}
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            label={t("BPA_STATUS")}
-            text={t("BPA_SUBMITTED")}
-            last
-          />
         )}
       </StatusTable>
       {/* {mutation.isSuccess && <SubmitBar label={t("BPA_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />} */}
