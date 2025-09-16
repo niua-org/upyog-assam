@@ -358,7 +358,6 @@ import useSelectedMDMS from "./useSelectedMDMS";
 import useRouteSubscription from "./useRouteSubscription";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 
-
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
