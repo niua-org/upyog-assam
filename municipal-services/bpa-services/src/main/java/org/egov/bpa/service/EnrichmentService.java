@@ -141,7 +141,8 @@ public class EnrichmentService {
 		String tenantId = request.getBPA().getTenantId();
 		BPA bpa = request.getBPA();
 
-		List<String> applicationNumbers = Arrays.asList("APP-2025-0001");
+		List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
+				config.getApplicationNoIdgenFormat(), 1);
 		ListIterator<String> itr = applicationNumbers.listIterator();
 
 		Map<String, String> errorMap = new HashMap<>();
