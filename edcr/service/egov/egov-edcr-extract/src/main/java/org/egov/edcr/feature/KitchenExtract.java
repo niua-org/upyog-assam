@@ -50,7 +50,12 @@ public class KitchenExtract extends FeatureExtract {
 
                         String kitchenLayer = String.format(layerNames.getLayerName("LAYER_NAME_KITCHEN"), block.getNumber(),
                                 floor.getNumber());
-                        List<BigDecimal> kitchenHeight = Util.getListOfDimensionValueByLayer(pl, kitchenLayer);
+                       // List<BigDecimal> kitchenHeight = Util.getListOfDimensionValueByLayer(pl, kitchenLayer);
+                        
+                        List<BigDecimal> kitchenHeight = Util.getListOfDimensionByColourCode(pl, kitchenLayer, DxfFileConstants.KITCHEN_HEIGHT_COLOR);
+                        
+                        List<BigDecimal> kitchenWidth = Util.getListOfDimensionByColourCode(pl, kitchenLayer,
+        						DxfFileConstants.KITCHEN_WIDTH_COLOR);
 
                         List<DXFLWPolyline> residentialKitchenPolyLines = Util.getPolyLinesByLayerAndColor(pl.getDoc(),
                                 kitchenLayer, DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR, pl);
@@ -89,7 +94,10 @@ public class KitchenExtract extends FeatureExtract {
                                 }
                                 kitchen.setHeights(kitchenHeights);
                             }
-
+                            if (!kitchenWidth.isEmpty()) {
+                                kitchen.setKitchenWidth(kitchenWidth);  
+                            }
+                              
                             if (kitchenPolyLines != null && !kitchenPolyLines.isEmpty()) {
                                 List<Measurement> kitchens = kitchenPolyLines.stream()
                                         .map(acRoomPolyLine -> new MeasurementDetail(acRoomPolyLine, true))

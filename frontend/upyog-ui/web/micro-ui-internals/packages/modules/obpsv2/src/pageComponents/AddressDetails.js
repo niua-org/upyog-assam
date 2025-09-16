@@ -24,7 +24,7 @@ const AddressDetails = ({ t, config, onSelect, formData }) => {
   const [permanentCityOptions, setPermanentCityOptions] = useState([]);
   const [correspondenceCityOptions, setCorrespondenceCityOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
-
+  const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
   // Initialize districts from MDMS data
   useEffect(() => {
     if (mdmsData?.districts) {
@@ -150,7 +150,7 @@ const AddressDetails = ({ t, config, onSelect, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={2} flow="buildingPlanPermit" />
+      <Timeline currentStep={flow === "editApplication" ? 2 : 2} flow={flow }/>
       <FormStep
         config={config}
         onSelect={goNext}

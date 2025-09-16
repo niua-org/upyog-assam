@@ -159,7 +159,8 @@ const Urls = {
   obpsv2:{
     create: "/bpa-services/v1/bpa/_create",
     update: "/bpa-services/v1/bpa/_update",
-    search: "/bpa-services/v1/bpa/_search"
+    search: "/bpa-services/v1/bpa/_search",
+    rtpcreate : "/bpa-services/v1/rtp/_create",
   },
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",

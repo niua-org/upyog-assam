@@ -28,6 +28,15 @@ public class RoomAreaRequirement extends MdmsFeatureRule {
 	    
 	    @JsonProperty("commercialACroomHeight")
 	    private BigDecimal  commercialACroomHeight;
+	    
+	    public BigDecimal getNonInhabitationalRoomArea() {
+			return nonInhabitationalRoomArea;
+		}
+		public void setNonInhabitationalRoomArea(BigDecimal nonInhabitationalRoomArea) {
+			this.nonInhabitationalRoomArea = nonInhabitationalRoomArea;
+		}
+		@JsonProperty("nonInhabitationalRoomArea")
+	    private BigDecimal  nonInhabitationalRoomArea;
 	 
 		public BigDecimal getCommercialACroomHeight() {
 			return commercialACroomHeight;
@@ -87,7 +96,9 @@ public class RoomAreaRequirement extends MdmsFeatureRule {
 		public String toString() {
 			return "RoomAreaRequirement [roomArea2=" + roomArea2 + ", roomArea1=" + roomArea1 + ", roomWidth2="
 					+ roomWidth2 + ", roomWidth1=" + roomWidth1 + ", acRoomHeight=" + acRoomHeight + ", roomHeight="
-					+ roomHeight + ", hillyRoomHeight=" + hillyRoomHeight + "]";
+					+ roomHeight + ", hillyRoomHeight=" + hillyRoomHeight + ", commercialGFheight=" + commercialGFheight
+					+ ", commercialACroomHeight=" + commercialACroomHeight + ", nonInhabitationalRoomArea="
+					+ nonInhabitationalRoomArea + "]";
 		}
 	
 }

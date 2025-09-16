@@ -7,7 +7,18 @@ import {
     StatusTable,
     MultiLink,
     Toast,
-    CheckBox
+    CheckBox,
+    PopUp,
+    HeaderBar,
+    ActionBar,
+    Menu,
+    Modal,
+    SubmitBar,
+    CardLabel,
+    TextInput,
+    TextArea,
+    CardLabelDesc,
+    UploadFile
   } from "@upyog/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
@@ -38,13 +49,19 @@ import {
     const [showToast, setShowToast] = useState(null);
     const { data: storeData } = Digit.Hooks.useStore.getInitData();
     const { tenants } = storeData || {};
-  
+    const [displayMenu, setDisplayMenu] = useState(false);
     const { isLoading, isError, error, data, refetch } =Digit.Hooks.obpsv2.useBPASearchApi({
       tenantId,
       filters: { applicationNo: acknowledgementIds },
     });
-  
+    const [actioneError, setActionError] = useState(null);
+    const [popup, setPopup] = useState(false);
+    const [selectedAction, setSelectedAction] = useState(null);
+    const [oldRTPName, setOldRTPName] = useState();
+    const [ newRTPName, setNewRTPName ] = useState();
     const bpaApplicationDetail = get(data, "BPA", []);
+    const [comments, setComments] = useState("");
+    const [uploadedFile, setUploadedFile] = useState(null);
     const bpaId = get(data, "BPA[0].applicationNo", []);
   
     let bpa_details = (bpaApplicationDetail && bpaApplicationDetail.length > 0 && bpaApplicationDetail[0]) || {};
@@ -93,14 +110,47 @@ import {
       label: t("BPA_DOWNLOAD_ACKNOWLEDGEMENT"),
       onClick: () => getAcknowledgementData(),
     });
-  
+   const Heading = (props) => {
+     return <h1 className="heading-m">{props.label}</h1>;
+   };
+   
+   const CloseBtn = (props) => {
+     return (
+       <div className="icon-bg-secondary" onClick={props.onClick}>
+           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+             <path d="M0 0h24v24H0V0z" fill="none" />
+             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+           </svg>
+         
+       </div>
+     );
+   };
     // const getAcknowledgementData = async () => {
     //   const applications = application || {};
     //   const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     //   const acknowldgementDataAPI = await getBPAAcknowledgementData({ ...applications }, tenantInfo, t);
     //   Digit.Utils.pdf.generate(acknowldgementDataAPI);
     // };
+    function addComment(e) {
+    setActionError(null);
+    setComments(e.target.value);
+  }
+  function selectfile(e) {
+    setFile(e.target.files[0]);
+  }
   
+    function onActionSelect(action) {
+    setSelectedAction(action);
+    switch (action) {
+      case "NEWRTP":
+        setPopup(true);
+        setDisplayMenu(false);
+        break;
+      default:
+        setDisplayMenu(false);
+    }
+  }
+
     if (isLoading) {
       return <Loader />;
     }
@@ -344,6 +394,63 @@ import {
                 text={bpa_details?.land?.todZone?.name || t("CS_NA")}
               />
             </StatusTable>
+            {popup ? (
+               <Modal
+      headerBarMain={
+        <Heading
+          label={
+             t("NEW_RTP")
+          }
+        />
+      }
+      headerBarEnd={<CloseBtn onClick={() => close(popup)} />}
+      actionCancelLabel={t("CS_COMMON_CANCEL")}
+      actionCancelOnSubmit={() => close(popup)}
+      actionSaveLabel={
+         t("CS_COMMON_CONFIRM")
+      }
+      actionSaveOnSubmit={() => {
+        if(!comments)
+        setActionError(t("CS_MANDATORY_REASON"));
+      if(!oldRTPName)
+        setActionError(t("CS_OLD_RTP_NAME_MANDATORY"))
+      if(!newRTPName)
+        setActionError(t("CS_NEW_RTP_NAME_MANDATORY"))
+        // if(selectedAction === "REJECT" && !comments)
+        // setError(t("CS_MANDATORY_COMMENTS"));
+        // else
+        // onAssign(selectedEmployee, comments, uploadedFile);
+      }}
+      error={actioneError}
+      setError={setActionError}
+    >
+      <Card>
+        
+          <React.Fragment>
+            <CardLabel>{t("OLD_RTP_NAME")}</CardLabel>
+            { <TextInput  t={t} type="text" value={oldRTPName} onChange={(e) => setOldRTPName(e.target.value.replace(/[^a-zA-Z\s]/g, ""))} ValidationRequired={true}{...{ pattern: "^[a-zA-Z ]+$", title: t("BPA_NAME_ERROR_MESSAGE") }} />}
+              <CardLabel>{t("NEW_RTP_NAME")}</CardLabel>
+            { <TextInput  t={t} type="text" value={newRTPName} onChange={(e) => setNewRTPName(e.target.value.replace(/[^a-zA-Z\s]/g, ""))} ValidationRequired={true}{...{ pattern: "^[a-zA-Z ]+$", title: t("BPA_NAME_ERROR_MESSAGE") }} />}
+          </React.Fragment>
+        <CardLabel>{t("REASON_FOR_CHANGING_PREVIOUS_RTP")}</CardLabel>
+        <TextArea name="reason" onChange={addComment} value={comments} maxLength={500}/>
+        <div style={{ textAlign: "right", fontSize: "12px", color: "#666" }}>
+          {comments.length}/500
+        </div>
+        <CardLabel>{t("CS_ACTION_SUPPORTING_DOCUMENTS")}</CardLabel>
+        <CardLabelDesc>{t(`CS_UPLOAD_RESTRICTIONS`)}</CardLabelDesc>
+        <UploadFile
+          id={"pgr-doc"}
+          accept=".jpg"
+          onUpload={selectfile}
+          onDelete={() => {
+            setUploadedFile(null);
+          }}
+          message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+        />
+      </Card>
+    </Modal>
+            ):null}
   
             {/* <WFApplicationTimeline application={application} id={application?.applicationNo} userType={"citizen"} /> */}
             {showToast && (
@@ -356,6 +463,9 @@ import {
                 }}
               />
             )}
+             <ActionBar>
+              <SubmitBar label={t("WF_NEW_RTP")} onSubmit={() => onActionSelect("NEWRTP")} />
+            </ActionBar>
           </Card>
         </div>
       </React.Fragment>

@@ -65,7 +65,8 @@ public class RoadReserveExtract extends FeatureExtract {
                   }
                 
                
-                System.out.println("uu" +  planDetail.getRoadReserveFront());
+                LOG.info
+("RoadReserve" +  planDetail.getRoadReserveFront());
             }
         }
         String layerNameRear = layerNames.getLayerName("LAYER_NAME_ROAD_RESERVE_REAR");
@@ -100,7 +101,8 @@ public class RoadReserveExtract extends FeatureExtract {
                 
                 
             }
-            System.out.println("uu" +  planDetail.getRoadReserveRear());
+            LOG.info
+("RoadReserve" +  planDetail.getRoadReserveRear());
         }
 
         // Process Side Road Reserves

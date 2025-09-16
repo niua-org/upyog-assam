@@ -84,11 +84,7 @@ public class TravelDistanceToExit extends FeatureProcess {
 	// Logger for logging important information
 	private static final Logger LOG = LogManager.getLogger(TravelDistanceToExit.class);
 
-	// Permissible travel distances fetched from MDMS
-	public static BigDecimal travelDistanceToExitValueOne = BigDecimal.ZERO;
-	public static BigDecimal travelDistanceToExitValueTwo = BigDecimal.ZERO;
-	public static BigDecimal travelDistanceToExitValueThree = BigDecimal.ZERO;
-
+	
 
 	@Autowired
 	MDMSCacheManager cache;

@@ -5,6 +5,7 @@ import static org.egov.edcr.constants.DxfFileConstants.OPENING_ABOVE_2_1_ON_SIDE
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.PlanInformation;
-import org.egov.common.entity.edcr.SetBack;
-import org.egov.common.entity.edcr.VirtualBuilding;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
@@ -24,6 +21,7 @@ import org.egov.edcr.entity.blackbox.PlotDetail;
 import org.egov.edcr.service.LayerNames;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -121,6 +119,25 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				}
 
 		}
+
+        List<DXFDimension> buildingDimensions = Util.getDimensionsByLayer(pl.getDoc(), buildingFootPrint);
+        if (buildingDimensions != null && !buildingDimensions.isEmpty())
+            for (Object dxfEntity : buildingDimensions) {
+                DXFDimension dimension = (DXFDimension) dxfEntity;
+                List<BigDecimal> values = new ArrayList<>();
+                Util.extractDimensionValue(pl, values, dimension, buildingFootPrint);
+
+                if (pl.getBlocks().isEmpty())
+                    for (Block bl : pl.getBlocks()) {
+                        if (!values.isEmpty()) {
+                            for (BigDecimal length : values) {
+                                if (length.compareTo(bl.getBuilding().getBuildingLength()) < 0 || (bl.getBuilding().getBuildingLength().compareTo(BigDecimal.ZERO) == 0)) {
+                                    bl.getBuilding().setBuildingLength(length);
+                                }
+                            }
+                        }
+                    }
+            }
 
 		if (pl.getBlocks().isEmpty())
 			pl.addError(layerNames.getLayerName("LAYER_NAME_BUILDING_FOOT_PRINT"),
@@ -396,6 +413,15 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(desam))
 			pi.setDesam(desam);
 
+		String TDR = planInfoProperties.get(DxfFileConstants.TDR);
+		if (StringUtils.isNotBlank(TDR))
+			pi.setTDR(TDR);
+		
+		String todZone = planInfoProperties.get(DxfFileConstants.TOD_ZONE);
+		if (StringUtils.isNotBlank(todZone))
+			pi.setTodZone(todZone);
+
+		
 		if (!planInfoProperties.isEmpty()) {
 			String accessWidth = planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH);
 			if (StringUtils.isNotBlank(accessWidth)) {
@@ -715,6 +741,132 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(subZone))
 			pi.setSubZone(subZone);
 		
+		String dagNo = planInfoProperties.get(DxfFileConstants.DAGNO);
+		if (StringUtils.isNotBlank(dagNo))
+			pi.setDagNo(dagNo);
+		
+		String wardNo = planInfoProperties.get(DxfFileConstants.WARDNO);
+		if (StringUtils.isNotBlank(dagNo))
+			pi.setWardNo(wardNo);
+		
+		String developementZone = planInfoProperties.get(DxfFileConstants.DEVELOPMENTZONE);
+		if (StringUtils.isNotBlank(developementZone))
+			pi.setDevelopementZone(developementZone);
+		
+		
+		String twoWheelerSlowCharger = planInfoProperties.get(DxfFileConstants.TWO_WHEELER_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(twoWheelerSlowCharger)) {
+			twoWheelerSlowCharger = twoWheelerSlowCharger.replaceAll(digitsRegex, "");
+			BigDecimal twoWheelerSlowChargerValue = getNumericValue(twoWheelerSlowCharger, pl, DxfFileConstants.TWO_WHEELER_SLOW_CHARGER);
+			pi.setTwoWheelerSlowCharger(twoWheelerSlowChargerValue);
+		}
+		
+		String twoWheelerFastCharger = planInfoProperties.get(DxfFileConstants.TWO_WHEELER_FAST_CHARGER);
+		if (StringUtils.isNotBlank(twoWheelerFastCharger)) {
+		    twoWheelerFastCharger = twoWheelerFastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(twoWheelerFastCharger, pl, DxfFileConstants.TWO_WHEELER_FAST_CHARGER);
+		    pi.setTwoWheelerFastCharger(value);
+		}
+
+		String fourWheelerSlowCharger = planInfoProperties.get(DxfFileConstants.FOUR_WHEELER_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(fourWheelerSlowCharger)) {
+		    fourWheelerSlowCharger = fourWheelerSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(fourWheelerSlowCharger, pl, DxfFileConstants.FOUR_WHEELER_SLOW_CHARGER);
+		    pi.setFourWheelerSlowCharger(value);
+		}
+
+		String fourWheelerFastCharger = planInfoProperties.get(DxfFileConstants.FOUR_WHEELER_FAST_CHARGER);
+		if (StringUtils.isNotBlank(fourWheelerFastCharger)) {
+		    fourWheelerFastCharger = fourWheelerFastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(fourWheelerFastCharger, pl, DxfFileConstants.FOUR_WHEELER_FAST_CHARGER);
+		    pi.setFourWheelerFastCharger(value);
+		}
+
+		String threeWheelerSlowCharger = planInfoProperties.get(DxfFileConstants.THREE_WHEELER_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(threeWheelerSlowCharger)) {
+		    threeWheelerSlowCharger = threeWheelerSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(threeWheelerSlowCharger, pl, DxfFileConstants.THREE_WHEELER_SLOW_CHARGER);
+		    pi.setThreeWheelerSlowCharger(value);
+		}
+
+		String threeWheelerFastCharger = planInfoProperties.get(DxfFileConstants.THREE_WHEELER_FAST_CHARGER);
+		if (StringUtils.isNotBlank(threeWheelerFastCharger)) {
+		    threeWheelerFastCharger = threeWheelerFastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(threeWheelerFastCharger, pl, DxfFileConstants.THREE_WHEELER_FAST_CHARGER);
+		    pi.setThreeWheelerFastCharger(value);
+		}
+
+		String PVslowCharger = planInfoProperties.get(DxfFileConstants.PV_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(PVslowCharger)) {
+		    PVslowCharger = PVslowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(PVslowCharger, pl, DxfFileConstants.PV_SLOW_CHARGER);
+		    pi.setPVslowCharger(value);
+		}
+
+		String PVfastCharger = planInfoProperties.get(DxfFileConstants.PV_FAST_CHARGER);
+		if (StringUtils.isNotBlank(PVfastCharger)) {
+		    PVfastCharger = PVfastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(PVfastCharger, pl, DxfFileConstants.PV_FAST_CHARGER);
+		    pi.setPVfastCharger(value);
+		}
+
+		String noOfFourWheelerForSlowCharger = planInfoProperties.get(DxfFileConstants.NO_OF_FOUR_WHEELER_FOR_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(noOfFourWheelerForSlowCharger)) {
+		    noOfFourWheelerForSlowCharger = noOfFourWheelerForSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfFourWheelerForSlowCharger, pl, DxfFileConstants.NO_OF_FOUR_WHEELER_FOR_SLOW_CHARGER);
+		    pi.setNoOfFourWheelerForSlowCharger(value);
+		}
+
+		String noOfThreeWheelerForSlowCharger = planInfoProperties.get(DxfFileConstants.NO_OF_THREE_WHEELER_FOR_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(noOfThreeWheelerForSlowCharger)) {
+		    noOfThreeWheelerForSlowCharger = noOfThreeWheelerForSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfThreeWheelerForSlowCharger, pl, DxfFileConstants.NO_OF_THREE_WHEELER_FOR_SLOW_CHARGER);
+		    pi.setNoOfThreeWheelerForSlowCharger(value);
+		}
+
+		String noOfTwoWheelerForSlowCharger = planInfoProperties.get(DxfFileConstants.NO_OF_TWO_WHEELER_FOR_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(noOfTwoWheelerForSlowCharger)) {
+		    noOfTwoWheelerForSlowCharger = noOfTwoWheelerForSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfTwoWheelerForSlowCharger, pl, DxfFileConstants.NO_OF_TWO_WHEELER_FOR_SLOW_CHARGER);
+		    pi.setNoOfTwoWheelerForSlowCharger(value);
+		}
+
+		String noOfPVForSlowCharger = planInfoProperties.get(DxfFileConstants.NO_OF_PV_FOR_SLOW_CHARGER);
+		if (StringUtils.isNotBlank(noOfPVForSlowCharger)) {
+		    noOfPVForSlowCharger = noOfPVForSlowCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfPVForSlowCharger, pl, DxfFileConstants.NO_OF_PV_FOR_SLOW_CHARGER);
+		    pi.setNoOfPVForSlowCharger(value);
+		}
+
+		String noOfFourWheelerForfastCharger = planInfoProperties.get(DxfFileConstants.NO_OF_FOUR_WHEELER_FOR_FAST_CHARGER);
+		if (StringUtils.isNotBlank(noOfFourWheelerForfastCharger)) {
+		    noOfFourWheelerForfastCharger = noOfFourWheelerForfastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfFourWheelerForfastCharger, pl, DxfFileConstants.NO_OF_FOUR_WHEELER_FOR_FAST_CHARGER);
+		    pi.setNoOfFourWheelerForfastCharger(value);
+		}
+
+		String noOfThreeWheelerForFastCharger = planInfoProperties.get(DxfFileConstants.NO_OF_THREE_WHEELER_FOR_FAST_CHARGER);
+		if (StringUtils.isNotBlank(noOfThreeWheelerForFastCharger)) {
+		    noOfThreeWheelerForFastCharger = noOfThreeWheelerForFastCharger.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfThreeWheelerForFastCharger, pl, DxfFileConstants.NO_OF_THREE_WHEELER_FOR_FAST_CHARGER);
+		    pi.setNoOfThreeWheelerForFastCharger(value);
+		}
+
+		String noOfWheelerResidential = planInfoProperties.get(DxfFileConstants.NO_OF_WHEELER_RESIDENTIAL);
+		if (StringUtils.isNotBlank(noOfWheelerResidential)) {
+		    noOfWheelerResidential = noOfWheelerResidential.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(noOfWheelerResidential, pl, DxfFileConstants.NO_OF_WHEELER_RESIDENTIAL);
+		    pi.setNoOfWheelerResidential(value);
+		}
+
+		String chargerResidential = planInfoProperties.get(DxfFileConstants.CHARGER_RESIDENTIAL);
+		if (StringUtils.isNotBlank(chargerResidential)) {
+		    chargerResidential = chargerResidential.replaceAll(digitsRegex, "");
+		    BigDecimal value = getNumericValue(chargerResidential, pl, DxfFileConstants.CHARGER_RESIDENTIAL);
+		    pi.setChargerResidential(value);
+		}
+
+		
 		
 		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
 		if (StringUtils.isNotBlank(khasraNo))
@@ -728,6 +880,64 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String city = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(city))
 			pi.setCity(city);
+
+        // Extract for earthquake resistance measures
+        String isEarthquakeResistant = planInfoProperties.get(DxfFileConstants.EARTHQUAKE_RESISTANT);
+        if (StringUtils.isNotBlank(isEarthquakeResistant)) {
+            LOG.info("Extracting Earthquake Resistant value from Plan Information layer: " + isEarthquakeResistant);
+            if (isEarthquakeResistant.equalsIgnoreCase(DcrConstants.YES))
+                pi.setEarthquakeResistant(true);
+            else if (isEarthquakeResistant.equalsIgnoreCase(DcrConstants.NO))
+                pi.setEarthquakeResistant(false);
+            else
+                pl.addError(DxfFileConstants.EARTHQUAKE_RESISTANT,
+                        DxfFileConstants.EARTHQUAKE_RESISTANT + " cannot be accepted , should be either YES/NO.");
+        }
+
+        String secondRoadWidth = planInfoProperties.get(DxfFileConstants.SECOND_ROAD_WIDTH);
+        if (StringUtils.isNotBlank(secondRoadWidth)) {
+            secondRoadWidth = secondRoadWidth.replaceAll(digitsRegex, "");
+            BigDecimal roadWidthValue = getNumericValue(secondRoadWidth, pl, DxfFileConstants.SECOND_ROAD_WIDTH);
+            if(roadWidthValue.compareTo(pi.getRoadWidth()) > 0){
+                pi.setRoadWidth(roadWidthValue);
+            }
+        }
+
+        String isFourFiveStaredHotel = planInfoProperties.get(DxfFileConstants.IS_FOUR_FIVE_STARED_HOTEL);
+        if (StringUtils.isNotBlank(isFourFiveStaredHotel)) {
+            LOG.info("Extracting isFourFiveStaredHotel value from Plan Information layer: " + isFourFiveStaredHotel);
+            if (isFourFiveStaredHotel.equalsIgnoreCase(DcrConstants.YES))
+                pi.setFourFiveStaredHotel(true);
+            else if (isFourFiveStaredHotel.equalsIgnoreCase(DcrConstants.NO))
+                pi.setFourFiveStaredHotel(false);
+            else
+                pl.addError(DxfFileConstants.IS_FOUR_FIVE_STARED_HOTEL,
+                        DxfFileConstants.IS_FOUR_FIVE_STARED_HOTEL + " cannot be accepted , should be either YES/NO.");
+        }
+
+        String isEconomicallyWeakerSection = planInfoProperties.get(DxfFileConstants.IS_ECONOMICALLY_WEAKER_SECTION);
+        if (StringUtils.isNotBlank(isEconomicallyWeakerSection)) {
+            LOG.info("Extracting isEconomicallyWeakerSection value from Plan Information layer: " + isEconomicallyWeakerSection);
+            if (isEconomicallyWeakerSection.equalsIgnoreCase(DcrConstants.YES))
+                pi.setEconomicallyWeakerSection(true);
+            else if (isEconomicallyWeakerSection.equalsIgnoreCase(DcrConstants.NO))
+                pi.setEconomicallyWeakerSection(false);
+            else
+                pl.addError(DxfFileConstants.IS_ECONOMICALLY_WEAKER_SECTION,
+                        DxfFileConstants.IS_ECONOMICALLY_WEAKER_SECTION + " cannot be accepted , should be either YES/NO.");
+        }
+
+        String isLowerIncomeGroup = planInfoProperties.get(DxfFileConstants.IS_LOWER_INCOME_GROUP);
+        if (StringUtils.isNotBlank(isLowerIncomeGroup)) {
+            LOG.info("Extracting isLowerIncomeGroup value from Plan Information layer: " + isLowerIncomeGroup);
+            if (isLowerIncomeGroup.equalsIgnoreCase(DcrConstants.YES))
+                pi.setLowerIncomeGroup(true);
+            else if (isLowerIncomeGroup.equalsIgnoreCase(DcrConstants.NO))
+                pi.setLowerIncomeGroup(false);
+            else
+                pl.addError(DxfFileConstants.IS_LOWER_INCOME_GROUP,
+                        DxfFileConstants.IS_LOWER_INCOME_GROUP + " cannot be accepted , should be either YES/NO.");
+        }
 
 //		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
 //		if (StringUtils.isNotBlank(mauza))

@@ -20,6 +20,7 @@ import org.egov.common.entity.edcr.Room;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.TypicalFloor;
 import org.egov.common.entity.edcr.Window;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.OccupancyDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
@@ -174,7 +175,11 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                     if (!regularRoomheights.isEmpty())
                                         roomHeightMap.put(colorCode, regularRoomheights);
                                 }
+                                
+                                List<BigDecimal> roomWidth = Util.getListOfDimensionByColourCode(pl, regularRoomLayer,
+                						DxfFileConstants.INDEX_COLOR_TWO);
 
+                             
                                 List<DXFLWPolyline> roomPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
                                         regularRoomLayer);
 
@@ -190,6 +195,9 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                     }
                                     room.setClosed(isClosed);
 
+                                    if (!roomWidth.isEmpty()) {
+                                        room.setRoomWidth(roomWidth);  
+                                    }
                                     List<RoomHeight> roomHeights = new ArrayList<>();
                                     if (!roomPolyLines.isEmpty()) {
                                         List<Measurement> rooms = new ArrayList<Measurement>();
@@ -242,6 +250,129 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                 }
                             }
                         }
+                        
+                        
+//                        /*
+//                         * Extract Non Inhabitable room
+//                         */
+                        Map<Integer, List<BigDecimal>> nonInhabitableRoomHeightMap = new HashMap<>();
+
+                        String roomLayerName = String.format(layerNames.getLayerName("LAYER_NAME_NON_INHABITABLE_ROOM"),
+                                block.getNumber(), floor.getNumber(), "+\\d");
+
+                        List<String> roomLayers = Util.getLayerNamesLike(pl.getDoc(), roomLayerName);
+
+                        if (!roomLayers.isEmpty()) {
+
+                            for (String roomLayer : roomLayers) {
+
+                                for (String type : roomOccupancyTypes) {
+                                    Integer colorCode = roomOccupancyFeature.get(type);
+                                    List<BigDecimal> roomheights = Util.getListOfDimensionByColourCode(pl,
+                                            roomLayer, colorCode);
+                                    if (!roomheights.isEmpty())
+                                    	nonInhabitableRoomHeightMap.put(colorCode, roomheights);
+                                }
+
+                                List<DXFLWPolyline> roomPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
+                                        roomLayer);
+
+                                if (!nonInhabitableRoomHeightMap.isEmpty() || !roomPolyLines.isEmpty()) {
+                                    boolean isClosed = roomPolyLines.stream()
+                                            .allMatch(dxflwPolyline -> dxflwPolyline.isClosed());
+
+                                    Room room = new Room();
+                                    String[] roomNo = roomLayer.split("_");
+                                    if (roomNo != null && roomNo.length == 7) {
+                                    	room.setNumber(roomNo[6]);
+                                    }
+                                    room.setClosed(isClosed);
+
+                                    List<RoomHeight> roomHeights = new ArrayList<>();
+                                    if (!roomPolyLines.isEmpty()) {
+                                        List<Measurement> rooms = new ArrayList<Measurement>();
+                                        roomPolyLines.stream().forEach(arp -> {
+                                            Measurement m = new MeasurementDetail(arp, true);
+                                            if (!roomHeightMap.isEmpty() && nonInhabitableRoomHeightMap.containsKey(m.getColorCode())) {
+                                                for (BigDecimal value : nonInhabitableRoomHeightMap.get(m.getColorCode())) {
+                                                    RoomHeight roomHeight = new RoomHeight();
+                                                    roomHeight.setColorCode(m.getColorCode());
+                                                    roomHeight.setHeight(value);
+                                                    roomHeights.add(roomHeight);
+                                                }
+                                                room.setHeights(roomHeights);
+                                            }
+                                            rooms.add(m);
+                                        });
+
+                                        // Extract the Mezzanine Area if is declared at non inhabitable room level
+                                        String roomMezzLayerRegExp = String
+                                                .format(layerNames.getLayerName("LAYER_NAME_MEZZANINE_AT_NON_INHABITABLE_ROOM"),
+                                                        block.getNumber(), floor.getNumber(), room.getNumber(), "+\\d");
+                                        List<String> roomMezzLayers = Util.getLayerNamesLike(pl.getDoc(),
+                                        		roomMezzLayerRegExp);
+                                        if (!roomMezzLayers.isEmpty()) {
+                                            for (String layerName : roomMezzLayers) {
+                                                List<Occupancy> roomMezzanines = new ArrayList<>();
+                                                String[] array = layerName.split("_");
+                                                String mezzanineNo = array[8];
+                                                List<DXFLWPolyline> mezzaninePolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
+                                                        layerName);
+                                                if (!mezzaninePolyLines.isEmpty())
+                                                    for (DXFLWPolyline polyline : mezzaninePolyLines) {
+                                                        OccupancyDetail occupancy = new OccupancyDetail();
+                                                        occupancy.setColorCode(polyline.getColor());
+                                                        occupancy.setMezzanineNumber(mezzanineNo);
+                                                        occupancy.setIsMezzanine(true);
+                                                        occupancy.setBuiltUpArea(Util.getPolyLineArea(polyline));
+                                                        occupancy.setTypeHelper(Util.findOccupancyType(polyline, pl));
+                                                        List<BigDecimal> heights = Util.getListOfDimensionValueByLayer(pl,
+                                                                layerName);
+                                                        if (!heights.isEmpty())
+                                                            occupancy.setHeight(Collections.max(heights));
+                                                        roomMezzanines.add(occupancy);
+                                                    }
+                                                room.setMezzanineAreas(roomMezzanines);
+                                            }
+                                        }
+
+                                        room.setRooms(rooms);
+                                    }
+                                    floor.addNonInhabitationalRooms(room);
+                                }
+
+                            }
+
+                        }
+                        
+                     /* Extract hilly area room height */
+
+						String hillyAreaRoomHeightLayerName = String.format(layerNames.getLayerName("LAYER_NAME_HILLY_ROOM_HEIGHT"),
+								block.getNumber(), floor.getNumber(), "+\\d");
+
+						List<String> hillyHeightLayers = Util.getLayerNamesLike(pl.getDoc(), hillyAreaRoomHeightLayerName);
+
+						if (!hillyHeightLayers.isEmpty()) {
+
+							for (String hillyLayer : hillyHeightLayers) {
+								String hillyHeight = Util.getMtextByLayerName(pl.getDoc(), hillyLayer);
+
+								List<DXFDimension> dimensionList = Util.getDimensionsByLayer(pl.getDoc(), hillyLayer);
+								if (dimensionList != null && !dimensionList.isEmpty()) {
+									Room room = new Room();
+									BigDecimal hillyHeight1 = hillyHeight != null
+											? BigDecimal
+													.valueOf(Double.valueOf(hillyHeight.replaceAll("HILLY_ROOM_HT_M=", "")))
+											: BigDecimal.ZERO;
+									room.setHillyAreaRoomHeight(hillyHeight1);
+							
+									floor.addRegularRoom(room);
+								}
+								
+							}
+						}
+						
+                      
                     	// Code Added by Neha for Doors extract
 
 						String doorLayerName = String.format(layerNames.getLayerName("LAYER_NAME_DOOR"),

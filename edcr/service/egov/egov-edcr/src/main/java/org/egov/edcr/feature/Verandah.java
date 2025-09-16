@@ -171,23 +171,25 @@ public class Verandah extends FeatureProcess {
 	 * @param permissibleWidth The minimum required verandah width
 	 */
 	private void evaluateVerandahWidth(Plan pl, ScrutinyDetail scrutinyDetail, Floor floor, BigDecimal permissibleWidth) {
-	    Optional<BigDecimal> minWidthOpt = floor.getVerandah().getMeasurements().stream()
-	            .map(Measurement::getWidth)
-	            .min(Comparator.naturalOrder());
+	    List<BigDecimal> verandahWidths = floor.getVerandah().getVerandahWidth();
 
-	    if (minWidthOpt.isPresent() && minWidthOpt.get().compareTo(BigDecimal.ZERO) > 0) {
-	        BigDecimal minWidth = minWidthOpt.get();
-			ReportScrutinyDetail detail = new ReportScrutinyDetail();
-			detail.setRuleNo(RULE_43);
-			detail.setDescription(VERANDAH_DESCRIPTION);
-			detail.setRequired(MIN_WIDTH + permissibleWidth + METER);
-			detail.setProvided(WIDTH_AREA + minWidth + AT_FLOOR + floor.getNumber());
-			detail.setStatus(minWidth.compareTo(permissibleWidth) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+	    if (verandahWidths != null && !verandahWidths.isEmpty()) {
+	        // Take minimum width from extracted verandah widths
+	        BigDecimal providedWidth = verandahWidths.stream().min(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
 
-			Map<String, String> details = mapReportDetails(detail);
-			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+	        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+	        detail.setRuleNo(RULE_43);
+	        detail.setDescription(VERANDAH_DESCRIPTION);
+	        detail.setRequired(EMPTY_STRING);
+	        detail.setProvided(WIDTH_AREA + providedWidth + AT_FLOOR + floor.getNumber());
+	        detail.setStatus(Result.Accepted.getResultVal());
+	               
+
+	        Map<String, String> details = mapReportDetails(detail);
+	        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	    }
 	}
+
 
 	/**
 	 * Evaluates verandah depth against maximum depth restrictions for a specific floor.
@@ -208,9 +210,9 @@ public class Verandah extends FeatureProcess {
 			ReportScrutinyDetail detail = new ReportScrutinyDetail();
 			detail.setRuleNo(RULE_43A);
 			detail.setDescription(VERANDAH_DESCRIPTION);
-			detail.setRequired(MIN_DEPTH_NOT_MORE_THAN + permissibleDepth + METER);
+			detail.setRequired(EMPTY_STRING);
 			detail.setProvided(DEPTH_AREA + minDepth + AT_FLOOR + floor.getNumber());
-			detail.setStatus(minDepth.compareTo(permissibleDepth) <= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+			detail.setStatus(Result.Accepted.getResultVal());
 
 			Map<String, String> details = mapReportDetails(detail);
 			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);

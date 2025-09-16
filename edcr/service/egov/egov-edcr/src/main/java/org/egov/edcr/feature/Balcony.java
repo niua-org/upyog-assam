@@ -70,6 +70,8 @@ import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 public class Balcony extends FeatureProcess {
 
 	private static final Logger log = LogManager.getLogger(Balcony.class);
+
+	
 	
 	@Autowired
 	MDMSCacheManager cache;
@@ -92,14 +94,20 @@ public class Balcony extends FeatureProcess {
 	 */
 	
 	@Override
-	public Plan process(Plan plan) {
-	    for (Block block : plan.getBlocks()) {
-	        if (block.getBuilding() != null) {
-	            processBlockBalconies(plan, block);
-	        }
-	    }
-	    return plan;
-	}
+    public Plan process(Plan plan) {
+        log.info("Starting process() for plan");
+        for (Block block : plan.getBlocks()) {
+            log.info("Processing Block: {}", block.getNumber());
+            if (block.getBuilding() != null) {
+                log.info("Block {} has building. Processing balconies.", block.getNumber());
+                processBlockBalconies(plan, block);
+            } else {
+                log.info("Block {} has no building. Skipping.", block.getNumber());
+            }
+        }
+        log.info("Exiting process() for plan:");
+        return plan;
+    }
 
 	/**
 	 * Processes all balconies for a given block and prepares scrutiny details.
@@ -113,15 +121,20 @@ public class Balcony extends FeatureProcess {
 	 * @param block the block whose balconies are to be processed"Block_"
 	 */
 	private void processBlockBalconies(Plan plan, Block block) {
-	    ScrutinyDetail scrutinyDetail = createScrutinyDetail(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.BALCONY,
-	            RULE_NO, FLOOR, DESCRIPTION, PERMISSIBLE, PROVIDED, STATUS);
+        log.info("Processing balconies for Block {}", block.getNumber());
 
-	    for (Floor floor : block.getBuilding().getFloors()) {
-	        processFloorBalconies(plan, block, floor, scrutinyDetail);
-	    }
+        ScrutinyDetail scrutinyDetail = createScrutinyDetail(
+                BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.BALCONY,
+                RULE_NO, FLOOR, DESCRIPTION, PERMISSIBLE, PROVIDED, STATUS);
 
-	    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-	}
+        for (Floor floor : block.getBuilding().getFloors()) {
+            log.info("Processing Floor {} of Block {}", floor.getNumber(), block.getNumber());
+            processFloorBalconies(plan, block, floor, scrutinyDetail);
+        }
+
+        log.info("Adding scrutiny details for Block {} to plan report.", block.getNumber());
+        plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
 
 	/**
 	 * Processes all balconies on a given floor of a block.
@@ -136,68 +149,76 @@ public class Balcony extends FeatureProcess {
 	 * @param scrutinyDetail the scrutiny detail object to which validation results are added
 	 */
 	private void processFloorBalconies(Plan plan, Block block, Floor floor, ScrutinyDetail scrutinyDetail) {
-	    boolean isTypicalRepititiveFloor = false;
+        log.info("Processing balconies for Floor {} in Block {}", floor.getNumber(), block.getNumber());
 
-	    Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
+        boolean isTypicalRepititiveFloor = false;
+        Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
 
-	    List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
-	    if (balconies != null && !balconies.isEmpty()) {
-	        for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
-	            validateBalcony(plan, floor, balcony, typicalFloorValues, scrutinyDetail);
-	        }
-	    }
-	}
+        List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
+        if (balconies != null && !balconies.isEmpty()) {
+            log.info("Found {} balconies in Floor {} of Block {}", balconies.size(), floor.getNumber(), block.getNumber());
+            for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
+                log.info("Validating Balcony {}", balcony.getNumber());
+                validateBalcony(plan, floor, balcony, typicalFloorValues, scrutinyDetail);
+            }
+        } else {
+            log.info("No balconies found in Floor {} of Block {}", floor.getNumber(), block.getNumber());
+        }
+    }
 
 	/**
-	 * Validates the width of a single balcony against MDMS rules and adds the result to scrutiny.
+	 * Validates the width of a single balcony against MDMS rules and adds the
+	 * result to scrutiny.
 	 * <p>
-	 * Compares the minimum width of the balcony with the permissible value obtained from
-	 * MDMS rules. Based on the comparison, a result row is created and added to the scrutiny detail.
+	 * Compares the minimum width of the balcony with the permissible value obtained
+	 * from MDMS rules. Based on the comparison, a result row is created and added
+	 * to the scrutiny detail.
 	 * </p>
 	 *
-	 * @param plan              the plan being processed
-	 * @param floor             the floor containing the balcony
-	 * @param balcony           the balcony to validate
-	 * @param typicalFloorValues a map containing details about typical floors, if applicable
-	 * @param scrutinyDetail    the scrutiny detail object to which the validation result is added
+	 * @param plan               the plan being processed
+	 * @param floor              the floor containing the balcony
+	 * @param balcony            the balcony to validate
+	 * @param typicalFloorValues a map containing details about typical floors, if
+	 *                           applicable
+	 * @param scrutinyDetail     the scrutiny detail object to which the validation
+	 *                           result is added
 	 */
 	private void validateBalcony(Plan plan, Floor floor, org.egov.common.entity.edcr.Balcony balcony,
-	                              Map<String, Object> typicalFloorValues, ScrutinyDetail scrutinyDetail) {
-		
-		BigDecimal balconyValue;
+			Map<String, Object> typicalFloorValues, ScrutinyDetail scrutinyDetail) {
 
-	    List<BigDecimal> widths = balcony.getWidths();
-	    BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO
-	            : widths.stream().reduce(BigDecimal::min).get();
-	    minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-	    
-	    List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BALCONY.getValue(), false);
-        Optional<BalconyRequirement> matchedRule = rules.stream()
-            .filter(BalconyRequirement.class::isInstance)
-            .map(BalconyRequirement.class::cast)
-            .findFirst();
+		BigDecimal balconyValue = BigDecimal.ZERO;
+		log.info("Validating balcony widths for Balcony {}", balcony.getNumber());
 
-	    if (matchedRule.isPresent()) {
-	        balconyValue = matchedRule.get().getPermissible();
-	    } else {
-	        balconyValue = BigDecimal.ZERO;
-	    }
-	    
-//	    List<BalconyRule> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false, BalconyRule.class);
-//
-//	    BigDecimal balconyValue = rules.stream()
-//	        .findFirst()
-//	        .map(BalconyRule::getPermissible)
-//	        .orElse(BigDecimal.ZERO);
-//
+		List<BigDecimal> widths = balcony.getWidths();
+		log.info("Widths found for Balcony {}: {}", balcony.getNumber(), widths);
 
+		BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO : widths.stream().reduce(BigDecimal::min).get();
+		minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+		log.info("Minimum width for Balcony {}: {}", balcony.getNumber(), minWidth);
 
-	    boolean isAccepted = minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-	            DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0;
+		List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BALCONY.getValue(), false);
+		log.info("Fetched {} rules from MDMS for Balcony validation.", rules.size());
 
-	    String floorLabel = typicalFloorValues.get(TYPICAL_FLOOR) != null
-	            ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
-	            : FLOOR_SPACED + floor.getNumber();
+		Optional<BalconyRequirement> matchedRule = rules.stream().filter(BalconyRequirement.class::isInstance)
+				.map(BalconyRequirement.class::cast).findFirst();
+
+		if (matchedRule.isPresent()) {
+			balconyValue = matchedRule.get().getPermissible();
+			log.info("Matched permissible value from MDMS: {}", balconyValue);
+		} else {
+			balconyValue = BigDecimal.ZERO;
+			log.info("No rule matched. Default permissible value set to 0.");
+		}
+
+		boolean isAccepted = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+		        DcrConstants.ROUNDMODE_MEASUREMENTS)
+		    .compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+		        DcrConstants.ROUNDMODE_MEASUREMENTS)) <= 0;
+		log.info("Balcony {} validation result: {}", balcony.getNumber(), isAccepted ? "ACCEPTED" : "NOT ACCEPTED");
+
+		String floorLabel = typicalFloorValues.get(TYPICAL_FLOOR) != null
+				? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+				: FLOOR_SPACED + floor.getNumber();
 
 		ReportScrutinyDetail detail = new ReportScrutinyDetail();
 		detail.setRuleNo(RULE45_IV);
@@ -208,19 +229,20 @@ public class Balcony extends FeatureProcess {
 		detail.setFloorNo(floorLabel);
 
 		Map<String, String> details = mapReportDetails(detail);
-	    scrutinyDetail.getDetail().add(details);
+		scrutinyDetail.getDetail().add(details);
+		log.info("Added scrutiny detail for Balcony {} in Floor {}", balcony.getNumber(), floor.getNumber());
 	}
-
 	// Method to create ScrutinyDetail
 	private ScrutinyDetail createScrutinyDetail(String key, String... headings) {
-	    ScrutinyDetail detail = new ScrutinyDetail();
-	    detail.setKey(key);
-	    for (int i = 0; i < headings.length; i++) {
-	        detail.addColumnHeading(i + 1, headings[i]);
-	    }
-	    return detail;
-	}
-
+        log.info("Creating scrutiny detail with key: {}", key);
+        ScrutinyDetail detail = new ScrutinyDetail();
+        detail.setKey(key);
+        for (int i = 0; i < headings.length; i++) {
+            detail.addColumnHeading(i + 1, headings[i]);
+        }
+        return detail;
+    }
+	
 	@Override
 	public Map<String, Date> getAmendments() {
 	    return new LinkedHashMap<>();
