@@ -545,7 +545,7 @@ public class Far_Assam extends Far {
             quarterBuildingLength = buildingLength.divide(farBalconyLength, 2, RoundingMode.HALF_UP);
         }
         else{
-            return false;
+            return true;
         }
 
         return balconyLength.compareTo(quarterBuildingLength) <= 0;
