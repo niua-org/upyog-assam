@@ -53,10 +53,10 @@ public class OverHangsExtract extends FeatureExtract {
                             .map(flightPolyLine -> new MeasurementDetail(flightPolyLine, true))
                             .collect(Collectors.toList());
                     floor.setOverHangs(overHangMeasurements);
-                }
+//                }
 //
 //                for (Floor floor : block.getBuilding().getFloors()) {
-//                    String floorProjectedBalcony = String.format(layerNames.getLayerName("LAYER_NAME_FLOOR_PROJECTED_BALCONY"), block.getNumber(), floor.getNumber());
+                    String floorProjectedBalcony = String.format(layerNames.getLayerName("LAYER_NAME_FLOOR_PROJECTED_BALCONY"), block.getNumber(), floor.getNumber());
 
                     //-------------- TO BE TESTED AND CHECK OUT WHICH CODE IS NEEDED ----------------
 //                    Map<String, Integer> OverHangColors = planDetail.getSubFeatureColorCodesMaster().get("Balcony");
@@ -73,30 +73,30 @@ public class OverHangsExtract extends FeatureExtract {
 //                            }
 //                        });
 //                    }
-//                    List<BigDecimal> balconyLength = Util.getListOfDimensionValueByLayer(planDetail, floorProjectedBalcony);
-//                    floor.setFloorProjectedBalconies(balconyLength);
-//
-//                    // Balcony distance from plot boundary
-//                        String balconyDistLayerName = String.format(
-//                                layerNames.getLayerName("LAYER_NAME_BALCONY_DIST_TO_PLOT_BNDRY"),
-//                                floor.getNumber());
-//                        if (balconyDistLayerName != null) {
-//                            List<BigDecimal> distanceToPlotList = Util.getListOfDimensionValueByLayer(planDetail,
-//                                    balconyDistLayerName);
-//                            floor.setBalconyDistanceFromPlotBoundary(distanceToPlotList);
-//                        }
-//                    }
+                    if(!floorProjectedBalcony.isEmpty()) {
+                        List<BigDecimal> balconyLength = Util.getListOfDimensionValueByLayer(planDetail, floorProjectedBalcony);
+                        floor.setFloorProjectedBalconies(balconyLength);
+                    }
+
+                    // Balcony distance from plot boundary
+                    String balconyDistLayerName = String.format(
+                            layerNames.getLayerName("LAYER_NAME_BALCONY_DIST_TO_PLOT_BNDRY"), block.getNumber(), floor.getNumber());
+                    if (!balconyDistLayerName.isEmpty()) {
+                        List<BigDecimal> distanceToPlotList = Util.getListOfDimensionValueByLayer(planDetail, balconyDistLayerName);
+                        floor.setBalconyDistanceFromPlotBoundary(distanceToPlotList);
+                    }
                 }
             }
+        }
 
         return planDetail;
     }
 
-    private List<BigDecimal> buildDimension(PlanDetail pl, DXFDimension dim, Map.Entry<String, Integer> sub,
-                                            String layerName) {
-        List<BigDecimal> values = new ArrayList<>();
-        LOG.info("**** Corridor -" + sub.getKey() + "- Dimension---->>>" + values);
-        Util.extractDimensionValue(pl, values, dim, layerName);
-        return values.isEmpty() ? Arrays.asList(BigDecimal.ZERO) : values;
-    }
+//    private List<BigDecimal> buildDimension(PlanDetail pl, DXFDimension dim, Map.Entry<String, Integer> sub,
+//                                            String layerName) {
+//        List<BigDecimal> values = new ArrayList<>();
+//        LOG.info("**** Corridor -" + sub.getKey() + "- Dimension---->>>" + values);
+//        Util.extractDimensionValue(pl, values, dim, layerName);
+//        return values.isEmpty() ? Arrays.asList(BigDecimal.ZERO) : values;
+//    }
 }

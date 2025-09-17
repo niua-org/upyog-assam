@@ -56,7 +56,6 @@ import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
-import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -479,19 +478,19 @@ public class AdditionalFeature_Assam extends FeatureProcess {
      * @param roadWidth Width of the road
      */
     private void validateHeightOfBuilding(Plan pl, HashMap<String, String> errors, BigDecimal roadWidth,
-                                                  BigDecimal additionalFeatureBuildingHeightA,
-                                                  BigDecimal additionalFeatureBuildingHeightB,
-                                                  BigDecimal additionalFeatureBuildingHeightServiceFloor,
-                                                  BigDecimal additionalFeatureTotalBuildingHeight,
-                                                  BigDecimal additionalFeatureBuildingHeightStiltParking,
-                                                  BigDecimal additionalFeatureBuildingHeightRoofTanks,
-                                                  BigDecimal additionalFeatureBuildingHeightChimney,
-                                                  BigDecimal additionalFeatureBuildingHeightServiceRooms,
-                                                  BigDecimal additionalFeatureBuildingHeightStairCovers,
-                                                  BigDecimal additionalFeatureBuildingHeightRoofArea,
-                                                  BigDecimal additionalFeatureBuildingHeightRWH,
-                                                  BigDecimal additionalFeatureBuildingHeightCappedPermitted,
-                                                  BigDecimal additionalFeatureBuildingHeightMaxPermitted
+                                          BigDecimal additionalFeatureBuildingHeightA,
+                                          BigDecimal additionalFeatureBuildingHeightB,
+                                          BigDecimal additionalFeatureBuildingHeightServiceFloor,
+                                          BigDecimal additionalFeatureTotalBuildingHeight,
+                                          BigDecimal additionalFeatureBuildingHeightStiltParking,
+                                          BigDecimal additionalFeatureBuildingHeightRoofTanks,
+                                          BigDecimal additionalFeatureBuildingHeightChimney,
+                                          BigDecimal additionalFeatureBuildingHeightServiceRooms,
+                                          BigDecimal additionalFeatureBuildingHeightStairCovers,
+                                          BigDecimal additionalFeatureBuildingHeightRoofArea,
+                                          BigDecimal additionalFeatureBuildingHeightRWH,
+                                          BigDecimal additionalFeatureBuildingHeightCappedPermitted,
+                                          BigDecimal additionalFeatureBuildingHeightMaxPermitted
     ) {
 
         for (Block block : pl.getBlocks()) {
@@ -582,7 +581,7 @@ public class AdditionalFeature_Assam extends FeatureProcess {
                                                         BigDecimal additionalFeatureBuildingHeightRoofArea,
                                                         BigDecimal additionalFeatureBuildingHeightRWH
 
-                                                        ) {
+    ) {
         BigDecimal totalHeight = block.getBuilding().getBuildingHeight();
         LOG.info("Calculating effective building height for block: " + block.getNumber());
 
@@ -597,7 +596,7 @@ public class AdditionalFeature_Assam extends FeatureProcess {
 
             // Roof tanks and supports ≤ 2.0 m height.
             if(block.getRoofTanks().isEmpty()){
-                pl.addError("NO_ROOF_TANKS_FOUND", "No roof tanks found");
+                pl.addError(NO_ROOF_TANKS_FOUND, NO_ROOF_TANK_DESC);
             } else {
                 BigDecimal maxTankHeight = block.getRoofTanks().stream().reduce(BigDecimal::max).get();
                 if (maxTankHeight.compareTo(additionalFeatureBuildingHeightRoofTanks) <= 0) {
@@ -629,11 +628,14 @@ public class AdditionalFeature_Assam extends FeatureProcess {
 
             // Chimneys and architectural features ≤ 1.5 m height.
             if(block.getChimneys().isEmpty()){
-                pl.addError("NO_CHIMNEYS_FOUND", "No chimneys found");
+                pl.addError(NO_CHIMNEYS_FOUND, NO_CHIMNEYS_DESC);
             } else {
-                BigDecimal maxChimneyHeight = block.getChimneys().stream().reduce(BigDecimal::max).get();
-                if (maxChimneyHeight.compareTo(additionalFeatureBuildingHeightChimney) <= 0)
-                    totalHeight = totalHeight.subtract(maxChimneyHeight);
+                if(!block.getChimneys().isEmpty()) {
+                    BigDecimal maxChimneyHeight = block.getChimneys().stream().reduce(BigDecimal::max).get();
+                    if (maxChimneyHeight.compareTo(additionalFeatureBuildingHeightChimney) <= 0)
+                        totalHeight = totalHeight.subtract(maxChimneyHeight);
+                }
+
                 if (maxArchitectureHeight.compareTo(additionalFeatureBuildingHeightChimney) <= 0)
                     totalHeight = totalHeight.subtract(maxArchitectureHeight);
                 // Subtracting servicerooms heights such as ventilation, ac and lift rooms
@@ -712,7 +714,7 @@ public class AdditionalFeature_Assam extends FeatureProcess {
                 }
             }
         }else{
-            pl.addError("NO_SETBACKS_FOUND", "No setbacks found");
+            pl.addError(NO_SETBACKS_FOUND, NO_SETBACK_DESC);
         }
 
         // Cap front setback at 16m as per regulations
