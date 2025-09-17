@@ -65,7 +65,8 @@ public class LandUserService {
 					owner.setTenantId(centralInstanceUtil.getStateLevelTenant(landInfo.getTenantId()));
 				}
 
-				userDetailResponse = userExists(owner, requestInfo);
+				OwnerInfo ownerInfo = convertToOwnerInfo(owner);
+				userDetailResponse = userExists(ownerInfo, requestInfo);
 
 				if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())
 					//TODO: check this condition and uncomment if required
@@ -73,19 +74,16 @@ public class LandUserService {
 					) {
 					// if no user found with mobileNo or details were changed,
 					// creating new one..
-					Role role = getCitizenRole();
-					addUserDefaultFields(owner.getTenantId(), role, owner);
 					StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
 							.append(config.getUserCreateEndpoint());
-					setUserName(owner);
+					setUserName(ownerInfo, owner);
 					owner.setOwnerType(LandConstants.CITIZEN);
-					OwnerInfo ownerInfo = convertToOwnerInfo(owner);
 					log.info("ownerInfo-->" + ownerInfo);
 					userDetailResponse = userCall(new CreateUserRequest(requestInfo, ownerInfo), uri);
 					log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
 				}
 				if (userDetailResponse != null)
-					setOwnerFields(owner, userDetailResponse, requestInfo);
+					setOwnerFields(ownerInfo, userDetailResponse, requestInfo);
 				
 			} else {
 				log.debug("MobileNo is not existed in ownerInfo.");
@@ -96,11 +94,11 @@ public class LandUserService {
 
 	private OwnerInfo convertToOwnerInfo(OwnerInfoV2 ownerInfoV2) {
 		OwnerInfo ownerInfo = new OwnerInfo();
-		ownerInfo.setActive(ownerInfoV2.getActive());
+		ownerInfo.setActive(ownerInfoV2.getStatus());
 		ownerInfo.setEmailId(ownerInfoV2.getEmailId());
 		ownerInfo.setFatherOrHusbandName(ownerInfoV2.getFatherOrHusbandName());
 		ownerInfo.setGender(ownerInfoV2.getGender());
-		ownerInfo.setId(ownerInfoV2.getId());
+		ownerInfo.setId(ownerInfoV2.getUserId());
 		ownerInfo.setMobileNumber(ownerInfoV2.getMobileNumber());
 		ownerInfo.setName(ownerInfoV2.getName());
 		if(ownerInfoV2.getPermanentAddress() != null){
@@ -109,10 +107,10 @@ public class LandUserService {
 		if(ownerInfoV2.getCorrespondenceAddress() != null){
 			ownerInfo.setCorrespondenceAddress(ownerInfoV2.getCorrespondenceAddress().getAddressLine1());
 		}
-		ownerInfo.setUuid(ownerInfoV2.getUuid());
-		ownerInfo.setUserName(ownerInfoV2.getUserName());
-		ownerInfo.setType(ownerInfoV2.getType());
-		ownerInfo.setRoles(ownerInfoV2.getRoles());
+		ownerInfo.setUuid(ownerInfoV2.getUserUuid());
+		ownerInfo.setUserName(ownerInfoV2.getMobileNumber());
+		Role role = getCitizenRole();
+		addUserDefaultFields(ownerInfoV2.getTenantId(), role, ownerInfo);
 		ownerInfo.setTenantId(ownerInfoV2.getTenantId());
 		return ownerInfo;
 	}
@@ -139,7 +137,7 @@ public class LandUserService {
 	 *            The requestInfo of the request
 	 * @return The search response from the user service
 	 */
-	private UserDetailResponse userExists(OwnerInfoV2 owner, @Valid RequestInfo requestInfo) {
+	private UserDetailResponse userExists(OwnerInfo owner, @Valid RequestInfo requestInfo) {
 
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setTenantId(centralInstanceUtil.getStateLevelTenant(owner.getTenantId()));
@@ -160,8 +158,8 @@ public class LandUserService {
 	 * @param owner
 	 *            The owner to whom the username is to assigned
 	 */
-	private void setUserName(OwnerInfoV2 owner) {
-		owner.setUserName(owner.getUserName());
+	private void setUserName(OwnerInfo owner, OwnerInfoV2 ownerv2) {
+		owner.setUserName(ownerv2.getMobileNumber());
 	}
 
 	/**
@@ -174,7 +172,7 @@ public class LandUserService {
 	 * @param requestInfo
 	 *            The requestInfo of the request
 	 */
-	private void setOwnerFields(OwnerInfoV2 owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
+	private void setOwnerFields(OwnerInfo owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
 		owner.setId(userDetailResponse.getUser().get(0).getId());
 		owner.setUuid(userDetailResponse.getUser().get(0).getUuid());
 		owner.setUserName((userDetailResponse.getUser().get(0).getUserName()));
@@ -191,7 +189,7 @@ public class LandUserService {
 	 * @param owner
 	 *            The user whose fields are to be set
 	 */
-	private void addUserDefaultFields(String tenantId, Role role, OwnerInfoV2 owner) {
+	private void addUserDefaultFields(String tenantId, Role role, OwnerInfo owner) {
 		owner.setActive(true);
 		owner.setTenantId(tenantId);
 		owner.setRoles(Collections.singletonList(role));
@@ -204,8 +202,8 @@ public class LandUserService {
 		Set<String> uuids = new HashSet<String>();
 		landInfos.forEach(landInfo -> {
 			landInfo.getOwners().forEach(owner -> {
-				if (owner.getUuid() != null && owner.getStatus() )
-					uuids.add(owner.getUuid().toString());
+				if (owner.getUserUuid() != null && owner.getStatus() )
+					uuids.add(owner.getUserUuid());
 			});
 		});
 

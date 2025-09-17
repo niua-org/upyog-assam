@@ -189,11 +189,11 @@ public class LandEnrichmentService {
 		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
 		landInfos.forEach(landInfo -> {
 			landInfo.getOwners().forEach(owner -> {
-				if (userIdToOwnerMap.get(owner.getUuid()) == null)
+				if (userIdToOwnerMap.get(owner.getUserUuid()) == null)
 					throw new CustomException(LandConstants.OWNER_SEARCH_ERROR,
 							"The owner of the landInfo " + landInfo.getId() + " is not coming in user search");
 				else
-					owner.addUserWithoutAuditDetail(userIdToOwnerMap.get(owner.getUuid()));
+					owner.addUserWithoutAuditDetail(userIdToOwnerMap.get(owner.getUserUuid()));
 			});
 		});
 	}
