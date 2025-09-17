@@ -7,7 +7,7 @@ let actions = [];
 const getAction = (flow) => {
   console.log("Flow in timeline:", flow);
   switch (flow) {
-    case "buildingPlanPermit":
+    case "buildingPermit":
       actions = ["BPA_APPLICANT_DETAILS", "BPA_ADDRESS_DETAILS", "BPA_LAND_DETAILS", "BPA_SUMMARY"];
       break;
     case "editApplication":

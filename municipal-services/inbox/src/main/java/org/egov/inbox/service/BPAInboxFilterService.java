@@ -126,7 +126,7 @@ public class BPAInboxFilterService {
 
                 result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
-                applicationNumbers = JsonPath.read(result, "$.BPAs.*.applicationno");
+                applicationNumbers = JsonPath.read(result, "$.BPAs.*.application_no");
             } else {
                 StringBuilder citizenUri = new StringBuilder();
 

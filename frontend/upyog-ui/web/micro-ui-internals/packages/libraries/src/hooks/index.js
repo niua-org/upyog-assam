@@ -331,6 +331,7 @@ import useADSDemandEstimation from "./ads/useADSDemandEstimation";
 import useCMSearch from "./cm/useCMSearch";
 import useBPACreateUpdateApi from "./obpsv2/useBPACreateUpdateApi";
 import useBPASearchApi from "./obpsv2/useBPASearchApi";
+import useOBPSDocuments from "./obpsv2/useOBPSDocuments";
 
 
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
@@ -692,7 +693,8 @@ const cm = {
 
 const obpsv2={
   useBPACreateUpdateApi,
-  useBPASearchApi
+  useBPASearchApi,
+  useOBPSDocuments
 };
 
 const wt={

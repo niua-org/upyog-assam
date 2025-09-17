@@ -88,6 +88,7 @@ public class EnrichmentService {
 		AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		bpaRequest.getBPA().setAuditDetails(auditDetails);
 		bpaRequest.getBPA().setId(UUID.randomUUID().toString());
+		bpaRequest.getBPA().getAreaMapping().setId(UUID.randomUUID().toString());
         Map<String, String> additionalDetails = bpaRequest.getBPA().getAdditionalDetails() != null
                 ? (Map<String, String>) bpaRequest.getBPA().getAdditionalDetails()
                 : new HashMap<String, String>();
@@ -141,7 +142,8 @@ public class EnrichmentService {
 		String tenantId = request.getBPA().getTenantId();
 		BPA bpa = request.getBPA();
 
-		List<String> applicationNumbers = Arrays.asList("APP-2025-0001");
+		List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
+				config.getApplicationNoIdgenFormat(), 1);
 		ListIterator<String> itr = applicationNumbers.listIterator();
 
 		Map<String, String> errorMap = new HashMap<>();

@@ -311,8 +311,8 @@ public class InboxService {
 					criteria.setModuleSearchCriteria(moduleSearchCriteria);
 				}
 				for (Map<String, String> tenantAppln : tenantWiseApplns) {
-					String tenant = tenantAppln.get("tenantid");
-					String applnNo = tenantAppln.get("applicationno");
+					String tenant = tenantAppln.get("tenant_id");
+					String applnNo = tenantAppln.get("application_no");
 					if (tenantAndApplnNumbersMap.containsKey(tenant)) {
 						List<String> applnNos = tenantAndApplnNumbersMap.get(tenant);
 						applnNos.add(applnNo);
