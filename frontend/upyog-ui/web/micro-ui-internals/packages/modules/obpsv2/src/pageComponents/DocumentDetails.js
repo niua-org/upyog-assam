@@ -13,7 +13,7 @@ import Timeline from "../components/Timeline";
 import DocumentsPreview from "../../../templates/ApplicationDetails/components/DocumentsPreview";
 import { stringReplaceAll } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
-import useOBPSDocuments from "../../../../libraries/src/hooks/obpsV2/useOBPSDocuments";
+
 const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
     const stateId = Digit.ULBService.getStateId();
     const [documents, setDocuments] = useState(formData?.documents?.documents || []);
@@ -21,7 +21,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || [])
-    const {data: bpaTaxDocuments, isLoading} = useOBPSDocuments(stateId, formData, beforeUploadDocuments || []);
+    const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obpsv2.useOBPSDocuments(stateId, formData, beforeUploadDocuments || []);
     const flow = window.location.href.includes("editApplication") ? "editApplication" : "buildingPermit"
     const handleSubmit = () => {
         let document = formData.documents;

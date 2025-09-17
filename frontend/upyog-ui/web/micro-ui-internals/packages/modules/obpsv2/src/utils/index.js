@@ -1,3 +1,4 @@
+import { random } from 'lodash';
 import { v4 as uuid_v4 } from 'uuid';
 export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
@@ -48,68 +49,140 @@ export const checkForNA = (value = "") => {
   return checkForNotNull(value) ? value : "CS_NA";
 };
 
-export const bpaPayload = (data) =>{
-  const formdata={
-    BPA: {
+export const bpaPayload = (data) => {
+  console.log("data in bpa payload", data);
+
+  // Permanent Address
+  const permanentAddress = {
+    addressLine1: data?.address?.permanent?.addressLine1,
+    addressLine2: data?.address?.permanent?.addressLine2,
+    city: data?.address?.permanent?.city?.code,
+    addressCategory: "PERMANENT",
+    addressType: "PERMANENT_ADDRESS",
+    country: "INDIA",
+    district: data?.address?.permanent?.district?.code,
+    houseNo: data?.address?.permanent?.houseNo,
+    pincode: data?.address?.permanent?.pincode,
+    state: data?.address?.permanent?.state?.code,
+    tenantId: data?.tenantId,
+  };
+
+  // Correspondence Address
+  const correspondenceAddress = data?.address?.sameAsPermanent
+    ? { ...permanentAddress, addressCategory: "CORRESPONDENCE" }
+    : {
+        addressLine1: data?.address?.correspondence?.addressLine1,
+        addressLine2: data?.address?.correspondence?.addressLine2,
+        addressCategory: "CORRESPONDENCE",
+        addressType: "CORRESPONDENCE_ADDRESS",
+        city: data?.address?.correspondence?.city?.code,
+        country: "INDIA",
+        district: data?.address?.correspondence?.district?.code,
+        houseNo: data?.address?.correspondence?.houseNo,
+        pincode: data?.address?.correspondence?.pincode,
+        state: data?.address?.correspondence?.state?.code,
         tenantId: data?.tenantId,
-        areaMapping:{
-          buildingPermitAuthority: data?.areaMapping?.bpAuthority?.code,
-          district: data?.areaMapping?.district?.code,
-          mouza: data?.areaMapping?.mouza?.code || data?.areaMapping?.mouza,
-          planningArea: data?.areaMapping?.planningArea?.code,
-          planningPermitAuthority: data?.areaMapping?.ppAuthority?.code,
-          revenueVillage: data?.areaMapping?.revenueVillage?.code,
-          ward: data?.areaMapping?.ward
+      };
+
+  // Final Payload
+  const formdata = {
+    BPA: {
+      tenantId: data?.tenantId,
+      applicationType: data?.land?.constructionType?.code,
+      businessService: "bpa-services",
+      status: "INITIATED",
+
+      areaMapping: {
+        buildingPermitAuthority: "GMC",
+        district: data?.areaMapping?.district?.code,
+        mouza: data?.areaMapping?.mouza?.code || data?.areaMapping?.mouza,
+        planningArea: data?.areaMapping?.planningArea?.code,
+        planningPermitAuthority: data?.areaMapping?.ppAuthority?.code,
+        revenueVillage: data?.areaMapping?.revenueVillage?.code,
+        ward: data?.areaMapping?.ward,
+      },
+
+      documents:
+        data?.land?.documents?.map((doc) => ({
+          documentType: doc?.documentType || "",
+          documentUid: doc?.documentUid || "",
+          fileStoreId: doc?.fileStoreId || "",
+          id: doc?.id || "",
+        })) || [],
+
+      landInfo: {
+        tenantId: data?.tenantId,
+        id:Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15),
+        newDagNumber: data?.land?.newDagNumber,
+        newPattaNumber: data?.land?.newPattaNumber,
+        oldDagNumber: data?.land?.oldDagNumber,
+        oldPattaNumber: data?.land?.oldPattaNumber,
+        totalPlotArea: data?.land?.totalPlotArea,
+        documents:
+        data?.land?.documents?.map((doc) => ({
+          documentType: doc?.documentType || "",
+          documentUid: doc?.documentUid || "",
+          fileStoreId: doc?.fileStoreId || "",
+          id: doc?.id || "",
+        })) || [],
+        address:{
+          addressLine1: data?.address?.permanent?.addressLine1,
+          addressLine2: data?.address?.permanent?.addressLine2,
+          city: data?.address?.permanent?.city?.code,
+          country: "INDIA",
+          district: data?.address?.permanent?.district?.code,
+          houseNo: data?.address?.permanent?.houseNo,
+          pincode: data?.address?.permanent?.pincode,
+          state: data?.address?.permanent?.state?.code,
+          tenantId: data?.tenantId
+        },
+        owners: [
+          {
+            aadhaarNumber: data?.applicant?.aadhaarNumber,
+            pan: data?.applicant?.panCardNumber,
+            mobileNumber: data?.applicant?.mobileNumber,
+            altContactNumber: data?.applicant?.alternateNumber,
+            name: data?.applicant?.applicantName,
+            emailId: data?.applicant?.emailId,
+            fatherOrHusbandName: data?.applicant?.fatherName,
+            motherName: data?.applicant?.motherName,
+            permanentAddress,
+            correspondenceAddress,
+            active: true 
+          },
+        ],
+        ownerAddresses: [],
+        rtpDetails: {
+          rtpCategory: data?.land?.rtpCategory?.code,
+          rtpName: data?.land?.registeredTechnicalPerson?.name,
+          rtpUUID: data?.land?.registeredTechnicalPerson?.code,
         },
 
-        documents: data?.land?.documents?.map((doc) =>({
-          ...doc,
-        })) || [],
-        
-        landInfo:{
-          address:{
-            addressLine1: data?.address?.permanent?.addressLine1,
-            addressLine2: data?.address?.permanent?.addressLine2,
-            city: data?.address?.permanent?.city?.code,
-            country: "INDIA",
-            district: data?.address?.permanent?.district?.code,
-            houseNo: data?.address?.permanent?.houseNo,
-            pincode: data?.address?.permanent?.pincode,
-            state: data?.address?.permanent?.state?.code,
-            tenantId: data?.tenantId
+        units: [
+          {
+            occupancyType: data?.land?.occupancyType?.code,
           },
-            documents: data?.land?.documents?.map((doc) =>({
-              ...doc,
-            })) || [],
-            newDagNumber: data?.land?.newDagNumber,
-            newPattaNumber: data?.land?.newPattaNumber,
-            oldDagNumber: data?.land?.oldDagNumber,
-            oldPattaNumber: data?.land?.oldPattaNumber,
-            totalPlotArea: data?.land?.totalPlotArea,
-            owners:{
-              aadhaarNumber: data?.applicant?.aadhaarNumber,
-              panNumber:data?.applicant?.panCardNumber,
-              mobileNumber: data?.applicant?.mobileNumber,
-              altContactNumber: data?.applicant?.alternateNumber,
-              name: data?.applicant?.applicantName,
-              emailId: data?.applicant?.emailId,
-              fatherOrHusbandName: data?.applicant?.fatherName,
-              motherName: data?.applicant?.motherName
-            },
-            rtpDetails:{
-              rtpCategory: data?.land?.rtpCategory?.code,
-              rtpName: data?.land?.registeredTechnicalPerson?.code
-            },
-            units:{
-              occupancyType: data?.land?.occupancyType?.code,
-            }
-          },
-        workflow:{
-          action:"APPLY",
-          comments:""
-        }
+        ],
+
+        additionalDetails: {
+          adjoiningOwners: data?.land?.adjoiningOwners,
+          futureProvisions: data?.land?.futureProvisions?.horizontalExtension?.code,
+          todBenefits: data?.land?.todBenefits?.code,
+          todWithTdr: data?.land?.todWithTdr?.code,
+          todZone: data?.land?.todZone?.code,
+          tdrUsed: data?.land?.tdrUsed?.code,
+          todAcknowledgement: data?.land?.todAcknowledgement,
+        },
+      },
+
+      workflow: {
+        action: "APPLY",
+        comments: "",
+      },
     },
   };
+
   return formdata;
 };
 
