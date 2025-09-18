@@ -72,34 +72,22 @@ CREATE TABLE IF NOT EXISTS ug_land_geolocation(
 );
 
 CREATE TABLE IF NOT EXISTS ug_land_owner_info(
-	user_id character varying(64),
-	owner_id character varying(64),
-	user_uuid character varying(64),
-	tenant_id character varying(64),
-	name character varying(100),
-	mobile_number character varying(20),
-	alt_mobile_number character varying(20),
-	dob character varying(64),
-	email_id character varying(128),
-	gender character varying(10),
-	relationship_type character varying(30),
-	guardian_name character varying(100),
-	mother_name character varying(100),
-	pan_number character varying(20),
-	aadhaar_number character varying(20),
+	id character varying(64),
+	uuid character varying(64),
 	is_primary_owner boolean,
 	ownership_percentage double precision,
-	owner_type character varying(64),
 	institution_id character varying(64),
 	land_info_id character varying(64),
+	mother_name character varying(100),
 	status boolean DEFAULT TRUE,
+	
 	created_by character varying(64),
     last_modified_by character varying(64),
     created_time bigint,
     last_modified_time bigint,
 	
-	CONSTRAINT pk_ug_land_owner_info PRIMARY KEY (user_id),
-	CONSTRAINT uk_ug_land_owner_info_composite UNIQUE (user_id, land_info_id),
+	CONSTRAINT pk_ug_land_owner_info PRIMARY KEY (id),
+	CONSTRAINT uk_ug_land_owner_info_composite UNIQUE (id, land_info_id),
 	CONSTRAINT fk_ug_land_owner_info FOREIGN KEY (land_info_id) REFERENCES ug_land_info (id),
 	
 	additional_details JSONB
@@ -127,7 +115,7 @@ CREATE TABLE IF NOT EXISTS ug_land_owner_address(
 	last_modified_time bigint,
 
 	CONSTRAINT pk_ug_land_owner_address PRIMARY KEY (id),
-	CONSTRAINT fk_ug_land_owner_address FOREIGN KEY (owner_info_id) REFERENCES ug_land_owner_info (user_id),
+	CONSTRAINT fk_ug_land_owner_address FOREIGN KEY (owner_info_id) REFERENCES ug_land_owner_info (id),
 
 	additional_details JSONB
 );
@@ -231,28 +219,16 @@ CREATE TABLE IF NOT EXISTS ug_land_audit_details(
 
 -- Audit table for ug_land_owner_info
 CREATE TABLE IF NOT EXISTS ug_land_owner_audit_details(
-    user_id character varying(64),
-    owner_id character varying(64),
-   	user_uuid character varying(64),
-   	tenant_id character varying(64),
-   	name character varying(100),
-   	mobile_number character varying(20),
-   	alt_mobile_number character varying(20),
-   	dob character varying(64),
-   	email_id character varying(128),
-   	gender character varying(10),
-   	relationship_type character varying(30),
-   	guardian_name character varying(100),
-   	mother_name character varying(100),
-   	pan_number character varying(20),
-   	aadhaar_number character varying(20),
-   	is_primary_owner boolean,
-   	ownership_percentage double precision,
-   	owner_type character varying(64),
-   	institution_id character varying(64),
-   	land_info_id character varying(64),
-   	status boolean DEFAULT TRUE,
-   	created_by character varying(64),
+    id character varying(64),
+    uuid character varying(64),
+    is_primary_owner boolean,
+    ownership_percentage double precision,
+    institution_id character varying(64),
+    land_info_id character varying(64),
+    mother_name character varying(100),
+    status boolean DEFAULT TRUE,
+    
+    created_by character varying(64),
     last_modified_by character varying(64),
     created_time bigint,
     last_modified_time bigint,
@@ -364,7 +340,7 @@ CREATE INDEX  IF NOT EXISTS land_index ON ug_land_info
 
 CREATE INDEX  IF NOT EXISTS land_owner_index ON ug_land_owner_info
 (
-    user_id,
+    id,
     land_info_id
 );
 
