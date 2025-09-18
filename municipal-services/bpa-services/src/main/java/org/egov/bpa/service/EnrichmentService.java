@@ -89,6 +89,10 @@ public class EnrichmentService {
 		bpaRequest.getBPA().setAuditDetails(auditDetails);
 		bpaRequest.getBPA().setId(UUID.randomUUID().toString());
 		bpaRequest.getBPA().getAreaMapping().setId(UUID.randomUUID().toString());
+		if(bpaRequest.getBPA().getRtpDetails() != null){
+			//TODO:move this uuid generation to util method
+			bpaRequest.getBPA().getRtpDetails().setId(UUID.randomUUID().toString());
+		}
         Map<String, String> additionalDetails = bpaRequest.getBPA().getAdditionalDetails() != null
                 ? (Map<String, String>) bpaRequest.getBPA().getAdditionalDetails()
                 : new HashMap<String, String>();
