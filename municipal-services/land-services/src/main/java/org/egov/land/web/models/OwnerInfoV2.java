@@ -27,13 +27,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class OwnerInfoV2 {
+    // primary key of the owner
+    private String ownerId;
 
-    private Long id;
+    // userid from user service
+    private Long userId;
 
     /**
      * User uuid from user service
      */
-    private String uuid;
+    private String userUuid;
 
     /**
      * Tenant ID of the owner
@@ -227,8 +230,8 @@ public class OwnerInfoV2 {
      *            User object obtained from user service
      */
     public void addUserWithoutAuditDetail(OwnerInfo user) {
-        this.setUuid(user.getUuid());
-        this.setId(user.getId());
+        this.setUserUuid(user.getUuid());
+        this.setUserId(user.getId());
      //   this.setUserName(user.getUserName());
         //	this.setPassword(user.getPassword());
         //	this.setSalutation(user.getSalutation());

@@ -117,7 +117,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 			BigDecimal ownerShipPercentage = val != null ? new BigDecimal(val) : null;
 
 			OwnerInfoV2 owner = OwnerInfoV2.builder().tenantId(tenantId).ownerId(ownerId)
-					.uuid(rs.getString("landInfoowner_uuid"))
+					.userUuid(rs.getString("landInfoowner_uuid"))
 //					.mobileNumber(rs.getString("mobilenumber"))
 					.isPrimaryOwner(isPrimaryOwner)
 					.ownerShipPercentage(ownerShipPercentage)

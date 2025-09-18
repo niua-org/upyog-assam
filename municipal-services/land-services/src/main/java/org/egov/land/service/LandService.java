@@ -55,14 +55,6 @@ public class LandService {
 		
 		enrichmentService.enrichLandInfoRequest(landRequest, false);
 
-		landRequest.getLandInfo().getOwners().forEach(owner -> {
-			if (owner.getActive()) {
-				owner.setStatus(true);
-			}else
-			{
-				owner.setStatus(false);
-			}
-		});
 		repository.save(landRequest.getLandInfo().getTenantId(), landRequest);
 		return landRequest.getLandInfo();
 	}
@@ -83,15 +75,6 @@ public class LandService {
 		landValidator.validateLandInfo(landRequest, mdmsData);
 		userService.manageUser(landRequest);
 		enrichmentService.enrichLandInfoRequest(landRequest, true);
-		
-			landRequest.getLandInfo().getOwners().forEach(owner -> {
-			if (owner.getActive()) {
-				owner.setStatus(true);
-			}else
-			{
-				owner.setStatus(false);
-			}
-		});
 
 		repository.update(landRequest.getLandInfo().getTenantId(), landRequest);
 		List<OwnerInfoV2> activeOwnerList = new ArrayList<>();
