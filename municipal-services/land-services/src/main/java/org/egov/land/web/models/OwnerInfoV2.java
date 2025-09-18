@@ -27,16 +27,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class OwnerInfoV2 {
-    // primary key of the owner
-    private String ownerId;
 
-    // userid from user service
-    private Long userId;
+    private Long id;
 
-    /**
-     * User uuid from user service
-     */
-    private String userUuid;
+    private String uuid;
 
     /**
      * Tenant ID of the owner
@@ -53,6 +47,13 @@ public class OwnerInfoV2 {
     private String name = null;
 
     /**
+     * Unique ID of the owner
+     */
+    @SafeHtml
+    @JsonProperty("ownerId")
+    private String ownerId = null;
+
+    /**
      * Mobile number of the owner
      */
     @SafeHtml
@@ -60,25 +61,16 @@ public class OwnerInfoV2 {
     private String mobileNumber = null;
 
     /**
-     * Alternate contact number of the owner
-     */
-    @Size(max = 50)
-    @SafeHtml
-    @JsonProperty("altContactNumber")
-    private String altContactNumber;
-
-    /**
      * Gender of the owner
      */
     @SafeHtml
     private String gender;
-    /**
-     * Relationship details of the owner
-     */
-    @JsonProperty("relationship")
-    private Relationship relationship = null;
 
-    private String dob;
+    /**
+     * Mother's name of the owner
+     */
+    @SafeHtml
+    private String motherName = null;
 
     /**
      * Father's or husband's name of the owner
@@ -86,12 +78,6 @@ public class OwnerInfoV2 {
     @SafeHtml
     @JsonProperty("fatherOrHusbandName")
     private String fatherOrHusbandName = null;
-
-    /**
-     * Mother's name of the owner
-     */
-    @SafeHtml
-    private String motherName = null;
 
     /**
      * Email ID of the owner
@@ -102,10 +88,19 @@ public class OwnerInfoV2 {
     private String emailId;
 
     /**
+     * Alternate contact number of the owner
+     */
+    @Size(max = 50)
+    @SafeHtml
+    @JsonProperty("altContactNumber")
+    private String altContactNumber;
+
+    /**
      * PAN number of the owner
      */
     @Size(max = 10)
     @SafeHtml
+    @JsonProperty("pan")
     private String panNumber;
 
     /**
@@ -168,6 +163,31 @@ public class OwnerInfoV2 {
     private List<Document> documents = null;
 
     /**
+     * Relationship details of the owner
+     */
+    @JsonProperty("relationship")
+    private Relationship relationship = null;
+
+    @JsonProperty("active")
+    private Boolean active;
+
+    @Size(max = 64)
+    @SafeHtml
+    @JsonProperty("userName")
+    private String userName;
+
+    @Size(max = 50)
+    @SafeHtml
+    @JsonProperty("type")
+    private String type;
+
+    @JsonProperty("roles")
+    @Valid
+    private List<Role> roles;
+
+    private String dob;
+
+    /**
      * Additional details about the owner
      */
     @JsonProperty("additionalDetails")
@@ -200,6 +220,13 @@ public class OwnerInfoV2 {
     private Long lastModifiedDate;
 
     /**
+     * OTP reference for the owner
+     */
+    @SafeHtml
+    @JsonProperty("otpReference")
+    private String otpReference;
+
+    /**
      * Audit details of the owner
      */
     @JsonProperty("auditDetails")
@@ -230,9 +257,9 @@ public class OwnerInfoV2 {
      *            User object obtained from user service
      */
     public void addUserWithoutAuditDetail(OwnerInfo user) {
-        this.setUserUuid(user.getUuid());
-        this.setUserId(user.getId());
-     //   this.setUserName(user.getUserName());
+        this.setUuid(user.getUuid());
+        this.setId(user.getId());
+        this.setUserName(user.getUserName());
         //	this.setPassword(user.getPassword());
         //	this.setSalutation(user.getSalutation());
         this.setName(user.getName());
@@ -248,11 +275,11 @@ public class OwnerInfoV2 {
         //	this.setCorrespondenceAddress(user.getCorrespondenceAddress());
         //	this.setCorrespondenceCity(user.getCorrespondenceCity());
         //	this.setCorrespondencePincode(user.getCorrespondencePincode());
-   //     this.setActive(user.getActive());
+        this.setActive(user.getActive());
         //this.setDob(user.getDob());
         //	this.setPwdExpiryDate(user.getPwdExpiryDate());
         //	this.setLocale(user.getLocale());
-    //    this.setType(user.getType());
+        this.setType(user.getType());
         //this.setAccountLocked(user.getAccountLocked());
         //	this.setRoles(user.getRoles());
         this.setFatherOrHusbandName(user.getFatherOrHusbandName());
