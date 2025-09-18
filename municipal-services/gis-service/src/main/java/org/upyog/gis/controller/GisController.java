@@ -1,5 +1,10 @@
 package org.upyog.gis.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.MediaType;
 import org.upyog.gis.model.PolygonProcessingResponse;
 import org.upyog.gis.service.GisService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/gis")
 @RequiredArgsConstructor
 public class GisController {
 
@@ -29,12 +33,21 @@ public class GisController {
      * @param rtpiId optional RTPI ID
      * @return response containing district, zone, and WFS response
      */
-    @PostMapping("/process-polygon")
-    public ResponseEntity<PolygonProcessingResponse> processPolygonFile(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "tenantId", required = false) String tenantId,
-            @RequestParam(value = "applicationNo", required = false) String applicationNo,
-            @RequestParam(value = "rtpiId", required = false) String rtpiId) {
+    @Operation(summary = "Process polygon file", description = "Uploads and processes a polygon KML file")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK")
+    })
+    @PostMapping(value = "/process-polygon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PolygonProcessingResponse> processPolygon(
+            @Parameter(description = "Polygon KML file", required = true)
+            @RequestPart("file") MultipartFile file,
+            @Parameter(description = "Tenant ID", required = true)
+            @RequestParam String tenantId,
+            @Parameter(description = "Application Number", required = true)
+            @RequestParam String applicationNo,
+            @Parameter(description = "RTPI ID", required = true)
+            @RequestParam String rtpiId
+    ) {
 
         try {
             log.info("Processing polygon file: {} (tenant: {}, applicationNo: {}, rtpiId: {})", 

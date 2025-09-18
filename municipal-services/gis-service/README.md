@@ -18,7 +18,7 @@ This microservice accepts KML file uploads, extracts polygon geometries, queries
 
 ## API Endpoints
 
-### POST `/api/gis/process-polygon`
+### POST `/gis-service/process-polygon`
 
 Process a polygon file and return district/zone information.
 
@@ -71,7 +71,7 @@ curl -F "file=@polygon.kml" \
      -F "tenantId=tenant1" \
      -F "applicationNo=APP123" \
      -F "rtpiId=RTPI456" \
-     http://localhost:8081/api/gis/process-polygon
+     http://localhost:8081/gis-service/process-polygon
 ```
 
 ## Configuration
@@ -241,7 +241,7 @@ INTERSECTS(the_geom, POLYGON((-75.2 39.6, -74.6 39.6, -74.6 40.1, -75.2 40.1, -7
 1. Configure database connection in `application.properties`
 2. Run Flyway migrations: `mvn flyway:migrate`
 3. Start the application: `mvn spring-boot:run`
-4. Test with sample KML file: `curl -F "file=@test-polygon.kml" http://localhost:8081/api/gis/process-polygon`
+4. Test with sample KML file: `curl -F "file=@test-polygon.kml" http://localhost:8081/gis-service/process-polygon`
 
 ### Sample KML File
 

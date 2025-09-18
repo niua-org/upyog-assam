@@ -15,12 +15,12 @@ import java.time.OffsetDateTime;
  * Entity for logging GIS processing operations
  */
 @Entity
-@Table(name = "utilities_gis_log")
+@Table(name = "eg_gis_log")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UtilitiesGisLog {
+public class GisLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

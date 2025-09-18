@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.upyog.gis.client.FilestoreClient;
 import org.upyog.gis.config.GisProperties;
-import org.upyog.gis.entity.UtilitiesGisLog;
+import org.upyog.gis.entity.GisLog;
 import org.upyog.gis.model.PolygonProcessingResponse;
-import org.upyog.gis.repository.UtilitiesGisLogRepository;
+import org.upyog.gis.repository.GisLogRepository;
 import org.upyog.gis.service.GisService;
 import org.upyog.gis.util.KmlParser;
 import org.upyog.gis.wfs.WfsClient;
@@ -24,15 +24,9 @@ import java.io.InputStream;
 import java.time.OffsetDateTime;
 
 /**
- * Improved implementation of GIS service for polygon processing.
- *
- * Key improvements made compared to the original:
- * - Use UUID for fileStoreId
- * - Use try-with-resources when reading the upload InputStream
- * - Do not hard-code fallback district/zone (no "New Jersey")
- * - Produce a more informative and structured fallback response (includes reason/timestamp/source)
- * - Robust null-checks when creating a cleaned WFS response
- * - Extract fewer assumptions about original WFS payload
+ * Service implementation for GIS operations such as processing polygon files,
+ * interacting with WFS, and logging GIS-related activities.
+ * Handles KML uploads, WFS queries, and response formatting.
  */
 @Slf4j
 @Service
@@ -41,16 +35,31 @@ public class GisServiceImpl implements GisService {
 
     private static final long MAX_FILE_SIZE = 10L * 1024L * 1024L; // 10 MB
 
+    private static final String STATUS_SUCCESS = "SUCCESS";
+    private static final String STATUS_FAILURE = "FAILURE";
+    private static final String STATUS_PENDING = "PENDING";
+
     private final WfsClient wfsClient;
-    private final UtilitiesGisLogRepository logRepository;
+    private final GisLogRepository logRepository;
     private final GisProperties gisProperties;
     private final ObjectMapper objectMapper;
     private final FilestoreClient filestoreClient;
 
+    /**
+     * Processes a polygon file (KML/XML), uploads it to filestore, parses the polygon,
+     * queries WFS for district/zone, logs the operation, and returns a structured response.
+     *
+     * @param file         the uploaded polygon file (KML/XML)
+     * @param tenantId     the tenant identifier
+     * @param applicationNo the application number
+     * @param rtpiId       the RTPI identifier
+     * @return PolygonProcessingResponse containing district, zone, WFS response, and filestore ID
+     * @throws Exception if file validation, parsing, or WFS query fails
+     */
     @Override
     @Transactional
     public PolygonProcessingResponse processPolygonFile(MultipartFile file, String tenantId, String applicationNo, String rtpiId) throws Exception {
-        UtilitiesGisLog logEntry = null;
+        GisLog logEntry = null;
         String fileStoreId = null;
 
         try {
@@ -60,8 +69,7 @@ public class GisServiceImpl implements GisService {
             log.info("Uploading KML file to Filestore: {}", file.getOriginalFilename());
             fileStoreId = filestoreClient.uploadFile(file, tenantId, "gis", "kml-upload");
 
-
-            logEntry = createLogEntry(fileStoreId, tenantId, applicationNo, rtpiId, "PENDING", null, null);
+            logEntry = createLogEntry(fileStoreId, tenantId, applicationNo, rtpiId, STATUS_PENDING, null, null);
             logRepository.save(logEntry);
 
             // parse the polygon using try-with-resources
@@ -125,7 +133,7 @@ public class GisServiceImpl implements GisService {
                     .fileStoreId(fileStoreId)
                     .build();
 
-            updateLogEntry(logEntry, "SUCCESS", objectMapper.writeValueAsString(response), createSuccessDetails(wfsResponse));
+            updateLogEntry(logEntry, STATUS_SUCCESS, objectMapper.writeValueAsString(response), createSuccessDetails(wfsResponse));
             log.info("Polygon processing completed. District: {}, Zone: {}", district, zone);
 
             return response;
@@ -134,13 +142,19 @@ public class GisServiceImpl implements GisService {
             log.error("Error processing polygon file", e);
 
             if (logEntry != null) {
-                updateLogEntry(logEntry, "FAILURE", null, createErrorDetails(e));
+                updateLogEntry(logEntry, STATUS_FAILURE, null, createErrorDetails(e));
             }
 
             throw new RuntimeException("Failed to process polygon file: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Validates the uploaded polygon file for presence, extension, and size.
+     *
+     * @param file the uploaded file
+     * @throws IllegalArgumentException if validation fails
+     */
     private void validatePolygonFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Polygon file is required and cannot be empty");
@@ -156,8 +170,20 @@ public class GisServiceImpl implements GisService {
         }
     }
 
-    private UtilitiesGisLog createLogEntry(String fileStoreId, String tenantId, String applicationNo, String rtpiId, String status, String output, JsonNode details) {
-        return UtilitiesGisLog.builder()
+    /**
+     * Creates a new GisLog entry for logging GIS operations.
+     *
+     * @param fileStoreId   the filestore ID of the uploaded file
+     * @param tenantId      the tenant identifier
+     * @param applicationNo the application number
+     * @param rtpiId        the RTPI identifier
+     * @param status        the status of the operation
+     * @param output        the output or result (may be null)
+     * @param details       additional details (may be null)
+     * @return a new GisLog instance
+     */
+    private GisLog createLogEntry(String fileStoreId, String tenantId, String applicationNo, String rtpiId, String status, String output, JsonNode details) {
+        return GisLog.builder()
                 .fileStoreId(fileStoreId)
                 .tenantId(tenantId)
                 .applicationNo(applicationNo)
@@ -170,13 +196,27 @@ public class GisServiceImpl implements GisService {
                 .build();
     }
 
-    private void updateLogEntry(UtilitiesGisLog logEntry, String status, String output, JsonNode details) {
+    /**
+     * Updates an existing GisLog entry with new status, output, and details.
+     *
+     * @param logEntry the log entry to update
+     * @param status   the new status
+     * @param output   the output or result (may be null)
+     * @param details  additional details (may be null)
+     */
+    private void updateLogEntry(GisLog logEntry, String status, String output, JsonNode details) {
         logEntry.setStatus(status);
         logEntry.setOutput(output);
         logEntry.setDetails(details);
         logRepository.save(logEntry);
     }
 
+    /**
+     * Creates a JSON node with success details for logging.
+     *
+     * @param wfsResponse the WFS response
+     * @return a JsonNode containing feature count, timestamp, and status
+     */
     private JsonNode createSuccessDetails(JsonNode wfsResponse) {
         ObjectNode details = objectMapper.createObjectNode();
         int featureCount = 0;
@@ -189,6 +229,12 @@ public class GisServiceImpl implements GisService {
         return details;
     }
 
+    /**
+     * Creates a JSON node with error details for logging.
+     *
+     * @param e the exception encountered
+     * @return a JsonNode containing error message, type, and timestamp
+     */
     private JsonNode createErrorDetails(Exception e) {
         ObjectNode details = objectMapper.createObjectNode();
         details.put("error", e.getMessage());
@@ -197,6 +243,13 @@ public class GisServiceImpl implements GisService {
         return details;
     }
 
+    /**
+     * Builds a fallback WFS response when the WFS service is unavailable.
+     *
+     * @param polygonWkt the WKT of the polygon
+     * @param cause      the exception that caused the fallback (may be null)
+     * @return a structured fallback WFS response as JsonNode
+     */
     private JsonNode createFallbackWfsResponse(String polygonWkt, Exception cause) {
         // Create a structured fallback WFS response for fallback scenarios.
         // Note: We deliberately avoid hard-coding district/zone values here.
@@ -231,6 +284,14 @@ public class GisServiceImpl implements GisService {
         return fallbackResponse;
     }
 
+    /**
+     * Creates a clean, minimal WFS response containing only relevant data.
+     *
+     * @param originalResponse the original WFS response
+     * @param district         the extracted district (may be null)
+     * @param zone             the extracted zone (may be null)
+     * @return a cleaned WFS response as JsonNode
+     */
     private JsonNode createCleanWfsResponse(JsonNode originalResponse, String district, String zone) {
         ObjectNode cleanResponse = objectMapper.createObjectNode();
         cleanResponse.put("type", "FeatureCollection");

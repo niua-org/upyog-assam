@@ -5,13 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * Main Spring Boot application class for utilities-gis microservice
+ * Main Spring Boot application class for gis service
  */
 @SpringBootApplication
 @EnableTransactionManagement
-public class UtilitiesGisApplication {
+public class GisApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UtilitiesGisApplication.class, args);
+        SpringApplication.run(GisApplication.class, args);
     }
 }

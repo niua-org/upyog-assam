@@ -32,6 +32,16 @@ public class RestFilestoreClient implements FilestoreClient {
     private final GisProperties gisProperties;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Uploads a file to the filestore service using REST API.
+     *
+     * @param file the file to upload
+     * @param tenantId the tenant ID
+     * @param module the module name
+     * @param tag optional tag for the file
+     * @return filestoreId of the uploaded file
+     * @throws Exception if upload fails or response is invalid
+     */
     @Override
     public String uploadFile(MultipartFile file, String tenantId, String module, String tag) throws Exception {
         log.info("Uploading file to filestore: {} (tenant: {}, module: {}, tag: {})", 
@@ -91,7 +101,10 @@ public class RestFilestoreClient implements FilestoreClient {
     }
 
     /**
-     * Extract fileStoreId from various possible response formats
+     * Extracts fileStoreId from response returned by the filestore service.
+     *
+     * @param responseJson the JSON response from the filestore service
+     * @return fileStoreId if found, otherwise null
      */
     private String extractFileStoreId(JsonNode responseJson) {
 
@@ -109,4 +122,3 @@ public class RestFilestoreClient implements FilestoreClient {
     }
 
 }
-

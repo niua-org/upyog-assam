@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Response DTO for polygon processing endpoint
+ * Response model for polygon processing endpoint
  */
 @Data
 @Builder

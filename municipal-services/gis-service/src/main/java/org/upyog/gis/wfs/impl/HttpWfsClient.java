@@ -28,7 +28,6 @@ public class HttpWfsClient implements WfsClient {
 
     private final WebClient webClient;
     private final GisProperties gisProperties;
-    private final ObjectMapper objectMapper;
 
     @Override
     public JsonNode queryFeatures(String polygonWkt) throws Exception {
