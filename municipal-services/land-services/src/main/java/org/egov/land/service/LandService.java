@@ -53,7 +53,7 @@ public class LandService {
 		//landValidator.validateLandInfo(landRequest,mdmsData);
 		userService.manageUser(landRequest);
 		
-		enrichmentService.enrichLandInfoRequest(landRequest, false);
+		enrichmentService.enrichCreateLandInfo(landRequest);
 
 		landRequest.getLandInfo().getOwners().forEach(owner -> {
 			if (owner.getActive()) {
@@ -82,7 +82,7 @@ public class LandService {
 		});
 		landValidator.validateLandInfo(landRequest, mdmsData);
 		userService.manageUser(landRequest);
-		enrichmentService.enrichLandInfoRequest(landRequest, true);
+		enrichmentService.enrichUpdateLandInfo(landRequest);
 		
 			landRequest.getLandInfo().getOwners().forEach(owner -> {
 			if (owner.getActive()) {
