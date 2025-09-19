@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
@@ -12,6 +13,7 @@ import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.MeasurementWithHeight;
 import org.egov.common.entity.edcr.Room;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.service.LayerNames;
@@ -127,6 +129,9 @@ public class VentilationExtract extends FeatureExtract {
 
             List<String> ventilationLayers = Util.getLayerNamesLike(pl.getDoc(), kitchenAndDining);
             if (!ventilationLayers.isEmpty()) {
+            	List<BigDecimal> allWindowWidths = new ArrayList<>();
+            	List<BigDecimal> allDoorWidths = new ArrayList<>();
+            	List<BigDecimal> allDoorHeights = new ArrayList<>();
                 for (String ventLayer : ventilationLayers) {
                     List<DXFLWPolyline> lightAndVentilations = Util.getPolyLinesByLayer(pl.getDoc(), ventLayer);
                     if (!lightAndVentilations.isEmpty()) {
@@ -138,7 +143,70 @@ public class VentilationExtract extends FeatureExtract {
                         kitchen.getLightAndVentilation().setHeightOrDepth(
                             Util.getListOfDimensionValueByLayer(pl, ventLayer));
                     }
+                    List<BigDecimal> kitchenWindowWidth = 
+                            Util.getListOfDimensionByColourCode(pl, ventLayer, DxfFileConstants.INDEX_COLOR_TWO);
+
+                        if (!kitchenWindowWidth.isEmpty()) {
+                            allWindowWidths.addAll(kitchenWindowWidth);
+                        }
+                        
+                        List<BigDecimal> kitchenDoorWidth = 
+                                Util.getListOfDimensionByColourCode(pl, ventLayer, DxfFileConstants.INDEX_COLOR_THREE);
+
+                            if (!kitchenDoorWidth.isEmpty()) {
+                            	allDoorWidths.addAll(kitchenDoorWidth);
+                            }
+                            
+                            
+                            List<BigDecimal> kitchenDoorHeight = 
+                                    Util.getListOfDimensionByColourCode(pl, ventLayer, DxfFileConstants.INDEX_COLOR_FOUR);
+
+                                if (!kitchenDoorHeight.isEmpty()) {
+                                	allDoorHeights.addAll(kitchenDoorHeight);
+                                }
+
+
+                        
+                    String kitchenWindowHeight = Util.getMtextByLayerName(pl.getDoc(), ventLayer);
+
+                    if (StringUtils.isNotBlank(kitchenWindowHeight)) {
+                        try {
+                            // Clean unwanted characters (=, m, space, etc.)
+                            String sanitized = kitchenWindowHeight;
+                            if (sanitized.contains("=")) {
+                                sanitized = sanitized.split("=")[1] != null
+                                        ? sanitized.split("=")[1].replaceAll("[^\\d.]", "")
+                                        : "";
+                            } else {
+                                sanitized = sanitized.replaceAll("[^\\d.]", "");
+                            }
+
+                            if (StringUtils.isNotBlank(sanitized)) {
+                                BigDecimal height = new BigDecimal(sanitized);
+                                kitchen.setKitchenWindowHeight(height);
+                            } else {
+                                pl.addError(ventLayer + "_WINDOW_HT", 
+                                    "Kitchen window height is not defined in layer " + ventLayer);
+                            }
+                        } catch (NumberFormatException e) {
+                            LOG.error("Invalid kitchen window height value: {}", kitchenWindowHeight, e);
+                        }
+                    }
+
                 }
+                
+                if (!allWindowWidths.isEmpty()) {
+                    kitchen.setKitchenWindowWidth(allWindowWidths);
+                }
+                
+                if (!allWindowWidths.isEmpty()) {
+                    kitchen.setKitchenDoorHeight(allDoorHeights);               }
+                
+                if (!allWindowWidths.isEmpty()) {
+                    kitchen.setKitchenDoorWidth(allDoorHeights);
+                }
+                
+                
             }
         }
     }

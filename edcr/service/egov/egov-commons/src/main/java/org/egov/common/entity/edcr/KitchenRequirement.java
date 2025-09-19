@@ -11,7 +11,19 @@ public class KitchenRequirement extends MdmsFeatureRule {
 	    @JsonProperty("kitchenArea")
 	    private BigDecimal kitchenArea;
 	    
-	    @JsonProperty("kitchenDiningVentilationArea")
+	    @JsonProperty("kitchenDoorWidth")
+	    private BigDecimal kitchenDoorWidth;
+	    
+	    @JsonProperty("kitchenDoorHeight")
+	    private BigDecimal kitchenDoorHeight;
+	    
+	    public BigDecimal getKitchenDoorHeight() {
+			return kitchenDoorHeight;
+		}
+		public void setKitchenDoorHeight(BigDecimal kitchenDoorHeight) {
+			this.kitchenDoorHeight = kitchenDoorHeight;
+		}
+		@JsonProperty("kitchenDiningVentilationArea")
 	    private BigDecimal kitchenDiningVentilationArea;
 	    
 	    @JsonProperty("kitchenDiningVentilationWidth")
@@ -23,9 +35,18 @@ public class KitchenRequirement extends MdmsFeatureRule {
 		@Override
 		public String toString() {
 			return "KitchenRequirement [kitchenHeight=" + kitchenHeight + ", kitchenArea=" + kitchenArea
-					+ ", kitchenWidth=" + kitchenWidth + ", kitchenStoreArea=" + kitchenStoreArea
-					+ ", kitchenStoreWidth=" + kitchenStoreWidth + ", kitchenDiningWidth=" + kitchenDiningWidth
-					+ ", kitchenDiningArea=" + kitchenDiningArea + "]";
+					+ ", kitchenDoorWidth=" + kitchenDoorWidth + ", kitchenDoorHeight=" + kitchenDoorHeight
+					+ ", kitchenDiningVentilationArea=" + kitchenDiningVentilationArea
+					+ ", kitchenDiningVentilationWidth=" + kitchenDiningVentilationWidth + ", kitchenWidth="
+					+ kitchenWidth + ", kitchenStoreArea=" + kitchenStoreArea + ", kitchenStoreWidth="
+					+ kitchenStoreWidth + ", kitchenDiningWidth=" + kitchenDiningWidth + ", kitchenDiningArea="
+					+ kitchenDiningArea + "]";
+		}
+		public BigDecimal getKitchenDoorWidth() {
+			return kitchenDoorWidth;
+		}
+		public void setKitchenDoorWidth(BigDecimal kitchenDoorWidth) {
+			this.kitchenDoorWidth = kitchenDoorWidth;
 		}
 		public void setKitchenHeight(BigDecimal kitchenHeight) {
 			this.kitchenHeight = kitchenHeight;

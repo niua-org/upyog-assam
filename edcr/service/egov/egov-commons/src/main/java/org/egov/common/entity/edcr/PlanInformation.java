@@ -409,9 +409,19 @@ public class PlanInformation implements Serializable {
     //Extracted from Plan info.Khata number.
     //private String khataNo;
 
-  private String dagNo;
+    private String dagNo;
     
-    private String wardNo;
+    private String riskType;
+    
+    public String getRiskType() {
+		return riskType;
+	}
+
+	public void setRiskType(String riskType) {
+		this.riskType = riskType;
+	}
+
+	private String wardNo;
     
     private String developementZone;
     

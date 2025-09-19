@@ -83,12 +83,52 @@ public class Room {
     private List<Door> doors = new ArrayList<>();
 
     private BigDecimal hillyAreaRoomHeight;
+    
+    private BigDecimal kitchenWindowHeight;
 
     private List<Projections> roomProjections =  new ArrayList<>();
     
     private List<BigDecimal> kitchenWidth;
     
-    private List<BigDecimal> roomWidth;
+    private List<BigDecimal> kitchenDoorWidth;
+    
+    public List<BigDecimal> getKitchenDoorWidth() {
+		return kitchenDoorWidth;
+	}
+
+	public void setKitchenDoorWidth(List<BigDecimal> kitchenDoorWidth) {
+		this.kitchenDoorWidth = kitchenDoorWidth;
+	}
+
+	public List<BigDecimal> getKitchenDoorHeight() {
+		return kitchenDoorHeight;
+	}
+
+	public void setKitchenDoorHeight(List<BigDecimal> kitchenDoorHeight) {
+		this.kitchenDoorHeight = kitchenDoorHeight;
+	}
+
+	private List<BigDecimal> kitchenDoorHeight;
+    
+    private List<BigDecimal> kitchenWindowWidth;
+    
+    public BigDecimal getKitchenWindowHeight() {
+		return kitchenWindowHeight;
+	}
+
+	public void setKitchenWindowHeight(BigDecimal kitchenWindowHeight) {
+		this.kitchenWindowHeight = kitchenWindowHeight;
+	}
+
+	public List<BigDecimal> getKitchenWindowWidth() {
+		return kitchenWindowWidth;
+	}
+
+	public void setKitchenWindowWidth(List<BigDecimal> kitchenWindowWidth) {
+		this.kitchenWindowWidth = kitchenWindowWidth;
+	}
+
+	private List<BigDecimal> roomWidth;
 
     public List<BigDecimal> getRoomWidth() {
 		return roomWidth;

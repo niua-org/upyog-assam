@@ -87,6 +87,7 @@ public class DxfFileConstants {
     public static final String DESAM = "DESAM";
     public static final String TDR = "TDR";
     public static final String TOD_ZONE = "TOD_ZONE";
+    public static final String RISK_TYPE = "RISK_TYPE";
     public static final Object NO_OF_BEDS = "NO_OF_BEDS";
     public static final int YARD_DIMENSION_COLOR = 2;
     public static final int STAIR_FLIGHT_LENGTH_COLOR = 1;
@@ -95,6 +96,8 @@ public class DxfFileConstants {
     public static final int RAMP_FLIGHT_WIDTH_COLOR = 2;
     public static final int INDEX_COLOR_ONE = 1;
     public static final int INDEX_COLOR_TWO = 2;
+    public static final int INDEX_COLOR_THREE = 3;
+    public static final int INDEX_COLOR_FOUR = 4;
     public static final int KITCHEN_WIDTH_COLOR = 2;
     public static final int KITCHEN_HEIGHT_COLOR = 1;
 

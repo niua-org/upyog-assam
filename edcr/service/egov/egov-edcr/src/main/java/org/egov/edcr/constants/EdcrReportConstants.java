@@ -17,7 +17,9 @@ public class EdcrReportConstants {
     // Additional Feature
     public static final String RULE_4_4_4 = "4.4.4 (ii)";
     public static final String RULE_39 = "39";
-    public static final String RULE = "5.2.1";
+    public static final String RULE = "49 (a) & 49 (b)";
+    public static final String RULEROOMHT = "49 (c)";
+    public static final String RULEROOMHTC = "49 (d)";
     public static final String RULE_41_I_B = "41-i-b";
     public static final String RULE_47 = "47";
     public static final String RULE_50 = "50";
@@ -291,8 +293,9 @@ public class EdcrReportConstants {
     public static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
     public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
 
-    public static final String RULERISER = "5.15.4.1";
-    public static final String RULETREAD = "5.15.3";
+    public static final String RULERISER = "72 (d)";
+    public static final String RULETREAD = "72 (d)";
+    public static final String RULEWIDTH = "72 (b)";
     public static final String EXPECTED_NO_OF_RISER = "12";
     public static final String NO_OF_RISER_DESCRIPTION_GENERAL_STAIR = "Maximum no of risers required per flight for general stair %s flight %s";
     public static final String WIDTH_DESCRIPTION_GEN_STAIR = "Minimum width for general stair %s flight %s";
@@ -363,7 +366,10 @@ public class EdcrReportConstants {
     public static final String MINIMUM_WIDTH = "Minimum width ";
     public static final String AT_FLOOR = " at floor ";
 
-    public static final String SUBRULE_41_III = "5.4.1";
+    public static final String SUBRULE_41_III = "53";
+    public static final String KITCHEN_DOOR_HEIGHT = "Kitchen Door Minimum Height";
+    public static final String KITCHEN_DOOR_WIDTH = "Kitchen Door Minimum Width";
+    public static final String KICTHEN_VENT_DESC = "Required Kitchen Ventilation Area (≥ 1/6 of kitchen area)";
     public static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
     public static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";
     public static final String SUBRULE_41_III_TOTAL_WIDTH = "Minimum Width of %s";

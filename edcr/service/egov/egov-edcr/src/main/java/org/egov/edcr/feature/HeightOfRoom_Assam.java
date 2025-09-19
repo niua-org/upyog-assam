@@ -517,18 +517,18 @@ public class HeightOfRoom_Assam extends HeightOfRoom {
 	    String subRuleDesc1 = SUB_RULE_DESC_1;
 
 	    BigDecimal totalWindowArea = calculateWindowArea(room);
-	    BigDecimal totalDoorArea = calculateDoorArea(room);
-	    BigDecimal combinedArea = totalWindowArea.add(totalDoorArea);
+	  //  BigDecimal totalDoorArea = calculateDoorArea(room);
+	   // BigDecimal combinedArea = totalWindowArea.add(totalDoorArea);
 
-	    LOG.info("Evaluating ventilation for Room: {}, Floor: {}. RoomArea: {}, RequiredVentilationArea: {}, TotalWindowArea: {}, TotalDoorArea: {}, CombinedArea: {}",
-	            room.getNumber(), floor.getNumber(), roomArea, requiredVentilationArea, totalWindowArea, totalDoorArea, combinedArea);
+	    LOG.info("Evaluating ventilation for Room: {}, Floor: {}. RoomArea: {}, RequiredVentilationArea: {}, TotalWindowArea: {}",
+	            room.getNumber(), floor.getNumber(), roomArea, requiredVentilationArea, totalWindowArea);
 
-	    if (requiredVentilationArea.compareTo(BigDecimal.ZERO) != 0 && combinedArea.compareTo(BigDecimal.ZERO) != 0) {
-	        String result = combinedArea.compareTo(requiredVentilationArea) >= 0 ? Result.Accepted.getResultVal()
+	    if (requiredVentilationArea.compareTo(BigDecimal.ZERO) != 0 && totalWindowArea.compareTo(BigDecimal.ZERO) != 0) {
+	        String result = totalWindowArea.compareTo(requiredVentilationArea) >= 0 ? Result.Accepted.getResultVal()
 	                : Result.Not_Accepted.getResultVal();
 
 	        setReportOutputDetails(pl, RULE9, subRuleDesc1, floor.getNumber().toString(), EMPTY_STRING + room.getNumber(),
-	                VENTILATION_REQUIRED + GREATER_THAN_EQUAL + requiredVentilationArea, AREA_PROVIDED + combinedArea, result,
+	                VENTILATION_REQUIRED + GREATER_THAN_EQUAL + requiredVentilationArea, AREA_PROVIDED + totalWindowArea, result,
 	                ventilationDetail);
 	    }
 
@@ -1232,7 +1232,7 @@ public class HeightOfRoom_Assam extends HeightOfRoom {
 	        LOG.info("Actual minimum residential room height for commercial occupancy: {}", actualMinHeight);
 
 	        Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor, false);
-	        buildResult(pl, floor, requiredHeight, RULE, "Commercial Room Height Rule", actualMinHeight, false, typicalFloorValues);
+	        buildResult(pl, floor, requiredHeight, RULEROOMHTC, "Commercial Room Height Rule", actualMinHeight, false, typicalFloorValues);
 	        return;
 	    }
 
@@ -1256,7 +1256,7 @@ public class HeightOfRoom_Assam extends HeightOfRoom {
 	        LOG.info("Minimum Residential Regular Room Height required is set to: {}", minimumHeight);
 
 	        Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor, false);
-	        buildResult(pl, floor, minimumHeight, RULE, RULE_REGULAR_DESC, minHeight, false, typicalFloorValues);
+	        buildResult(pl, floor, minimumHeight, RULEROOMHT, RULE_REGULAR_DESC, minHeight, false, typicalFloorValues);
 
 	    } else {
 	        String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), REGULAR_ROOM);

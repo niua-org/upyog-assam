@@ -287,7 +287,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per rear setback rule based on building height";
+	    subRule = SUB_RULE_SIDE_YARD;
 	    
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
 
@@ -322,7 +322,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per rear setback rule based on building height";
+	    subRule = SUB_RULE_SIDE_YARD;
 	    
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
 	    
@@ -361,7 +361,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per commercial rear setback rule for height ≤ 12.6m and plot area ≤ 802 sq.m";
+	    subRule = SUB_RULE_SIDE_YARD;
 
 	    BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 	    BigDecimal plotArea = pl.getPlanInformation().getPlotArea();
@@ -416,7 +416,7 @@ public class RearYardService_Assam extends RearYardService {
 	        Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "Rear setback for industrial buildings as per fixed MDMS rules";
+	    subRule = SUB_RULE_SIDE_YARD;
 
 	    // Fetch REAR_SET_BACK rules from MDMS
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
@@ -475,7 +475,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per rear setback rule based on building height";
+	    subRule = SUB_RULE_SIDE_YARD;
 	    
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
 
@@ -510,7 +510,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per rear setback rule based on building height";
+	    subRule = SUB_RULE_SIDE_YARD;
 	    
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
 	   
@@ -546,7 +546,7 @@ public class RearYardService_Assam extends RearYardService {
 	        String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal buildingHeight, Boolean valid,
 	        String occupancyName) {
 
-	    subRule = "As per rear setback rule based on building height";
+	    subRule = SUB_RULE_SIDE_YARD;
 	    
 	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REAR_SET_BACK.getValue(), false);
 	    
@@ -1213,7 +1213,7 @@ public class RearYardService_Assam extends RearYardService {
 	        // Residential
 	        valid = processRearYardResidential(
 	                pl, block, level, min, mean, mostRestrictiveOccupancy, rearYardResult,
-	                subRule, rule, minVal, meanVal, depthOfPlot, valid, occupancyName);
+	                subRule, rule, minVal, meanVal, buildingHeight, valid, occupancyName);
 
 	    } else if (F.equalsIgnoreCase(occupancyCode)) {
 	    	  if (buildingHeight.compareTo(BUILDING_HEIGHT) <= 0 &&

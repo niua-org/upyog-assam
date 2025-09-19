@@ -420,6 +420,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String todZone = planInfoProperties.get(DxfFileConstants.TOD_ZONE);
 		if (StringUtils.isNotBlank(todZone))
 			pi.setTodZone(todZone);
+		
+		String riskType = planInfoProperties.get(DxfFileConstants.RISK_TYPE);
+		if (StringUtils.isNotBlank(riskType))
+			pi.setRiskType(riskType);
 
 		
 		if (!planInfoProperties.isEmpty()) {

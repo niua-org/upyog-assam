@@ -84,11 +84,17 @@ public class RearSetBackRequirement extends MdmsFeatureRule {
 			this.permissibleCollege = permissibleCollege;
 		}
 
-		@Override
-		public String toString() {
-			return "RearSetBackRequirement [permissibleLight=" + permissibleLight + ", permissibleMedium="
-					+ permissibleMedium + ", permissibleFlattered=" + permissibleFlattered + "]";
-		}
+		 @Override
+		    public String toString() {
+		        return "RearSetBackRequirement [fromBuildingHeight=" + getFromBuildingHeight() +
+		               ", toBuildingHeight=" + getToBuildingHeight() +
+		               ", permissible=" + getPermissible() +
+		               ", active=" + getActive() +
+		               ", permissibleLight=" + permissibleLight +
+		               ", permissibleMedium=" + permissibleMedium +
+		               ", permissibleFlattered=" + permissibleFlattered + "]";
+		    }
+
 	    
 
 
