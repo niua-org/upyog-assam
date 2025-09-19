@@ -627,7 +627,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["KHASRA NO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RISK TYPE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="225" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
@@ -642,7 +642,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getKhasraNo()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getRiskType()]]></textFieldExpression>
 			</textField>
 <!-- DAG NO row -->
 

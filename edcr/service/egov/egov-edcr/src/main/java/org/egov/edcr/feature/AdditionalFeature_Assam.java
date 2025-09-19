@@ -454,7 +454,7 @@ public class AdditionalFeature_Assam extends FeatureProcess {
                 if (errors.isEmpty() && StringUtils.isNotBlank(minRequiredFloorHeight)
                         && StringUtils.isNotBlank(maxPermissibleFloorHeight)) {
                     ReportScrutinyDetail detail = new ReportScrutinyDetail();
-                    detail.setRuleNo(RULE_4_4_4);
+                    detail.setRuleNo(RULEROOMHT);
                     detail.setFloorNo(String.valueOf(floorNumber));
                     detail.setMinRequired(minRequiredFloorHeight);
                     detail.setProvided(floorHeight.toString() + DcrConstants.IN_METER);

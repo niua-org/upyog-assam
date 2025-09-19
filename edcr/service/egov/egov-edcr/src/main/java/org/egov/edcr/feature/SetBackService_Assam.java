@@ -72,11 +72,11 @@ public class SetBackService_Assam extends FeatureProcess {
     @Autowired
     private FrontYardService_Assam frontYardServiceAssam;
 
-  //  @Autowired
- //   private SideYardService sideYardService;
+    @Autowired
+    private SideYardService_Assam sideYardService;
 
     @Autowired
-    private RearYardService rearYardService;
+    private RearYardService_Assam rearYardService;
     
     private static final BigDecimal TWO_HUNDRED = BigDecimal.valueOf(200);
 
@@ -251,7 +251,7 @@ public class SetBackService_Assam extends FeatureProcess {
         if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
         	frontYardServiceAssam.processFrontYard(pl);
 
-            if (DcrConstants.NO.equalsIgnoreCase(pl.getCoreArea())) {
+           
                 boolean rearRoadReservePresent = pl.getRoadReserveRear() != null && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) > 0;
                 boolean largePlot = pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0;
 
@@ -271,13 +271,13 @@ public class SetBackService_Assam extends FeatureProcess {
                     rearYardService.processRearYard(pl);
                 }
             }
-        }
+        
 
         // Uncomment if side yard processing is needed
-//        BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-//        if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
-//            sideYardService.processSideYard(pl);
-//        }
+        BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+        if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+            sideYardService.processSideYard(pl);
+        }
 
         if (!errors.isEmpty()) {
             pl.addErrors(errors);

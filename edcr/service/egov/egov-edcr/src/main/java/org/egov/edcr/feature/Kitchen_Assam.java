@@ -65,14 +65,17 @@ import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_41_III;
 import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_41_III_AREA_DESC;
 import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_41_III_DESC;
 import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_41_III_TOTAL_WIDTH;
+import static org.egov.edcr.constants.EdcrReportConstants.KICTHEN_VENT_DESC;
+import static org.egov.edcr.constants.EdcrReportConstants.KITCHEN_DOOR_WIDTH;
+import static org.egov.edcr.constants.EdcrReportConstants.KITCHEN_DOOR_HEIGHT;
 import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
 import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,35 +247,53 @@ public class Kitchen_Assam extends Kitchen {
 		LOG.info("KitchenRequirement rule found: Height = {}, Area = {}, Width = {}", rule.getKitchenHeight(),
 				rule.getKitchenArea(), rule.getKitchenWidth());
 
-		// Validate height
-		if (!kitchenHeights.isEmpty()) {
-			BigDecimal minHeight = kitchenHeights.stream().min(Comparator.naturalOrder()).get().setScale(2,
-					BigDecimal.ROUND_HALF_UP);
-			LOG.info("Minimum kitchen height for Floor {}: {}", floor.getNumber(), minHeight);
-			buildResult(pl, floor, rule.getKitchenHeight(), SUBRULE_41_III, SUBRULE_41_III_DESC, minHeight, false,
-					ProcessHelper.getTypicalFloorValues(block, floor, false));
-		} else {
-			String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "KITCHEN");
-			LOG.warn("Kitchen height not defined for layer: {}", layerName);
-			pl.addError(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
-		}
+        // Validate height
+        if (!kitchenHeights.isEmpty()) {
+            BigDecimal minHeight = kitchenHeights.stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
+            buildResult(pl, floor, rule.getKitchenHeight(), SUBRULE_41_III, SUBRULE_41_III_DESC, minHeight, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
+        } else {
+            String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "KITCHEN");
+            pl.addError(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
+        }
+        
+     // Validate door width
+        if (floor.getKitchen().getKitchenDoorWidth() != null && !floor.getKitchen().getKitchenDoorWidth().isEmpty()) {
+            BigDecimal minDoorWidth = floor.getKitchen().getKitchenDoorWidth()
+                .stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
 
-		// Process Room Types
+            buildResult(pl, floor, rule.getKitchenDoorWidth(), SUBRULE_41_III,
+            		KITCHEN_DOOR_WIDTH, minDoorWidth, false,
+                ProcessHelper.getTypicalFloorValues(block, floor, false));
+        }
+
+        // Validate door height
+        if (floor.getKitchen().getKitchenDoorHeight() != null && !floor.getKitchen().getKitchenDoorHeight().isEmpty()) {
+            BigDecimal minDoorHeight = floor.getKitchen().getKitchenDoorHeight()
+                .stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
+
+            buildResult(pl, floor, rule.getKitchenDoorHeight(), SUBRULE_41_III,
+            		KITCHEN_DOOR_HEIGHT, minDoorHeight, false,
+                ProcessHelper.getTypicalFloorValues(block, floor, false));
+        }
+
+        // Process Room Types
 		LOG.info("Processing Kitchen room type with color: {}", kitchenColor);
-		processRoomType(rooms, heightColors, kitchenColor, rule.getKitchenArea(), rule.getKitchenWidth(), KITCHEN,
-				floor, block, pl);
 
+        processRoomType(rooms, heightColors, kitchenColor, rule.getKitchenArea(), rule.getKitchenWidth(), KITCHEN, floor, block, pl);
+        
 		LOG.info("Processing Kitchen Store room type with color: {}", kitchenStoreColor);
-		processRoomType(rooms, heightColors, kitchenStoreColor, rule.getKitchenStoreArea(), rule.getKitchenStoreWidth(),
-				KITCHEN_STORE, floor, block, pl);
 
+        processRoomType(rooms, heightColors, kitchenStoreColor, rule.getKitchenStoreArea(), rule.getKitchenStoreWidth(), KITCHEN_STORE, floor, block, pl);
+        
 		LOG.info("Processing Kitchen Dining room type with color: {}", kitchenDiningColor);
-		processRoomType(rooms, heightColors, kitchenDiningColor, rule.getKitchenDiningArea(),
-				rule.getKitchenDiningWidth(), KITCHEN_DINING, floor, block, pl);
 
+        processRoomType(rooms, heightColors, kitchenDiningColor, rule.getKitchenDiningArea(), rule.getKitchenDiningWidth(), KITCHEN_DINING, floor, block, pl);
+        
 		LOG.info("Processing kitchen and dining ventilation for Floor: {}", floor.getNumber());
-		processKitchenAndDiningVentilation(floor, scrutinyDetail, block, pl);
-	}
+
+        evaluateKitchenVentilation(pl, floor, block, rooms);
+
+    }
 
 	/**
 	 * Filters rooms based on the specified color code and validates each room type
@@ -318,169 +339,134 @@ public class Kitchen_Assam extends Kitchen {
 					totalArea, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
 		}
 
-		if (!widths.isEmpty()) {
-			
-			BigDecimal minRoomWidth = widths.stream().min(Comparator.naturalOrder()).get().setScale(2,
-					BigDecimal.ROUND_HALF_UP);
-			LOG.info("Minimum width calculated for room type {}: {}", roomName, minRoomWidth);
-			buildResult(pl, floor, minWidth, SUBRULE_41_III, String.format(SUBRULE_41_III_TOTAL_WIDTH, roomName),
-					minRoomWidth, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
-		}
-	}
+        if (!widths.isEmpty()) {
+            BigDecimal minRoomWidth = widths.stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
+            buildResult(pl, floor, minWidth, SUBRULE_41_III, String.format(SUBRULE_41_III_TOTAL_WIDTH, roomName), minRoomWidth, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
+        }
+    }
 
-	/**
-	 * Validates the ventilation area and width provided for Kitchen + Dining layout
-	 * against the expected values from feature rules.
-	 *
-	 * @param floor            The Floor object being validated.
-	 * @param ventilationRatio Not used directly here, kept for future extension.
-	 * @param scrutinyDetail   ScrutinyDetail object for logging results.
-	 * @param block            Block to which the floor belongs.
-	 * @param pl               The complete Plan object.
-	 */
-	private void processKitchenAndDiningVentilation(Floor floor, ScrutinyDetail scrutinyDetail, Block block, Plan pl) {
 
-		if (floor.getKitchen() == null || floor.getKitchen().getLightAndVentilation() == null
-				|| floor.getKitchen().getLightAndVentilation().getMeasurements() == null
-				|| floor.getKitchen().getLightAndVentilation().getMeasurements().isEmpty()) {
-			LOG.info("No kitchen or ventilation measurements found for Floor: {}, Block: {}", floor.getNumber(),
-					block.getNumber());
-			return;
-		}
+    /**
+     * Builds the validation result for a given parameter (height, area, width) and appends it to the 
+     * scrutiny detail report. Checks if the actual value meets or exceeds the expected value.
+     *
+     * @param pl                   The Plan object to which the result is added.
+     * @param floor                The floor for which the rule is being validated.
+     * @param expected             The expected value for the parameter (height/area/width).
+     * @param subRule              Sub-rule identifier from the regulations.
+     * @param subRuleDesc          Description of the sub-rule being checked.
+     * @param actual               Actual value extracted from the Plan.
+     * @param valid                Boolean flag representing whether the value is valid.
+     * @param typicalFloorValues   Map containing information about typical floor applicability.
+     */
+    private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
+            BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
+        if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)
+                && expected.compareTo(BigDecimal.valueOf(0)) > 0 &&
+                subRule != null && subRuleDesc != null) {
+            if (actual.compareTo(expected) >= 0) {
+                valid = true;
+            }
+            String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+                    ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+                    : FLOOR_SPACED + floor.getNumber();
+            if (valid) {
+                setReportOutputDetails(pl, subRule, subRuleDesc, value,
+                        expected + DcrConstants.IN_METER,
+                        actual + DcrConstants.IN_METER, Result.Accepted.getResultVal());
+            } else {
+                setReportOutputDetails(pl, subRule, subRuleDesc, value,
+                        expected + DcrConstants.IN_METER,
+                        actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
+            }
+        }
+    }
+    
+    /**
+     * Evaluates the kitchen ventilation requirement for a given floor.
+     * <p>
+     * As per building regulations, every kitchen must have adequate light and ventilation.
+     * The total window opening area (width × height for all kitchen windows) must be at least
+     * one-sixth (1/6) of the total kitchen floor area.
+     * </p>
+     *
+     * <ul>
+     *   <li>Calculates total kitchen window area = Σ(width × height).</li>
+     *   <li>Calculates total kitchen area = Σ(room areas inside kitchen).</li>
+     *   <li>Derives required ventilation area = (kitchen area / 6).</li>
+     *   <li>Compares the provided window area with the required area and records the result.</li>
+     * </ul>
+     *
+     * @param pl    the {@link Plan} object containing overall building details
+     * @param floor the {@link Floor} object for which kitchen ventilation is being evaluated
+     * @param block the {@link Block} object to which the floor belongs
+     * @param rooms list of {@link Measurement} objects representing kitchen rooms and their areas
+     */
+    
+    private void evaluateKitchenVentilation(Plan pl, Floor floor, Block block, List<Measurement> rooms) {
+        if (floor.getKitchen() == null
+                || floor.getKitchen().getKitchenWindowWidth() == null
+                || floor.getKitchen().getKitchenWindowWidth().isEmpty()
+                || floor.getKitchen().getKitchenWindowHeight() == null) {
+            return;
+        }
+        
+        // Kitchen floor area = sum of all kitchen room areas
+        BigDecimal kitchenArea = rooms.stream()
+                .map(Measurement::getArea)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
 
-		BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
-		LOG.info("Processing kitchen & dining ventilation for Floor: {}, Block: {}, Building Height: {}",
-				floor.getNumber(), block.getNumber(), buildingHeight);
+        // Get kitchen window height
+        BigDecimal windowHeight = floor.getKitchen().getKitchenWindowHeight().setScale(2, RoundingMode.HALF_UP);
 
-		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.KITCHEN.getValue(), false);
+        // Provided window area = sum of (each window width × window height)
+        BigDecimal providedKitchenArea = floor.getKitchen().getKitchenWindowWidth().stream()
+                .map(width -> width.multiply(windowHeight))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
 
-		Optional<KitchenRequirement> matchedRule = rules.stream().filter(KitchenRequirement.class::isInstance)
-				.map(KitchenRequirement.class::cast)
-				.filter(rule -> buildingHeight.compareTo(rule.getFromBuildingHeight()) >= 0
-						&& buildingHeight.compareTo(rule.getToBuildingHeight()) < 0)
-				.findFirst();
+        // Required ventilation area = 1/6th of kitchen floor area
+        BigDecimal requiredVentilationArea = kitchenArea.divide(BigDecimal.valueOf(6), 2, RoundingMode.HALF_UP);
 
-		if (!matchedRule.isPresent()) {
-			LOG.warn("No matching KitchenRequirement rule found for Floor: {}, Building Height: {}", floor.getNumber(),
-					buildingHeight);
-			return;
-		}
+        LOG.info("Evaluating kitchen ventilation for Floor: {}. KitchenFloorArea: {}, RequiredVentilationArea: {}, ProvidedWindowArea: {}",
+                floor.getNumber(), kitchenArea, requiredVentilationArea, providedKitchenArea);
 
-		KitchenRequirement rule = matchedRule.get();
-		LOG.info("Matched KitchenRequirement rule: Ventilation Area = {}, Ventilation Width = {}",
-				rule.getKitchenDiningVentilationArea(), rule.getKitchenDiningVentilationWidth());
+        buildResult(pl, floor, requiredVentilationArea, SUBRULE_41_III,
+                KICTHEN_VENT_DESC,
+                providedKitchenArea,
+                providedKitchenArea.compareTo(requiredVentilationArea) >= 0,
+                ProcessHelper.getTypicalFloorValues(block, floor, false));
+    }
 
-		BigDecimal totalVentilationArea = rule.getKitchenDiningVentilationArea();
-		BigDecimal totalWidth = rule.getKitchenDiningVentilationWidth();
 
-		BigDecimal providedVentilationArea = floor.getKitchen().getLightAndVentilation().getMeasurements().stream()
-				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+    /**
+     * Populates a single scrutiny detail entry and appends it to the report output of the Plan.
+     *
+     * @param pl         The Plan object that contains the report.
+     * @param ruleNo     Rule number being validated.
+     * @param ruleDesc   Description of the rule.
+     * @param floor      Floor number or name where the rule is applied.
+     * @param expected   Expected value of the parameter (height, area, width).
+     * @param actual     Actual value found in the Plan.
+     * @param status     Result of the validation ("Accepted" or "Not Accepted").
+     */
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
+            String status) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setFloorNo(floor);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
 
-		BigDecimal providedVentilationWidth = floor.getKitchen().getLightAndVentilation().getMeasurements().stream()
-				.map(Measurement::getWidth).reduce(BigDecimal.ZERO, BigDecimal::add);
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+    }
 
-		LOG.info("Provided ventilation area: {}, Provided ventilation width: {}", providedVentilationArea,
-				providedVentilationWidth);
-
-		if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
-			ReportScrutinyDetail detail = new ReportScrutinyDetail();
-			detail.setRuleNo("91 (d)");
-			detail.setDescription("Kitchen and Dining - Ventilation Area");
-			detail.setRequired(totalVentilationArea.toString());
-			detail.setProvided(providedVentilationArea.toString());
-			detail.setStatus(
-					providedVentilationArea.compareTo(totalVentilationArea) >= 0 ? Result.Accepted.getResultVal()
-							: Result.Not_Accepted.getResultVal());
-
-			LOG.info("Ventilation area check: Required = {}, Provided = {}, Status = {}", totalVentilationArea,
-					providedVentilationArea, detail.getStatus());
-			scrutinyDetail.getDetail().add(mapReportDetails(detail));
-		}
-
-		if (totalWidth.compareTo(BigDecimal.ZERO) > 0) {
-			ReportScrutinyDetail detail = new ReportScrutinyDetail();
-			detail.setRuleNo("91 (d)");
-			detail.setDescription("Kitchen and Dining - Ventilation Width");
-			detail.setRequired(totalWidth + DcrConstants.IN_METER);
-			detail.setProvided(providedVentilationWidth + DcrConstants.IN_METER);
-			detail.setStatus(providedVentilationWidth.compareTo(totalWidth) >= 0 ? Result.Accepted.getResultVal()
-					: Result.Not_Accepted.getResultVal());
-
-			LOG.info("Ventilation width check: Required = {}, Provided = {}, Status = {}", totalWidth,
-					providedVentilationWidth, detail.getStatus());
-			scrutinyDetail.getDetail().add(mapReportDetails(detail));
-		}
-
-		// Add only once per floor
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-		LOG.info("Added kitchen & dining ventilation scrutiny details for Floor: {}", floor.getNumber());
-	}
-
-	/**
-	 * Builds the validation result for a given parameter (height, area, width) and
-	 * appends it to the scrutiny detail report. Checks if the actual value meets or
-	 * exceeds the expected value.
-	 *
-	 * @param pl                 The Plan object to which the result is added.
-	 * @param floor              The floor for which the rule is being validated.
-	 * @param expected           The expected value for the parameter
-	 *                           (height/area/width).
-	 * @param subRule            Sub-rule identifier from the regulations.
-	 * @param subRuleDesc        Description of the sub-rule being checked.
-	 * @param actual             Actual value extracted from the Plan.
-	 * @param valid              Boolean flag representing whether the value is
-	 *                           valid.
-	 * @param typicalFloorValues Map containing information about typical floor
-	 *                           applicability.
-	 */
-	private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
-			BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
-		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR) && expected.compareTo(BigDecimal.valueOf(0)) > 0
-				&& subRule != null && subRuleDesc != null) {
-			if (actual.compareTo(expected) >= 0) {
-				valid = true;
-			}
-			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
-					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
-					: FLOOR_SPACED + floor.getNumber();
-			if (valid) {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, expected + DcrConstants.IN_METER,
-						actual + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-			} else {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, expected + DcrConstants.IN_METER,
-						actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
-			}
-		}
-	}
-
-	/**
-	 * Populates a single scrutiny detail entry and appends it to the report output
-	 * of the Plan.
-	 *
-	 * @param pl       The Plan object that contains the report.
-	 * @param ruleNo   Rule number being validated.
-	 * @param ruleDesc Description of the rule.
-	 * @param floor    Floor number or name where the rule is applied.
-	 * @param expected Expected value of the parameter (height, area, width).
-	 * @param actual   Actual value found in the Plan.
-	 * @param status   Result of the validation ("Accepted" or "Not Accepted").
-	 */
-	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected,
-			String actual, String status) {
-		ReportScrutinyDetail detail = new ReportScrutinyDetail();
-		detail.setRuleNo(ruleNo);
-		detail.setDescription(ruleDesc);
-		detail.setFloorNo(floor);
-		detail.setRequired(expected);
-		detail.setProvided(actual);
-		detail.setStatus(status);
-
-		Map<String, String> details = mapReportDetails(detail);
-		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
-	}
-
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

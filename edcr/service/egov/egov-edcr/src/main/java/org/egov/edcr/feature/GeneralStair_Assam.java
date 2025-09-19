@@ -262,7 +262,7 @@ public class GeneralStair_Assam extends FeatureProcess {
 		if (flrHt != null) {
 			BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
 			String result = (riserHeight.compareTo(value) <= 0) ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal();
-			setReportOutputDetailsFloorStairWise(plan, RULE_4_4_4, floor.getNumber().toString(), EMPTY_STRING, EMPTY_STRING + value, EMPTY_STRING + riserHeight, result, scrutinyDetail4);
+			setReportOutputDetailsFloorStairWise(plan, RULERISER, floor.getNumber().toString(), EMPTY_STRING, EMPTY_STRING + value, EMPTY_STRING + riserHeight, result, scrutinyDetail4);
 		}
 	}
 
@@ -770,7 +770,7 @@ public class GeneralStair_Assam extends FeatureProcess {
 	                ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
 	                : FLOOR_SPACED + floor.getNumber();
 
-	        setReportOutputDetailsFloorStairWise(plan, RULE_4_4_4, value,
+	        setReportOutputDetailsFloorStairWise(plan, RULEWIDTH, value,
 	                String.format(WIDTH_DESCRIPTION_GEN_STAIR, generalStair.getNumber(), flight.getNumber()),
 	                minimumWidth.toString(), String.valueOf(minFlightWidth),
 	                valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
