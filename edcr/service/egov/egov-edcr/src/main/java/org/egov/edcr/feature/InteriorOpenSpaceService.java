@@ -68,15 +68,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.ReportScrutinyDetail;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -165,7 +157,9 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         }
     }
 
+    // Gets the building height, defaults to zero if not defined
     private BigDecimal getBuildingHeight(Block block) {
+        LOG.debug("Getting building height for Block: {}", block.getNumber());
         return (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null)
                 ? block.getBuilding().getBuildingHeight() : BigDecimal.ZERO;
     }
@@ -177,23 +171,25 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         LOG.info("Applying Clause 91(d) validation for Block {}, Floor {}", b.getNumber(), f.getNumber());
         if (f.getInteriorOpenSpace() == null) return;
         BigDecimal buildingHeight = getBuildingHeight(b);
+        MeasurementWithHeight wcShaft = f.getInteriorOpenSpace().getWcShaft();
+        MeasurementWithHeight kitchenShaft = f.getInteriorOpenSpace().getKitchenShaft();
 
         // Validate WC Shaft
-        if (f.getInteriorOpenSpace().getWcShaft() != null &&
-                f.getInteriorOpenSpace().getWcShaft().getMeasurements() != null &&
-                !f.getInteriorOpenSpace().getWcShaft().getMeasurements().isEmpty()) {
+        if (wcShaft != null &&
+                wcShaft.getMeasurements() != null &&
+                !wcShaft.getMeasurements().isEmpty()) {
             validateClause91d(pl, scrutinyDetail, f,
-                    f.getInteriorOpenSpace().getWcShaft().getMeasurements(),
+                    wcShaft.getMeasurements(),
                     f.getInteriorOpenSpace().getWcShaftWidth(),
                     buildingHeight, WC_BATH_STORE, ruleValues);
         }
 
         // Validate Kitchen Shaft
-        if (f.getInteriorOpenSpace().getKitchenShaft() != null &&
-                f.getInteriorOpenSpace().getKitchenShaft().getMeasurements() != null &&
-                !f.getInteriorOpenSpace().getKitchenShaft().getMeasurements().isEmpty()) {
+        if (kitchenShaft != null &&
+                kitchenShaft.getMeasurements() != null &&
+                !kitchenShaft.getMeasurements().isEmpty()) {
             validateClause91d(pl, scrutinyDetail, f,
-                    f.getInteriorOpenSpace().getKitchenShaft().getMeasurements(),
+                    kitchenShaft.getMeasurements(),
                     f.getInteriorOpenSpace().getKitchenShaftWidth(),
                     buildingHeight, KITCHEN_DINING, ruleValues);
         }
