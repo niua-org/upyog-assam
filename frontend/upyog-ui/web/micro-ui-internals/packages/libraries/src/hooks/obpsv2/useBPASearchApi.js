@@ -1,4 +1,3 @@
-import { fil } from "date-fns/locale";
 import { useQuery, useQueryClient } from "react-query";
 
 /**
@@ -14,7 +13,7 @@ const useBPASearchApi = ({ tenantId, filters, auth}, config = {}) => {
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
   
   const defaultSelect = (data) => {
-    if(data.BPA.length > 0)  data.BPA[0].applicationNo = data.BPA[0].applicationNo || [];
+    if(data.bpa.length > 0)  data.bpa[0].applicationNo = data.bpa[0].applicationNo || [];
       
     return data;
   };
