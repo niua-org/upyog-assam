@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.commons.mdms.config.MdmsConfiguration;
 import org.egov.commons.mdms.model.MasterDetail;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BpaMdmsUtil {
+    private static final Logger LOG = LogManager.getLogger(BpaMdmsUtil.class);
+
     private RestCallService serviceRequestRepository;
     private MdmsConfiguration mdmsConfiguration;
 
@@ -140,8 +144,10 @@ public class BpaMdmsUtil {
     }
 
     public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+        LOG.info("RequestInfo for the mdms call: " + requestInfo);
         MdmsCriteriaReq mdmsCriteriaReq = getBpaMDMSRequest(requestInfo,
                 tenantId);
+        LOG.info("******** MDMS Search URL: " + getMdmsSearchUrl().toString());
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }

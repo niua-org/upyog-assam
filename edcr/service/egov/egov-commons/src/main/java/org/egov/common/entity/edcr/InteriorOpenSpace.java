@@ -48,6 +48,8 @@
 package org.egov.common.entity.edcr;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class InteriorOpenSpace implements Serializable {
 	private static final long serialVersionUID = 53L;
@@ -55,6 +57,11 @@ public class InteriorOpenSpace implements Serializable {
 	private MeasurementWithHeight innerCourtYard = new MeasurementWithHeight();
 	private MeasurementWithHeight outerCourtYard = new MeasurementWithHeight();
 	private MeasurementWithHeight sunkenCourtYard = new MeasurementWithHeight();
+
+    private MeasurementWithHeight wcShaft = new MeasurementWithHeight();
+    private MeasurementWithHeight kitchenShaft = new MeasurementWithHeight();
+    List<BigDecimal> wcShaftWidth;
+    List<BigDecimal> KitchenShaftWidth;
 
 	public MeasurementWithHeight getVentilationShaft() {
 		return ventilationShaft;
@@ -88,4 +95,35 @@ public class InteriorOpenSpace implements Serializable {
 		this.sunkenCourtYard = sunkenCourtYard;
 	}
 
+    public List<BigDecimal> getWcShaftWidth() {
+        return wcShaftWidth;
+    }
+
+    public void setWcShaftWidth(List<BigDecimal> wcShaftWidth) {
+        this.wcShaftWidth = wcShaftWidth;
+    }
+
+    public List<BigDecimal> getKitchenShaftWidth() {
+        return KitchenShaftWidth;
+    }
+
+    public void setKitchenShaftWidth(List<BigDecimal> kitchenShaftWidth) {
+        KitchenShaftWidth = kitchenShaftWidth;
+    }
+
+    public MeasurementWithHeight getWcShaft() {
+        return wcShaft;
+    }
+
+    public void setWcShaft(MeasurementWithHeight wcShaft) {
+        this.wcShaft = wcShaft;
+    }
+
+    public MeasurementWithHeight getKitchenShaft() {
+        return kitchenShaft;
+    }
+
+    public void setKitchenShaft(MeasurementWithHeight kitchenShaft) {
+        this.kitchenShaft = kitchenShaft;
+    }
 }

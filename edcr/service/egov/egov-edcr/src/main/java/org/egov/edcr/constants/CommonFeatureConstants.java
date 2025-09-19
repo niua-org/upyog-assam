@@ -350,5 +350,10 @@ public class CommonFeatureConstants {
     public static final String BALCONY_SETBACK_DESC = " within 1.5m setback from plot boundary";
     public static final String BALCONY_LENGTH_DESC = " length exceeds 1/4 of building dimension";
 
+    public static final String WC_BATH_STORE = "WC, bath & store";
+    public static final String KITCHEN_DINING = "Kitchen & Dining";
+    public static final String MIN_AREA_SHAFT = " - Minimum area of shaft";
+    public static final String MIN_WIDTH_SHAFT = " - Minimum width of shaft";
+    public static final String MIN_AREA_STR = "Minimum area ";
 
 }

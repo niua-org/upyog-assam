@@ -14,4 +14,6 @@ public class RuleKeyConstants {
     public static final String FIFTY_NINE_7 = "59(7)";
 
     public static final String SIX_FOUR_ONE = "6.4.1";
+
+    public static final String NINETY_ONE_D = "91-d";
 }

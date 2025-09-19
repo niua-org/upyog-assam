@@ -1,5 +1,6 @@
 package org.egov.edcr.feature;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.MeasurementDetail;
 import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.service.LayerNames;
@@ -44,7 +46,33 @@ public class InteriorOpenSpaceServiceExtract extends FeatureExtract {
 
 					}
 
-					List<DXFLWPolyline> courtYardInternal = Util.getPolyLinesByLayer(pl.getDoc(), String.format(
+                    List<BigDecimal> wcShaftWidth = Util.getListOfDimensionByColourCode(pl, String.format(layerNames.getLayerName("LAYER_NAME_WC_SHAFT"), b.getNumber(), f.getNumber()), DxfFileConstants.INDEX_COLOR_ONE);
+                    if (!wcShaftWidth.isEmpty()) {
+                        f.getInteriorOpenSpace().setWcShaftWidth(wcShaftWidth);
+                    }
+                    List<DXFLWPolyline> wcShaftPolyline = Util.getPolyLinesByLayer(pl.getDoc(), String.format(
+                            layerNames.getLayerName("LAYER_NAME_WC_SHAFT"), b.getNumber(), f.getNumber()));
+                    if (!wcShaftPolyline.isEmpty()) {
+                        List<Measurement> wcShaftMeasurements = wcShaftPolyline.stream()
+                                .map(polyline -> new MeasurementDetail(polyline, true)).collect(Collectors.toList());
+                        f.getInteriorOpenSpace().getWcShaft().setMeasurements(wcShaftMeasurements);
+                    }
+
+                    List<BigDecimal> kitchenShaftWidth = Util.getListOfDimensionByColourCode(pl, String.format(layerNames.getLayerName("LAYER_NAME_KITCHEN_SHAFT"), b.getNumber(), f.getNumber()), DxfFileConstants.INDEX_COLOR_TWO);
+                    if (!kitchenShaftWidth.isEmpty()) {
+                        f.getInteriorOpenSpace().setKitchenShaftWidth(kitchenShaftWidth);
+                    }
+                    List<DXFLWPolyline> kitchenShaftPolyline = Util.getPolyLinesByLayer(pl.getDoc(), String.format(
+                            layerNames.getLayerName("LAYER_NAME_KITCHEN_SHAFT"), b.getNumber(), f.getNumber()));
+
+                    if (!kitchenShaftPolyline.isEmpty()) {
+                        List<Measurement> kitchenShaftMeasurements = kitchenShaftPolyline.stream()
+                                .map(polyline -> new MeasurementDetail(polyline, true)).collect(Collectors.toList());
+                        f.getInteriorOpenSpace().getKitchenShaft().setMeasurements(kitchenShaftMeasurements);
+                    }
+
+
+                        List<DXFLWPolyline> courtYardInternal = Util.getPolyLinesByLayer(pl.getDoc(), String.format(
 							layerNames.getLayerName("LAYER_NAME_COURTYARD_INNER"), b.getNumber(), f.getNumber()));
 					if (!courtYardInternal.isEmpty()) {
 						List<Measurement> courtYardInternalMeasurements = courtYardInternal.stream()
