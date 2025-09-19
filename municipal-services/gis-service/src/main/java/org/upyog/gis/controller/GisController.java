@@ -1,11 +1,13 @@
 package org.upyog.gis.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.MediaType;
-import org.upyog.gis.model.PolygonProcessingResponse;
+import org.upyog.gis.model.GISResponse;
+import org.upyog.gis.model.GISRequestWrapper;
 import org.upyog.gis.service.GisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,58 +16,56 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+
 /**
  * REST controller for GIS operations
  */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(value = "GIS Controller", description = "Operations for GIS processing")
 public class GisController {
 
     private final GisService gisService;
 
     /**
-     * Process polygon file and return district/zone information
+     * Find zone information from polygon file
      *
      * @param file the polygon file to process
-     * @param tenantId optional tenant ID
-     * @param applicationNo optional application number
-     * @param rtpiId optional RTPI ID
+     * @param gisRequestWrapper the GIS request containing tenant id, application number, RTPI ID and RequestInfo
      * @return response containing district, zone, and WFS response
      */
-    @Operation(summary = "Process polygon file", description = "Uploads and processes a polygon KML file")
+    @ApiOperation(value = "Find zone from polygon file", notes = "Uploads and processes a polygon KML file to find zone information")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK")
+            @ApiResponse(code = 200, message = "OK")
     })
-    @PostMapping(value = "/process-polygon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PolygonProcessingResponse> processPolygon(
-            @Parameter(description = "Polygon KML file", required = true)
+    @PostMapping(value = "/find-zone", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GISResponse> findZone(
+            @ApiParam(value = "Polygon KML file", required = true)
             @RequestPart("file") MultipartFile file,
-            @Parameter(description = "Tenant ID", required = true)
-            @RequestParam String tenantId,
-            @Parameter(description = "Application Number", required = true)
-            @RequestParam String applicationNo,
-            @Parameter(description = "RTPI ID", required = true)
-            @RequestParam String rtpiId
+            @ApiParam(value = "GIS Request with RequestInfo", required = true)
+            @RequestPart(value = "gisRequestWrapper") GISRequestWrapper gisRequestWrapper
     ) {
 
         try {
-            log.info("Processing polygon file: {} (tenant: {}, applicationNo: {}, rtpiId: {})", 
-                    file.getOriginalFilename(), tenantId, applicationNo, rtpiId);
+            log.info("Finding zone from polygon file: {} (tenant: {}, applicationNo: {}, rtpiId: {})", 
+                    file.getOriginalFilename(), gisRequestWrapper.getGisRequest().getTenantId(), 
+                    gisRequestWrapper.getGisRequest().getApplicationNo(), gisRequestWrapper.getGisRequest().getRtpiId());
 
-            PolygonProcessingResponse response = gisService.processPolygonFile(file, tenantId, applicationNo, rtpiId);
+            GISResponse response = gisService.findZoneFromPolygon(file, gisRequestWrapper);
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
             log.warn("Invalid request: {}", e.getMessage());
-            PolygonProcessingResponse errorResponse = PolygonProcessingResponse.builder()
+            GISResponse errorResponse = GISResponse.builder()
                     .error(e.getMessage())
                     .build();
             return ResponseEntity.badRequest().body(errorResponse);
 
         } catch (Exception e) {
-            log.error("Error processing polygon file", e);
-            PolygonProcessingResponse errorResponse = PolygonProcessingResponse.builder()
+            log.error("Error finding zone from polygon file", e);
+            GISResponse errorResponse = GISResponse.builder()
                     .error("Internal server error: " + e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

@@ -1,21 +1,24 @@
 package org.upyog.gis.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.*;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
+
 
 /**
  * Entity for logging GIS processing operations
  */
 @Entity
-@Table(name = "eg_gis_log")
+@Table(name = "ug_gis_log")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Data
 @Builder
 @NoArgsConstructor
@@ -41,17 +44,26 @@ public class GisLog {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "output", columnDefinition = "TEXT")
-    private String output;
+    @Column(name = "response_status", length = 50)
+    private String responseStatus;
 
-    @Column(name = "audit_created_by", length = 128)
-    private String auditCreatedBy;
+    @Column(name = "response_json", columnDefinition = "TEXT")
+    private String responseJson;
 
-    @Column(name = "audit_created_time", nullable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "createdby", length = 128)
+    private String createdby;
+
+    @Column(name = "createdtime", nullable = false)
     @Builder.Default
-    private OffsetDateTime auditCreatedTime = OffsetDateTime.now();
+    private Long createdtime = Instant.now().toEpochMilli();
 
-    @Type(JsonType.class)
+    @Column(name = "lastmodifiedby", length = 128)
+    private String lastmodifiedby;
+
+    @Column(name = "lastmodifiedtime")
+    private Long lastmodifiedtime;
+
+    @Type(type = "jsonb")
     @Column(name = "details", columnDefinition = "jsonb")
     private JsonNode details;
 }

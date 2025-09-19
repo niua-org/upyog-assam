@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -21,13 +21,12 @@
     <description>GIS service for KML processing and WFS integration</description>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <geotools.version>30.2</geotools.version>
-        <jts.version>1.19.0</jts.version>
-        <hibernate-types.version>3.5.0</hibernate-types.version>
+        <jts.version>1.17.1</jts.version>
+        <hibernate-types.version>2.12.1</hibernate-types.version>
     </properties>
 
     <dependencies>
@@ -70,13 +69,6 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <!-- GeoTools for GIS operations (simplified) -->
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-main</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-
         <!-- JTS for geometry operations -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -86,15 +78,23 @@
 
         <!-- JSONB support for PostgreSQL -->
         <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-60</artifactId>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-52</artifactId>
             <version>${hibernate-types.version}</version>
+        </dependency>
+
+        <!-- eGov Common Contract -->
+        <dependency>
+            <groupId>org.egov.services</groupId>
+            <artifactId>services-common</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
         </dependency>
 
         <!-- Utilities -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
             <optional>true</optional>
         </dependency>
         
@@ -103,38 +103,33 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- Test dependencies removed as requested -->
 
+        <!-- Swagger/OpenAPI for Spring Boot 2.x -->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.3.0</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>osgeo</id>
-            <name>OSGeo Release Repository</name>
-            <url>https://repo.osgeo.org/repository/release/</url>
-            <snapshots><enabled>false</enabled></snapshots>
-            <releases><enabled>true</enabled></releases>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

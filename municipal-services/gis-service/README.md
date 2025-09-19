@@ -1,77 +1,90 @@
-# GIS Microservice
+# GIS Service
 
-A Spring Boot microservice that provides GIS functionality for processing KML files and querying WFS (Web Feature Service) endpoints to extract district and zone information.
+A Spring Boot microservice for processing KML polygon files and extracting geographic zone information through WFS (Web Feature Service) integration.
 
 ## Overview
 
-This microservice accepts KML file uploads, extracts polygon geometries, queries a WFS service for intersecting features, and returns district/zone information along with the raw WFS response. The service includes robust error handling with retry logic and fallback mechanisms for unreliable WFS endpoints.
+The GIS Service processes KML polygon files to determine district and zone information by querying external WFS endpoints. It provides RESTful APIs for uploading KML files, extracting polygon geometries, and returning geographic metadata with comprehensive audit logging.
 
 ## Features
 
-- **KML Processing**: Parses KML files and extracts polygon coordinates using JTS geometry library
-- **WFS Integration**: Queries Web Feature Service endpoints for spatial intersections with CQL filters
-- **Filestore Integration**: Stores uploaded KML files in the core filestore service
-- **Audit Logging**: Comprehensive logging of all operations to PostgreSQL with JSONB details
-- **Retry Logic**: Automatic retry with axis swapping for WFS calls that return empty results
-- **Fallback Mechanism**: Returns structured fallback data when WFS service is unavailable
-- **Multi-tenant Support**: Optional tenant ID support for multi-tenant deployments
+- **KML File Processing**: Parse KML files and extract polygon geometries using JTS (Java Topology Suite)
+- **WFS Integration**: Query Web Feature Service endpoints for spatial intersections using CQL filters
+- **Filestore Integration**: Upload and store KML files through eGov filestore service
+- **Audit Logging**: Complete operation tracking with PostgreSQL JSONB storage
+- **Zone Detection**: Extract district and zone information from WFS responses
+- **Error Handling**: Robust error handling with retry mechanisms and fallback responses
+- **Multi-tenant Support**: Tenant-aware operations for multi-tenant deployments
+
+## Technology Stack
+
+- **Java**: 1.8
+- **Spring Boot**: 2.2.6.RELEASE
+- **Spring WebFlux**: Reactive HTTP client for WFS operations
+- **Spring Data JPA**: Database operations with PostgreSQL
+- **JTS**: 1.17.1 for geometry operations
+- **PostgreSQL**: Database with JSONB support for audit details
+- **Flyway**: Database migration management
+- **Lombok**: Code generation and boilerplate reduction
+- **Jackson**: JSON processing and serialization
+- **Hibernate Types**: Enhanced PostgreSQL JSONB support
+- **SpringFox Swagger**: API documentation
 
 ## API Endpoints
 
-### POST `/gis-service/process-polygon`
+### POST `/gis-service/find-zone`
 
-Process a polygon file and return district/zone information.
+Find zone information from a polygon KML file.
 
 **Request:**
 - **Content-Type**: `multipart/form-data`
 - **Parameters**:
-  - `file` (required): KML file to process
-  - `tenantId` (optional): Tenant identifier
-  - `applicationNo` (optional): Application number for tracking
-  - `rtpiId` (optional): RTPI identifier
+  - `file` (required): KML polygon file
+  - `gisRequestWrapper` (required): JSON containing RequestInfo and GIS request data
+
+**Request Structure:**
+```json
+{
+  "RequestInfo": {
+    "apiId": "gis-api",
+    "userInfo": {
+      "uuid": "user-uuid",
+      "tenantId": "tenant-id"
+    }
+  },
+  "gisRequest": {
+    "tenantId": "pg.citya",
+    "applicationNo": "APP-123",
+    "rtpiId": "RTPI-456"
+  }
+}
+```
 
 **Response:**
 ```json
 {
-  "district": "New Jersey",
-  "zone": "NJ",
+  "ResponseInfo": {
+    "apiId": "gis-api",
+    "ts": 1695123456789,
+    "status": "SUCCESSFUL"
+  },
+  "district": "Texas",
+  "zone": "TX",
   "wfsResponse": {
     "type": "FeatureCollection",
-    "totalFeatures": 1,
-    "numberMatched": 1,
-    "numberReturned": 1,
     "features": [
       {
         "type": "Feature",
-        "id": "states.1",
         "properties": {
-          "STATE_NAME": "New Jersey",
-          "STATE_ABBR": "NJ",
-          "STATE_FIPS": "34",
-          "SUB_REGION": "Mid Atl",
-          "LAND_KM": 19047.34,
-          "WATER_KM": 3544.243,
-          "PERSONS": 7730188
-        },
-        "geometry": {
-          "type": "MultiPolygon",
-          "coordinatesIncluded": false,
-          "note": "Geometry coordinates excluded for brevity"
+          "STATE_NAME": "Texas",
+          "STATE_ABBR": "TX",
+          "STATE_FIPS": "48"
         }
       }
     ]
   },
-  "fileStoreId": "actual-filestore-id-from-service"
+  "fileStoreId": "file-store-id"
 }
-```
-
-**Example cURL:**
-```bash
-curl -F "file=@polygon.kml" \
-     -F "tenantId=tenant1" \
-     -F "applicationNo=APP123" \
-     -F "rtpiId=RTPI456" \
-     http://localhost:8081/gis-service/process-polygon
 ```
 
 ## Configuration
@@ -79,8 +92,12 @@ curl -F "file=@polygon.kml" \
 ### Application Properties
 
 ```properties
+# Server Configuration
+server.port=8081
+server.context-path=/gis-service
+server.servlet.context-path=/gis-service
+
 # GIS Service Configuration
-gis.wms-url=https://gistcpservices.assam.gov.in/api/v1/geoservices/wms/assamtcpo/Assam_Zonning58?request=GetCapabilities
 gis.wfs-url=https://ahocevar.com/geoserver/wfs
 gis.wfs-type-name=topp:states
 gis.wfs-geometry-column=the_geom
@@ -88,122 +105,68 @@ gis.wfs-district-attribute=STATE_NAME
 gis.wfs-zone-attribute=STATE_ABBR
 
 # Filestore Configuration
-gis.filestore-url=http://localhost:8083/filestore/v1/files
+egov.filestore.host=http://localhost:8083
+gis.filestoreEndpoint=/filestore/v1/files
 
 # Database Configuration
 spring.datasource.url=jdbc:postgresql://localhost:5432/master_db
 spring.datasource.username=postgres
 spring.datasource.password=root
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-# JPA Configuration
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.properties.hibernate.format_sql=true
-
-# Flyway Configuration
-spring.flyway.enabled=true
-spring.flyway.locations=classpath:db/migration
-spring.flyway.baseline-on-migrate=true
-spring.flyway.user=postgres
-spring.flyway.password=root
-spring.flyway.url=jdbc:postgresql://localhost:5432/master_db
-
-# Server Configuration
-server.port=8081
 
 # File Upload Configuration
 spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
-
-# Logging Configuration
-logging.level.org.upyog.gis=INFO
 ```
-
-### Configuration Properties
-
-- **gis.wms-url**: WMS GetCapabilities URL for reference (read-only)
-- **gis.wfs-url**: WFS endpoint URL for feature queries
-- **gis.wfs-type-name**: Feature type name for WFS queries (e.g., `topp:states`)
-- **gis.wfs-geometry-column**: Geometry column name in WFS layer (default: `the_geom`)
-- **gis.wfs-district-attribute**: Attribute name for district information (e.g., `STATE_NAME`)
-- **gis.wfs-zone-attribute**: Attribute name for zone information (e.g., `STATE_ABBR`)
-- **gis.filestore-url**: Complete URL to filestore service endpoint
 
 ## Database Schema
 
-The service uses a PostgreSQL database with the following audit table:
-
-### gis_log
+### ug_gis_log Table
 
 | Column | Type | Description |
 |--------|------|-------------|
 | id | BIGSERIAL | Primary key |
-| file_store_id | VARCHAR(512) | Reference to stored file |
-| tenant_id | VARCHAR(128) | Tenant identifier |
 | application_no | VARCHAR(128) | Application number for tracking |
 | rtpi_id | VARCHAR(128) | RTPI identifier |
+| file_store_id | VARCHAR(512) | Reference to stored file |
+| tenant_id | VARCHAR(128) | Tenant identifier |
 | status | VARCHAR(50) | Processing status (PENDING/SUCCESS/FAILURE) |
-| output | TEXT | JSON response output |
-| audit_created_by | VARCHAR(128) | User who initiated the request |
-| audit_created_time | TIMESTAMPTZ | Request timestamp |
-| details | JSONB | Additional processing details |
+| response_status | VARCHAR(50) | Response outcome status |
+| response_json | TEXT | Processing response message |
+| createdby | VARCHAR(128) | User UUID who created the record |
+| createdtime | BIGINT | Creation timestamp (epoch milliseconds) |
+| lastmodifiedby | VARCHAR(128) | User UUID who last modified |
+| lastmodifiedtime | BIGINT | Last modification timestamp (epoch milliseconds) |
+| details | JSONB | Additional processing details and metadata |
 
 ## Architecture
 
-### Components
+### Core Components
 
-1. **GisController**: REST endpoint for polygon processing
-2. **GisService**: Business logic for KML processing and WFS integration
-3. **FilestoreClient**: Interface for file storage operations
-4. **WfsClient**: Interface for WFS operations with retry logic
+1. **GisController**: REST API controller handling HTTP requests
+2. **GisService**: Business logic for polygon processing and zone detection
+3. **FilestoreClient**: Client for file storage operations
+4. **WfsClient**: Client for Web Feature Service operations
 5. **KmlParser**: Utility for parsing KML files and extracting geometries
-6. **GisLog**: JPA entity for audit logging
+6. **GisLog**: JPA entity for audit logging and operation tracking
 
-### WFS Client Implementation
+### Processing Flow
 
-- **HttpWfsClient**: HTTP-based client using WebClient with:
-  - CQL filter support for spatial queries
-  - Automatic retry with axis swapping for empty results
-  - Fallback mechanism for service unavailability
-  - Proper URI encoding to prevent double encoding issues
+1. **File Validation**: Validate KML file type, size, and format
+2. **Filestore Upload**: Store KML file in eGov filestore service
+3. **Audit Logging**: Create initial log entry with PENDING status
+4. **KML Parsing**: Extract polygon geometry using JTS library
+5. **WFS Query**: Query WFS service for intersecting features
+6. **Zone Extraction**: Extract district and zone from WFS response
+7. **Response Cleanup**: Remove unnecessary demographic and geometry data
+8. **Audit Update**: Update log entry with final status and results
+9. **Response Return**: Return cleaned response to client
 
-### Filestore Client Implementation
+### WFS Integration
 
-- **RestFilestoreClient**: REST client for production use, integrates with egov-filestore service
-  - Flexible JSON response parsing for different filestore response formats
-  - Comprehensive error handling and logging
-
-## Processing Flow
-
-1. **File Upload**: KML file is uploaded via multipart form data
-2. **Validation**: File type (.kml/.xml), size (max 10MB), and content validation
-3. **Filestore Upload**: File is stored in the core filestore service
-4. **Audit Logging**: Initial log entry created with PENDING status
-5. **KML Parsing**: Polygon coordinates extracted from KML using JTS
-6. **WFS Query**: Spatial intersection query performed against WFS with CQL filter
-7. **Retry Logic**: If empty results, retry with swapped coordinate axes
-8. **Fallback**: If WFS fails, return structured fallback response
-9. **Response Processing**: District/zone information extracted from WFS response
-10. **Response Filtering**: Large geometry coordinates excluded from response for brevity
-11. **Audit Update**: Log entry updated with SUCCESS/FAILURE status
-12. **Response**: JSON response returned to client
-
-## Error Handling
-
-- **File Validation**: Invalid file types or sizes return 400 Bad Request
-- **WFS Failures**: Automatic retry with axis swapping, then fallback to mock data
-- **Timeout Handling**: WebClient configured with 10-second timeout
-- **Processing Errors**: All errors are logged and return appropriate HTTP status codes
-- **Audit Trail**: All operations are logged regardless of success/failure
-
-## WFS Query Details
-
-The service constructs CQL (Common Query Language) filters for spatial queries:
+The service performs spatial intersection queries using CQL filters:
 
 ```sql
-INTERSECTS(the_geom, POLYGON((-75.2 39.6, -74.6 39.6, -74.6 40.1, -75.2 40.1, -75.2 39.6)))
+INTERSECTS(the_geom, POLYGON((coordinates...)))
 ```
 
 **Query Parameters:**
@@ -213,55 +176,50 @@ INTERSECTS(the_geom, POLYGON((-75.2 39.6, -74.6 39.6, -74.6 40.1, -75.2 40.1, -7
 - `typeName=topp:states`
 - `outputFormat=application/json`
 - `srsName=EPSG:4326`
-- `cql_filter=INTERSECTS(...)`
-
-## Dependencies
-
-- **Spring Boot 3.2.0**: Main framework
-- **Spring WebFlux**: Reactive HTTP client for WFS calls
-- **Spring Data JPA**: Database operations
-- **JTS 1.19.0**: Geometry operations and WKT handling
-- **PostgreSQL**: Database with JSONB support
-- **Flyway**: Database migrations
-- **Lombok**: Code generation
-- **Jackson**: JSON processing
-- **Hypersistence Utils**: Enhanced Hibernate support
 
 ## Development
 
 ### Prerequisites
 
-- Java 17+
+- Java 1.8
 - Maven 3.6+
 - PostgreSQL 12+
-- Access to filestore service
+- Access to eGov filestore service
 
 ### Running the Application
 
 1. Configure database connection in `application.properties`
-2. Run Flyway migrations: `mvn flyway:migrate`
-3. Start the application: `mvn spring-boot:run`
-4. Test with sample KML file: `curl -F "file=@test-polygon.kml" http://localhost:8081/gis-service/process-polygon`
+2. Start the application: `mvn spring-boot:run`
+3. Access Swagger UI: `http://localhost:8081/gis-service/swagger-ui.html`
 
-### Sample KML File
+### Testing
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
-    <name>Test Polygon</name>
-    <Placemark>
-      <name>Test polygon for WFS intersect</name>
-      <Polygon>
-        <outerBoundaryIs>
-          <LinearRing>
-            <coordinates>
-              -75.2,39.6 -74.6,39.6 -74.6,40.1 -75.2,40.1 -75.2,39.6
-            </coordinates>
-          </LinearRing>
-        </outerBoundaryIs>
-      </Polygon>
-    </Placemark>
-  </Document>
-</kml>
+Use the provided test KML files in `src/main/resources/`:
+- `test-polygon.kml`
+- `test-polygon_2.kml`
+
+### Sample cURL Request
+
+```bash
+curl --location 'http://localhost:8081/gis-service/find-zone' \
+--form 'file=@"test-polygon.kml"' \
+--form 'gisRequestWrapper={"RequestInfo":{"apiId":"gis-api","userInfo":{"uuid":"test-user"}},"gisRequest":{"tenantId":"pg","applicationNo":"XYZ-123","rtpiId":"ABC-123"}}'
+```
+
+## API Documentation
+
+Swagger UI is available at: `http://localhost:8081/gis-service/swagger-ui.html`
+
+## Logging
+
+The service provides comprehensive logging at INFO level for:
+- File upload operations
+- KML parsing activities
+- WFS query execution
+- Zone extraction results
+- Error conditions and exceptions
+
+Configure logging level in `application.properties`:
+```properties
+logging.level.org.upyog.gis=INFO
 ```
