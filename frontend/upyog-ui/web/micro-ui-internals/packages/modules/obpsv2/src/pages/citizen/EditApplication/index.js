@@ -124,7 +124,7 @@ const Edit = () => {
               onAdd={handleMultiple}
               t={t}
               formData={params}
-              searchResult={data[0]}
+              searchResult={data?.[0]}
             />
           </Route>
         );
