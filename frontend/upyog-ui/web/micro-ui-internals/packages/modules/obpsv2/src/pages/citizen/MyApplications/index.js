@@ -60,7 +60,7 @@ export const BPAMyApplications = () => {
     { i18nKey: "Rejected", code: "REJECTED", value: t("BPA_REJECTED") }
   ];
 
-  const filteredApplications = data?.BPA || [];
+  const filteredApplications = data?.bpa || [];
 
   return (
     <React.Fragment>
