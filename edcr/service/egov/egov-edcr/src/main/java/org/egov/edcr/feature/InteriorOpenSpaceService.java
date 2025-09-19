@@ -47,8 +47,7 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.CommonFeatureConstants.M;
-import static org.egov.edcr.constants.CommonFeatureConstants.SQ_M;
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_INTERIOR_OPEN_SPACE;
 import static org.egov.edcr.constants.EdcrReportConstants.AREA;
 import static org.egov.edcr.constants.EdcrReportConstants.AT_FLOOR;
@@ -57,6 +56,7 @@ import static org.egov.edcr.constants.EdcrReportConstants.MINIMUM_WIDTH;
 import static org.egov.edcr.constants.EdcrReportConstants.RULE_43;
 import static org.egov.edcr.constants.EdcrReportConstants.RULE_43A;
 import static org.egov.edcr.constants.EdcrReportConstants.VENTILATIONSHAFT_DESCRIPTION;
+import static org.egov.edcr.constants.RuleKeyConstants.NINETY_ONE_D;
 import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
 import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
@@ -127,7 +127,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
      * Processes all interior open space components such as ventilation shafts and inner courtyards.
      */
     private void processInteriorOpenSpaces(Plan pl, InteriorOpenSpaceServiceRequirement ruleValues) {
-        LOG.info("Processing interior open spaces for {} blocks in plan {}", 
+        LOG.info("Processing interior open spaces for {} blocks in plan {}",
                 pl.getBlocks().size());
 
         for (Block b : pl.getBlocks()) {
@@ -155,11 +155,95 @@ public class InteriorOpenSpaceService extends FeatureProcess {
                             ruleValues.getMinInteriorWidthValueOne(),
                             ruleValues.getMinInteriorWidthValueTwo(),
                             RULE_43, RULE_43A, INTERNALCOURTYARD_DESCRIPTION);
+
+                    // Clause 91(d) validation for interior open spaces
+                    applyClause91dValidation(pl, b, f, scrutinyDetail, ruleValues);
                 }
             } else {
                 LOG.debug("Block {} has no floors or no building defined", b.getNumber());
             }
         }
+    }
+
+    private BigDecimal getBuildingHeight(Block block) {
+        return (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null)
+                ? block.getBuilding().getBuildingHeight() : BigDecimal.ZERO;
+    }
+
+    /**
+     * Applies Clause 91(d) height-based validation for interior open spaces
+     */
+    private void applyClause91dValidation(Plan pl, Block b, Floor f, ScrutinyDetail scrutinyDetail, InteriorOpenSpaceServiceRequirement ruleValues) {
+        LOG.info("Applying Clause 91(d) validation for Block {}, Floor {}", b.getNumber(), f.getNumber());
+        if (f.getInteriorOpenSpace() == null) return;
+        BigDecimal buildingHeight = getBuildingHeight(b);
+
+        // Validate WC Shaft
+        if (f.getInteriorOpenSpace().getWcShaft() != null &&
+                f.getInteriorOpenSpace().getWcShaft().getMeasurements() != null &&
+                !f.getInteriorOpenSpace().getWcShaft().getMeasurements().isEmpty()) {
+            validateClause91d(pl, scrutinyDetail, f,
+                    f.getInteriorOpenSpace().getWcShaft().getMeasurements(),
+                    f.getInteriorOpenSpace().getWcShaftWidth(),
+                    buildingHeight, WC_BATH_STORE, ruleValues);
+        }
+
+        // Validate Kitchen Shaft
+        if (f.getInteriorOpenSpace().getKitchenShaft() != null &&
+                f.getInteriorOpenSpace().getKitchenShaft().getMeasurements() != null &&
+                !f.getInteriorOpenSpace().getKitchenShaft().getMeasurements().isEmpty()) {
+            validateClause91d(pl, scrutinyDetail, f,
+                    f.getInteriorOpenSpace().getKitchenShaft().getMeasurements(),
+                    f.getInteriorOpenSpace().getKitchenShaftWidth(),
+                    buildingHeight, KITCHEN_DINING, ruleValues);
+        }
+        LOG.info("Clause 91(d) validation completed for Block {}, Floor {}", b.getNumber(), f.getNumber());
+    }
+
+    private void validateClause91d(Plan pl, ScrutinyDetail scrutinyDetail, Floor f,
+                                   List<Measurement> measurements, List<BigDecimal> widthList,
+                                   BigDecimal buildingHeight, String spaceType, InteriorOpenSpaceServiceRequirement ruleValues) {
+
+        LOG.info("Validating Clause 91(d) for {} in Floor {}", spaceType, f.getNumber());
+        boolean isAbove18m = buildingHeight.compareTo(ruleValues.getBuildingHeightThreshold()) > 0;
+        BigDecimal requiredArea, requiredWidth;
+
+        if (WC_BATH_STORE.equals(spaceType)) {
+            requiredArea = isAbove18m ? ruleValues.getWcAreaAboveThreshold() : ruleValues.getWcAreaBelowThreshold();
+            requiredWidth = isAbove18m ? ruleValues.getWcWidthAboveThreshold() : ruleValues.getWcWidthBelowThreshold();
+        } else {
+            requiredArea = isAbove18m ? ruleValues.getKitchenAreaAboveThreshold() : ruleValues.getKitchenAreaBelowThreshold();
+            requiredWidth = isAbove18m ? ruleValues.getKitchenWidthAboveThreshold() : ruleValues.getKitchenWidthBelowThreshold();
+        }
+
+        BigDecimal minArea = measurements.stream().map(Measurement::getArea).min(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
+        BigDecimal minWidth = widthList != null && !widthList.isEmpty() ?
+                widthList.stream().min(BigDecimal::compareTo).orElse(BigDecimal.ZERO) : BigDecimal.ZERO;
+
+        addClause91dReport(pl, scrutinyDetail, f, spaceType, minArea, requiredArea, minWidth, requiredWidth);
+    }
+
+    private void addClause91dReport(Plan pl, ScrutinyDetail scrutinyDetail, Floor f, String spaceType,
+                                    BigDecimal providedArea, BigDecimal requiredArea,
+                                    BigDecimal providedWidth, BigDecimal requiredWidth) {
+
+        LOG.info("Clause 91(d) Report for {} at Floor {}: Required Area: {}, Provided Area: {}, Required Width: {}, Provided Width: {}",
+                spaceType, f.getNumber(), requiredArea, providedArea, requiredWidth, providedWidth);
+        ReportScrutinyDetail areaDetail = new ReportScrutinyDetail();
+        areaDetail.setRuleNo(NINETY_ONE_D);
+        areaDetail.setDescription(spaceType + MIN_AREA_SHAFT);
+        areaDetail.setRequired(MIN_AREA_STR + requiredArea + SQ_M);
+        areaDetail.setProvided(AREA + providedArea + AT_FLOOR + f.getNumber());
+        areaDetail.setStatus(providedArea.compareTo(requiredArea) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, mapReportDetails(areaDetail));
+
+        ReportScrutinyDetail widthDetail = new ReportScrutinyDetail();
+        widthDetail.setRuleNo(NINETY_ONE_D);
+        widthDetail.setDescription(spaceType + MIN_WIDTH_SHAFT);
+        widthDetail.setRequired(MINIMUM_WIDTH + requiredWidth + M);
+        widthDetail.setProvided(WIDTH_STRING + providedWidth + AT_FLOOR + f.getNumber());
+        widthDetail.setStatus(providedWidth.compareTo(requiredWidth) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, mapReportDetails(widthDetail));
     }
 
     /**
@@ -192,7 +276,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 
         // Area validation
         if (minArea.compareTo(areaValueOne) > 0) {
-            LOG.info("Checking AREA for {} at floor {}: Required > {} sq.m, Provided: {}", 
+            LOG.info("Checking AREA for {} at floor {}: Required > {} sq.m, Provided: {}",
                     description, f.getNumber(), areaValueTwo, minArea);
 
             ReportScrutinyDetail detail = new ReportScrutinyDetail();
@@ -216,7 +300,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 
         // Width validation
         if (minWidth.compareTo(widthValueOne) > 0) {
-            LOG.info("Checking WIDTH for {} at floor {}: Required > {} m, Provided: {}", 
+            LOG.info("Checking WIDTH for {} at floor {}: Required > {} m, Provided: {}",
                     description, f.getNumber(), widthValueTwo, minWidth);
 
             ReportScrutinyDetail detail = new ReportScrutinyDetail();
