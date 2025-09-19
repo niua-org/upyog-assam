@@ -47,12 +47,95 @@ public class LandEnrichmentService {
 	@Autowired
 	private LandUserService userService;
 
-	public void enrichLandInfoRequest(LandInfoRequest landRequest, boolean isUpdate) {
+	public void enrichCreateLandInfo(LandInfoRequest landRequest) {
+		@Valid RequestInfo requestInfo = landRequest.getRequestInfo();
+		AuditDetails auditDetails = landUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		landRequest.getLandInfo().setAuditDetails(auditDetails);
+		landRequest.getLandInfo().setId(UUID.randomUUID().toString());
+		//TODO: remove false condition after testing
+		if (false) {
+			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
+		}
+
+		if (landRequest.getLandInfo().getInstitution() != null) {
+				landRequest.getLandInfo().getInstitution().setId(UUID.randomUUID().toString());
+				landRequest.getLandInfo().getInstitution().setTenantId(landRequest.getLandInfo().getTenantId());
+		}
+		
+		if (StringUtils.isEmpty(landRequest.getLandInfo().getChannel())) {
+			landRequest.getLandInfo().setChannel(Channel.SYSTEM);
+		}
+
+		if (StringUtils.isEmpty(landRequest.getLandInfo().getSource())) {
+			landRequest.getLandInfo().setSource(Source.MUNICIPAL_RECORDS);
+		}
+
+		// address
+		if (landRequest.getLandInfo().getAddress() != null) {
+				landRequest.getLandInfo().getAddress().setId(UUID.randomUUID().toString());
+			landRequest.getLandInfo().getAddress().setTenantId(landRequest.getLandInfo().getTenantId());
+			landRequest.getLandInfo().getAddress().setAuditDetails(auditDetails);
+			if(landRequest.getLandInfo().getAddress().getLocality() != null){
+				landRequest.getLandInfo().getAddress().setLocalityCode(landRequest.getLandInfo().getAddress().getLocality().getCode());
+			}
+			if (landRequest.getLandInfo().getAddress().getGeoLocation() != null)
+				landRequest.getLandInfo().getAddress().getGeoLocation().setId(UUID.randomUUID().toString());
+		}
+		// units
+		if (!CollectionUtils.isEmpty(landRequest.getLandInfo().getUnits())) {
+			landRequest.getLandInfo().getUnits().forEach(unit -> {
+				unit.setId(UUID.randomUUID().toString());
+				unit.setTenantId(landRequest.getLandInfo().getTenantId());
+				unit.setAuditDetails(auditDetails);
+			});
+		}
+
+		// Documents
+		if (!CollectionUtils.isEmpty(landRequest.getLandInfo().getDocuments())) {
+			landRequest.getLandInfo().getDocuments().forEach(document -> {
+				document.setId(UUID.randomUUID().toString());
+				document.setAuditDetails(auditDetails);
+			});
+		}
+
+		// Owners
+		if (!CollectionUtils.isEmpty(landRequest.getLandInfo().getOwners())) {
+			landRequest.getLandInfo().getOwners().forEach(owner -> {
+				owner.setOwnerId(UUID.randomUUID().toString());
+				owner.setAuditDetails(auditDetails);
+			});
+			landRequest.getLandInfo().getOwners().forEach(owner ->{
+				if(owner.getCorrespondenceAddress() !=null){
+					owner.getCorrespondenceAddress().setId(UUID.randomUUID().toString());
+					owner.getCorrespondenceAddress().setOwnerInfoId(owner.getOwnerId());
+					owner.getCorrespondenceAddress().setAuditDetails(auditDetails);
+					if(owner.getCorrespondenceAddress().getLocality() != null){
+						owner.getCorrespondenceAddress().setLocalityCode(owner.
+								getCorrespondenceAddress().getLocality().getCode());
+					}
+					landRequest.getLandInfo().getOwnerAddresses().add(owner.getCorrespondenceAddress());
+				}
+				if(owner.getPermanentAddress() !=null){
+
+					owner.getPermanentAddress().setId(UUID.randomUUID().toString());
+					owner.getPermanentAddress().setOwnerInfoId(owner.getOwnerId());
+					owner.getPermanentAddress().setAuditDetails(auditDetails);
+					if(owner.getPermanentAddress().getLocality() != null){
+						owner.getPermanentAddress().setLocalityCode(owner.
+								getPermanentAddress().getLocality().getCode());
+					}
+					landRequest.getLandInfo().getOwnerAddresses().add(owner.getPermanentAddress());
+				}
+			});
+		}
+	}
+
+	public void enrichUpdateLandInfo(LandInfoRequest landRequest) {
 		@Valid RequestInfo requestInfo = landRequest.getRequestInfo();
 		AuditDetails auditDetails = landUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		landRequest.getLandInfo().setAuditDetails(auditDetails);
 		//TODO: remove false condition after testing
-		if (!isUpdate && false) {
+		if (false) {
 			landRequest.getLandInfo().setId(UUID.randomUUID().toString());
 			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
 		}
@@ -116,7 +199,7 @@ public class LandEnrichmentService {
 			});
 			landRequest.getLandInfo().getOwners().forEach(owner ->{
 				if(owner.getCorrespondenceAddress() !=null){
-						owner.getCorrespondenceAddress().setId(UUID.randomUUID().toString());
+					owner.getCorrespondenceAddress().setId(UUID.randomUUID().toString());
 					owner.getCorrespondenceAddress().setOwnerInfoId(owner.getOwnerId());
 					owner.getCorrespondenceAddress().setAuditDetails(auditDetails);
 					if(owner.getCorrespondenceAddress().getLocality() != null){
@@ -164,8 +247,9 @@ public class LandEnrichmentService {
 		landInfos.forEach(bpa -> {
 			landInfors.add(new LandInfoRequest(requestInfo, bpa));
 		});
+		//TODO will resolve after testing
 		if (criteria.getLimit() == null || !criteria.getLimit().equals(-1)) {
-			enrichBoundary(landInfors);
+		//	enrichBoundary(landInfors);
 		}
 
 		UserDetailResponse userDetailResponse = userService.getUsersForLandInfos(landInfos);
@@ -189,11 +273,11 @@ public class LandEnrichmentService {
 		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
 		landInfos.forEach(landInfo -> {
 			landInfo.getOwners().forEach(owner -> {
-				if (userIdToOwnerMap.get(owner.getUserUuid()) == null)
+				if (userIdToOwnerMap.get(owner.getUuid()) == null)
 					throw new CustomException(LandConstants.OWNER_SEARCH_ERROR,
 							"The owner of the landInfo " + landInfo.getId() + " is not coming in user search");
 				else
-					owner.addUserWithoutAuditDetail(userIdToOwnerMap.get(owner.getUserUuid()));
+					owner.addUserWithoutAuditDetail(userIdToOwnerMap.get(owner.getUuid()));
 			});
 		});
 	}

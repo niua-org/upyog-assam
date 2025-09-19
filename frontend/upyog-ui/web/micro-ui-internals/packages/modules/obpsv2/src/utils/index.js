@@ -1,4 +1,3 @@
-import { random } from 'lodash';
 import { v4 as uuid_v4 } from 'uuid';
 export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
@@ -102,6 +101,12 @@ export const bpaPayload = (data) => {
         ward: data?.areaMapping?.ward,
       },
 
+      rtpDetails: {
+        rtpCategory: data?.land?.rtpCategory?.code,
+        rtpName: data?.land?.registeredTechnicalPerson?.name,
+        rtpUUID: data?.land?.registeredTechnicalPerson?.code,
+      },
+
       documents:
         data?.land?.documents?.map((doc) => ({
           documentType: doc?.documentType || "",
@@ -112,8 +117,6 @@ export const bpaPayload = (data) => {
 
       landInfo: {
         tenantId: data?.tenantId,
-        id:Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15),
         newDagNumber: data?.land?.newDagNumber,
         newPattaNumber: data?.land?.newPattaNumber,
         oldDagNumber: data?.land?.oldDagNumber,
@@ -153,11 +156,6 @@ export const bpaPayload = (data) => {
           },
         ],
         ownerAddresses: [],
-        rtpDetails: {
-          rtpCategory: data?.land?.rtpCategory?.code,
-          rtpName: data?.land?.registeredTechnicalPerson?.name,
-          rtpUUID: data?.land?.registeredTechnicalPerson?.code,
-        },
 
         units: [
           {
