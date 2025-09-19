@@ -90,7 +90,15 @@ export const bpaPayload = (data) => {
       applicationType: data?.land?.constructionType?.code,
       businessService: "bpa-services",
       status: "INITIATED",
-
+      additionalDetails: {
+        adjoiningOwners: data?.land?.adjoiningOwners,
+        futureProvisions: data?.land?.futureProvisions?.horizontalExtension?.code,
+        todBenefits: data?.land?.todBenefits?.code,
+        todWithTdr: data?.land?.todWithTdr?.code,
+        todZone: data?.land?.todZone?.code,
+        tdrUsed: data?.land?.tdrUsed?.code,
+        todAcknowledgement: data?.land?.todAcknowledgement,
+      },
       areaMapping: {
         buildingPermitAuthority: "GMC",
         district: data?.areaMapping?.district?.code,
@@ -162,16 +170,6 @@ export const bpaPayload = (data) => {
             occupancyType: data?.land?.occupancyType?.code,
           },
         ],
-
-        additionalDetails: {
-          adjoiningOwners: data?.land?.adjoiningOwners,
-          futureProvisions: data?.land?.futureProvisions?.horizontalExtension?.code,
-          todBenefits: data?.land?.todBenefits?.code,
-          todWithTdr: data?.land?.todWithTdr?.code,
-          todZone: data?.land?.todZone?.code,
-          tdrUsed: data?.land?.tdrUsed?.code,
-          todAcknowledgement: data?.land?.todAcknowledgement,
-        },
       },
 
       workflow: {
