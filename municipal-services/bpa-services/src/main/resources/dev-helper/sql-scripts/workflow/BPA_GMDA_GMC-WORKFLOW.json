@@ -1,39 +1,41 @@
 curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/_create' \
 --header 'Content-Type: application/json' \
---data '{
+--data-raw '{
 "RequestInfo": {
 "apiId": "Rainmaker",
 "action": "",
 "did": 1,
 "key": "",
-"msgId": "20170310130900|en_IN",
+"msgId": "20230910130900|en_IN",
 "requesterId": "",
-"ts": 1513579888683,
+"ts": 1513579888772,
 "ver": ".01",
 "authToken": "{{devAuth}}",
 "userInfo": {
-"id": 73,
-"userName": null,
-"name": null,
-"type": "EMPLOYEE",
-"mobileNumber": null,
-"emailId": null,
+"id": 2130,
+"uuid": "f9517ac8-a630-4b4a-adbf-717a7d99fa5c",
+"userName": "9999009999",
+"name": "KS",
+"mobileNumber": "9999009999",
+"emailId": "test@test.com",
+"locale": null,
+"type": "CITIZEN",
 "roles": [
 {
-"id": 2,
-"name": "Customer Support Representative",
-"code": null,
-"tenantId": null
+"name": "Citizen",
+"code": "CITIZEN",
+"tenantId": "pg"
 }
 ],
-"tenantId": null,
-"uuid": "uuid"
+"active": true,
+"tenantId": "pg",
+"permanentCity": null
 }
 },
 "BusinessServices": [
 {
 "tenantId": "pg",
-"businessService": "BPA_GMDA",
+"businessService": "BPA_GMDA_GMC",
 "business": "bpa-services",
 "businessServiceSla": "",
 "states": [
@@ -43,7 +45,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 {
 "roles": [
 "CITIZEN",
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "APPLY",
 "active": true,
@@ -60,7 +63,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 "actions": [
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "APPROVE",
 "active": true,
@@ -68,14 +72,14 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 },
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "REJECT",
 "active": true,
 "nextState": "REJECTED"
 }
 ],
-
 "applicationStatus": "PENDING_RTP_APPROVAL",
 "isStartState": false,
 "isStateUpdatable": true,
@@ -87,7 +91,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 "actions": [
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "EDIT",
 "active": true,
@@ -105,7 +110,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 "actions": [
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "VALIDATE_GIS",
 "active": true,
@@ -123,7 +129,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 "actions": [
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "APPLY_FOR_SCRUTINY",
 "active": true,
@@ -141,7 +148,8 @@ curl --location 'http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/
 "actions": [
 {
 "roles": [
-"BPA_RTP"
+"BPA_RTP",
+"BPA_ARCHITECT"
 ],
 "action": "SEND",
 "active": true,
